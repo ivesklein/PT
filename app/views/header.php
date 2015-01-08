@@ -158,7 +158,7 @@
         </ul>
 
         <ul class="nav-right pull-right list-unstyled">
-            <li class="dropdown langs text-normal" data-ng-controller="LangCtrl">
+            <!--li class="dropdown langs text-normal" data-ng-controller="LangCtrl">
                 <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
                     {{lang}}
                 </a>
@@ -184,7 +184,7 @@
                     <li data-ng-show="lang !== '한국어' ">
                         <a href="javascript:;" data-ng-click="setLang('한국어')"><div class="flag flags-korea"></div> 한국어</a></li>
                 </ul>
-            </li>
+            </li-->
 <!--             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
                     <span class="fa fa-magic nav-icon"></span>

@@ -53,7 +53,7 @@ angular.module("app",
 				.when("/mail/compose",{templateUrl:"views/mail/compose.html"})
 				.when("/mail/single",{templateUrl:"views/mail/single.html"})
 				.when("/pages/features",{templateUrl:"views/pages/features.html"})
-				.when("/pages/signin",{templateUrl:"views/pages/signin.html"})
+				.when("/pages/signin",{templateUrl:"views/login"})
 				.when("/pages/signup",{templateUrl:"views/pages/signup.html"})
 				.when("/pages/lock-screen",{templateUrl:"views/pages/lock-screen.html"})
 				.when("/pages/profile",{templateUrl:"views/pages/profile.html"})
