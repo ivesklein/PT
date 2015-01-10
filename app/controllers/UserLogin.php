@@ -12,7 +12,7 @@ class UserLogin extends BaseController {
 		if(Auth::attempt($userdata)){
 			return Redirect::to('/');
 		}else{
-			return Redirect::to('/#/pages/signin')->with('login_errors', true);
+			return Redirect::to('login')->with('login_errors', true);
 		}
 	}
 

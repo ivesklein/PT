@@ -11,14 +11,15 @@
 |
 */
 
-Route::get('/', function()
+Route::get('/', array( "before"=>'auth' ,function()
 {
-	//return "holaa";
 	return View::make('index');
-});
+}));
 
 
 Route::controller('views','First');
+
+Route::controller('lti','WC');
 
 Route::get('login2', array('before'=>'auth.basic', function()
 {
@@ -28,13 +29,25 @@ Route::get('login2', array('before'=>'auth.basic', function()
 
 Route::get('new', function()
 {
-	$staff = new Staff;
-	$staff->wc_id = "david@klein.cl";
-	$staff->password = Hash::make('david');
+	$staff = Staff::find(1);
+	$staff->name = "David";
+	$staff->surname = "Klein";
 	$staff->save();
 	//return "holaa";
 	return "nuevousuario";
 });
 
 
+
+Route::get('login', function()
+{
+	return View::make("login.login");
+});
+
 Route::post('login', 'UserLogin@user');
+
+Route::get('logout', function()
+{
+	Auth::logout();
+	return Redirect::to("login");
+});

@@ -1,3 +1,4 @@
+<?php if(Auth::check()) { ?>
 <header class="clearfix">
     <a href="#/" data-toggle-min-nav
                  class="toggle-min"
@@ -197,7 +198,7 @@
                 <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
                     <img src="images/g1.jpg" alt="" class="img-circle img30_30">
                     <span class="hidden-xs">
-                        <span data-i18n="Lisa Doe"></span>
+                        <span><?=(Auth::user()->name." ".Auth::user()->surname)?></span>
                     </span>
                 </a>
                 <ul class="dropdown-menu with-arrow pull-right">
@@ -220,7 +221,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#/pages/signin">
+                        <a href="logout">
                             <i class="fa fa-sign-out"></i>
                             <span data-i18n="Log Out"></span>
                         </a>
@@ -232,3 +233,4 @@
     </div>
 
 </header>
+<?php } ?>
