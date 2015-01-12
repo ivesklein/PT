@@ -22,7 +22,12 @@ class Menu {
 	}
 
 	public static function getMenu(){
-		echo self::row("Menu", "#/menu", "dashboard", "danger", 0, array(0=>array("link"=>"#/ala", "title"=>"lolo", "n"=>1)));
+
+		if(Auth::user()->id==1){
+			echo self::row("Vista1", "#/menu", "dashboard", "danger", 0, array(0=>array("link"=>"#/vista1", "title"=>"Subir temas", "n"=>0)));
+		}else{
+			echo self::row("Menu", "#/menu", "dashboard", "danger", 0, array(0=>array("link"=>"#/ala", "title"=>"lolo", "n"=>1)));
+		}
 	}
 
 }

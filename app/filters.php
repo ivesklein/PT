@@ -21,7 +21,6 @@ App::after(function($request, $response)
 {
 	//
 });
-
 /*
 |--------------------------------------------------------------------------
 | Authentication Filters

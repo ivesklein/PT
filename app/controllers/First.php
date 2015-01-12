@@ -18,7 +18,7 @@ class First extends BaseController
 
 	public function getNav()
 	{
-		return View::make('nav2');
+		return View::make('nav');
 	}
 
 	public function getDashboard()
@@ -30,6 +30,13 @@ class First extends BaseController
 	{
 		return View::make('login.login');
 	}
+
+	public function getVista1()
+	{
+		return View::make('views.view1');
+	}
+
+
 
 }
 

@@ -11,6 +11,7 @@
 |
 */
 
+
 $app = new Illuminate\Foundation\Application;
 
 /*
@@ -69,5 +70,7 @@ require $framework.'/Illuminate/Foundation/start.php';
 | from the actual running of the application and sending responses.
 |
 */
+
+$app->forgetMiddleware('Illuminate\Http\FrameGuard');
 
 return $app;

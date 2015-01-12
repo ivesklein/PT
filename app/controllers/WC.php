@@ -7,24 +7,38 @@ class WC extends BaseController
 	
 	public function getIndex()
 	{
-		return Carbon::now();
+		return View::make("hello");
+		//return Carbon::now();
+		//return "hola";
+	}
+
+	public function postIndex()
+	{
+		return View::make("helslo");
+		//return Carbon::now();
 		//return "hola";
 	}
 
 
-	public function getUrl(){
-		return LTI::url();
+	public function getAdd(){
+		$cons = new Consumer;
+		$cons->key = "webcursos";
+		$cons->secret = "webcursos-secret";
+		$cons->name = "Webcursos";
+		$cons->save();
+
 	}
 
-	public function postSig()
-	{
-
-		$oauth_signature = Input::get('oauth_signature');
-
-		$sig = LTI::signature();
-
-		return $oauth_signature." ".$sig;
-
+	public function postWeb()
+	{	
+		//return View::make("hello");
+		$lti = LTI::check();
+		if($lti['status'] == "ok"){
+			return "Hola ".$lti['name']." ".$lti['surname']."
+			<br>";
+		}else{
+			return $lti;
+		}
 
 	}
 

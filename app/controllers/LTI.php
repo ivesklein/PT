@@ -1,20 +1,51 @@
 <?php
 class LTI extends BaseController{
 
-	/*
-	public function signature($data){
+	
+	public static function check(){
 	
 		//clave que le damos previamente al cliente
-		$oauth_consumer_key = Input::get('oauth_consumer_key');
+		$ok = true;
+		$message = "";
+		if(!isset($_POST['oauth_consumer_key'])){
+			$ok=false;
+			$message="no key";
+		}else{
+			$oauth_consumer_key = Input::get('oauth_consumer_key');
+		}
 
-
-		$type = Input::get('lti_message_type');
+		if($ok){
+			if(!isset($_POST['lti_message_type'])){
+				$ok=false;
+				$message="no type";
+			}else{
+				$type = Input::get('lti_message_type');
+			}
+		}
 		//$vtype = $type=="basic-lti-launch-request"?"true":"false";
 
-		$version = Input::get('lti_version');//=="LTI-1p0"?"true":"false";
+		if($ok){
+			if(!isset($_POST['lti_version'])){
+				$ok=false;
+				$message="no version";
+			}else{
+				$version = Input::get('lti_version');
+				if($version!="LTI-1p0"){
+					$ok=false;
+					$message="lti version not sopported";
+				}
+			}
+		}
 
 		//id instancia creada, un curso puede tener varias
-		$resource_id = Input::get('resource_link_id');
+		if($ok){
+			if(!isset($_POST['resource_link_id'])){
+				$ok=false;
+				$message="no id_recurso";
+			}else{
+				$resource_id = Input::get('resource_link_id');
+			}
+		}
 
 		//id contexto (curso)
 		$context_id = Input::get('context_id');
@@ -25,63 +56,105 @@ class LTI extends BaseController{
 		//rol dentro del curso
 		$roles = Input::get('roles');
 
-		//random unico dentro de 90 minutos?
-		$oauth_nonce = Input::get('oauth_nonce');
+
+		if($ok){
+			if(!isset($_POST['oauth_nonce'])){
+				$ok=false;
+				$message="no nonce";
+			}else{
+				$oauth_nonce = Input::get('oauth_nonce');
+			}
+		}
 
 		//verifica si el nonce es válido, devuelve string true false
-		$vnonce = Nonce::pass($oauth_nonce);
+
+		if($ok){
+			$vnonce = Nonce::pass($oauth_nonce,$oauth_consumer_key);
+			if($vnonce=="false"){
+				$ok=false;
+				$message="invalid nonce";
+			}
+		}
 		//$vnonce = Nonce::exist($oauth_nonce);
 
 		//fecha
 		$oauth_timestamp = (float)Input::get('oauth_timestamp');
-		$diff = Carbon::now()->diffInSeconds(Carbon::createFromTimeStamp($oauth_timestamp))<2?"true":"false";
+		if($ok){
+			$diff = abs((float)time()-$oauth_timestamp)<1200?"true":"false";
+			if($diff=="false"){
+				$ok=false;
+				$message="invalid timestamp ".(abs(time()-$oauth_timestamp));
+			}
+		}
 
-
-		//signature
-		$oauth_signature = Input::get('oauth_signature');
+		if($ok){
+			if(!isset($_POST['oauth_signature'])){
+				$ok=false;
+				$message="no signature";
+			}else{
+				$oauth_signature = Input::get('oauth_signature');
+			}
+		}
 
 		//fullname
 		$name_full = Input::get('lis_person_name_full');
 
-		$method = Input::get('oauth_signature_method');
-
+		if($ok){
+			if(!isset($_POST['oauth_signature_method'])){
+				$ok=false;
+				$message="no signature method";
+			}else{
+				$method = Input::get('oauth_signature_method');
+				if($method!="HMAC-SHA1"){
+					$ok=false;
+					$message="signature method not supported";
+				}
+			}
+		}
 		
-		unset($_POST['oauth_signature']);
-		$arrayvars = $_POST;
-		$headers = apache_request_headers();
-		
-		//foreach ($headers as $key => $value) {
-		//	$arrayvars[$key] = urlencode($headers['']);
-		//}
+		$sig = self::signature();
+		if($ok){
+			if($sig!=$oauth_signature){
+				$ok=false;
+				$message="invalid signature";
+			}
+		}
 
-		$arrayvars["Host"] = urlencode($headers["Host"]);
-		$arrayvars["Content-Type"] = urlencode($headers["Content-Type"]);
+		$response = array();
 
-		uksort($arrayvars, "strnatcasecmp");
-		
-		$var0 = http_build_query($arrayvars);
+		if($ok){
+			if(isset($_POST['lis_person_contact_email_primary'])){
+				$response['email'] = Input::get('lis_person_contact_email_primary');
+			}
+			if(isset($_POST['lis_person_name_given'])){
+				$response['name'] = Input::get('lis_person_name_given');
+			}
+			if(isset($_POST['lis_person_name_family'])){
+				$response['surname'] = Input::get('lis_person_name_family');
+			}
+			if(isset($_POST['user_id'])){
+				$response['user_id'] = Input::get('user_id');
+			}
+		}
 
-		$vars = rawurldecode($var0);
-		
-		$key = "834fed55159ae9b7b08ce2b1023c0659";
 
-		$hash =base64_encode( hash_hmac ('sha1', $vars, $key, true) );
+		if($ok==true){
+			$response['status']="ok";
+		}else{
+			$response['status']="error";
+			$response['message']=$message;
+		}
 
+		return $response;
 
-		//return print_r($headers);
-		return $hash." ".$oauth_signature;
-
-		*
-
-		return "true";// or error;
 	}
-	*/
+
+	
 	public static function secret($consumer){
 
 		//ver consumerkey y buscar en db
 
 		$secret = Consumer::whereKey($consumer)->first()->secret;
-		
 		//$secret = "b9d5229df69a51be9741fa895e3a51bc";
 		return $secret;
 

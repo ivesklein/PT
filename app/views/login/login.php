@@ -25,10 +25,10 @@
             <div class="view-container">
                 <!-- ngView:  --><section data-ng-view="" id="content" class="animate-fade-up ng-scope"><div class="page-signin ng-scope">
 
-    <div class="signin-header">
+    <div class="signin-header" style="background:#121212;">
         <div class="container text-center">
             <section class="logo">
-                <a href="#/" class="ng-binding">Flatify</a>
+                <a href="#/" class="ng-binding">PT <img src="images/logo.png"></a>
             </section>
         </div>
     </div>
