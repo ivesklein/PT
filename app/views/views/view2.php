@@ -1,3 +1,4 @@
+<?php //lista recibe Temas Memoria ?>
 <div class="page page-table">
 
     <div class="panel panel-default">

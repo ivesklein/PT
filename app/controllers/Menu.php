@@ -27,7 +27,7 @@ class Menu {
 			$rows = "";
 			$rows .= self::row("Dashboard", "#/menu", "dashboard", "danger", 0, 
 				array(
-					0=>array("link"=>"#/", "title"=>"Estado Temas", "n"=>0))
+					0=>array("link"=>"#/vista5", "title"=>"Estado Temas", "n"=>0))
 				);
 
 			$rows .= self::row("Periodos", "#/menu", "calendar", "warning", 0, 

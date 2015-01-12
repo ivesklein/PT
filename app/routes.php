@@ -22,6 +22,15 @@ Route::post('/', array( "before"=>'auth' ,function()
 	return View::make('index');
 }));
 
+Route::get('/test' ,function()
+{
+	//redirect to controller
+	$rol = new Rol;
+	$rol->funciones()->each(function($item){
+		print_r($item->permission);
+	});
+});
+
 
 
 Route::controller('views','First');
@@ -36,12 +45,12 @@ Route::get('login2', array('before'=>'auth.basic', function()
 
 Route::get('new', function()
 {
-	$staff = Staff::find(1);
-	$staff->name = "David";
-	$staff->surname = "Klein";
-	$staff->save();
+	$permission = new Permission;
+	$permission->staff_id = 1;
+	$permission->permission = "CA";
+	$permission->save();
 	//return "holaa";
-	return "nuevousuario";
+	return "nuevopermiso";
 });
 
 

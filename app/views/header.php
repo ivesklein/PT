@@ -196,8 +196,8 @@
             </li> -->
             <li class="dropdown text-normal nav-profile">
                 <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                    <img src="images/g1.jpg" alt="" class="img-circle img30_30">
-                    <span class="hidden-xs">
+                    <img src="images/profile1.jpg" alt="" class="img-circle img30_30">
+                    <span class="hidden-xs" style="padding-left:8px;">
                         <span><?=(Auth::user()->name." ".Auth::user()->surname)?></span>
                     </span>
                 </a>

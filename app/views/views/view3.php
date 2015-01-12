@@ -1,3 +1,4 @@
+<?php //crear periodo ?>
 <div class="page page-table">
 
     <section class="panel panel-default">
