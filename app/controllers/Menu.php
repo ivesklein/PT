@@ -24,7 +24,21 @@ class Menu {
 	public static function getMenu(){
 
 		if(Auth::user()->id==1){
-			echo self::row("Vista1", "#/menu", "dashboard", "danger", 0, array(0=>array("link"=>"#/vista1", "title"=>"Subir temas", "n"=>0)));
+			$rows = "";
+			$rows .= self::row("Dashboard", "#/menu", "dashboard", "danger", 0, 
+				array(
+					0=>array("link"=>"#/", "title"=>"Estado Temas", "n"=>0))
+				);
+
+			$rows .= self::row("Periodos", "#/menu", "calendar", "warning", 0, 
+				array(
+					0=>array("link"=>"#/vista3", "title"=>"Crear Periodo", "n"=>0),
+					1=>array("link"=>"#/vista4", "title"=>"Modificar Periodo", "n"=>0),
+					2=>array("link"=>"#/vista1", "title"=>"Agregar Temas", "n"=>0)
+				)
+				);
+			echo $rows;
+
 		}else{
 			echo self::row("Menu", "#/menu", "dashboard", "danger", 0, array(0=>array("link"=>"#/ala", "title"=>"lolo", "n"=>1)));
 		}

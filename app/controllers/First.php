@@ -41,10 +41,51 @@ class First extends BaseController
 	{
 		return View::make('views.view1');
 	}
+
 	public function getVista2()
 	{
 		//digerir csv
-		return View::make('views.view1-2');
+		return View::make('views.view2');
+	}
+	
+	public function getVista3()
+	{
+		return View::make('views.view3');
+	}
+	
+	public function getVista4()
+	{
+		return View::make('views.view4');
+	}
+	
+	public function getVista5()
+	{
+		return View::make('views.view5');
+	}
+	
+	public function getVista6()
+	{
+		return View::make('views.view6');
+	}
+	
+	public function getVista7()
+	{
+		return View::make('views.view7');
+	}
+	
+	public function getVista8()
+	{
+		return View::make('views.view8');
+	}
+	
+	public function getVista9()
+	{
+		return View::make('views.view9');
+	}
+	
+	public function getVista10()
+	{
+		return View::make('views.view10');
 	}
 
 
