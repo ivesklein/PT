@@ -16,6 +16,13 @@ Route::get('/', array( "before"=>'auth' ,function()
 	return View::make('index');
 }));
 
+Route::post('/', array( "before"=>'auth' ,function()
+{
+	//redirect to controller
+	return View::make('index');
+}));
+
+
 
 Route::controller('views','First');
 

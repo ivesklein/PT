@@ -28,7 +28,7 @@
     <div class="signin-header" style="background:#121212;">
         <div class="container text-center">
             <section class="logo">
-                <a href="#/" class="ng-binding">PT <img src="images/logo.png"></a>
+                <a href="#/" class="ng-binding" style="color:white;"><img src="images/logo.png"><h3>PROCESO DE TITULACIÓN</h3></a>
             </section>
         </div>
     </div>

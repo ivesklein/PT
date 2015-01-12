@@ -21,7 +21,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading"><strong><span class="glyphicon glyphicon-save"></span> Plantilla de Ejemplo</strong></div>
                 <div class="panel-body">
-                	<a href=""><span class="glyphicon glyphicon-file"></span> Plantilla Ejemplo.csv</a>
+                	<a href="examples/ejemplo.csv"><span class="glyphicon glyphicon-file"></span> Plantilla Ejemplo.csv</a>
 
                 </div>
             </div>         

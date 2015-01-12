@@ -33,6 +33,7 @@ angular.module("app",
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/pages/signin",{templateUrl:"views/login"})
 				.when("/vista1",{templateUrl:"views/vista1"})
+				.when("/vista2",{templateUrl:"views/vista2"})
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})

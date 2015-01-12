@@ -11,6 +11,12 @@ class First extends BaseController
 		//return "hola";
 	}
 
+	public function postIndex()
+	{
+		return View::make('index');
+		//return "hola";
+	}
+
 	public function getHeader()
 	{
 		return View::make('header');
@@ -34,6 +40,11 @@ class First extends BaseController
 	public function getVista1()
 	{
 		return View::make('views.view1');
+	}
+	public function getVista2()
+	{
+		//digerir csv
+		return View::make('views.view1-2');
 	}
 
 
