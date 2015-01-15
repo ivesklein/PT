@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddConsumerNonceTable extends Migration {
+class CreatePmgroupsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,9 +12,12 @@ class AddConsumerNonceTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('nonce', function(Blueprint $table)
+		Schema::create('pmgroups', function(Blueprint $table)
 		{
-			$table->string('consumer', 100)->after('nonce');
+			$table->increments('id');
+			$table->string("group");
+			$table->string("uid",100);
+			$table->timestamps();
 		});
 	}
 
@@ -25,7 +28,7 @@ class AddConsumerNonceTable extends Migration {
 	 */
 	public function down()
 	{
-		//
+		Schema::drop('pmgroups');
 	}
 
 }

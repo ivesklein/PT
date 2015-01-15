@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddConsumerNonceTable extends Migration {
+class AddPmpassStaffsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,9 +12,9 @@ class AddConsumerNonceTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('nonce', function(Blueprint $table)
+		Schema::table('staffs', function(Blueprint $table)
 		{
-			$table->string('consumer', 100)->after('nonce');
+			$table->string('pmpass', 100)->after('pm_id');
 		});
 	}
 

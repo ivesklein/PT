@@ -22,6 +22,16 @@ class Menu {
 			"where"=>"periodos",
 			"place"=>"9",
 			"array"=>array("link"=>"#/vista4", "title"=>"Modificar Periodo", "n"=>0)
+		),
+		"guiaConfirmation"=>array(
+			"where"=>"guias",
+			"place"=>"10",
+			"array"=>array("link"=>"#/vista6", "title"=>"Confirmar Guías", "n"=>2)
+		),
+		"guiasConfirmation"=>array(
+			"where"=>"guias",
+			"place"=>"11",
+			"array"=>array("link"=>"#/vista7", "title"=>"Guías Profesores", "n"=>2)
 		)
 	);
 
@@ -30,9 +40,13 @@ class Menu {
 			"place"=>"0",
 			"array"=>array("Dashboard", "#/menu", "dashboard", "danger", 0)
 		),
+		"guias" => array(
+			"place"=>"11",
+			"array"=>array("Guias", "#/menu", "book", "warning", 0)
+		),
 		"periodos" => array(
 			"place"=>"10",
-			"array"=>array("Periodos", "#/menu", "calendar", "warning", 0)
+			"array"=>array("Periodos", "#/menu", "calendar", "orange", 0)
 		)
 	);
 

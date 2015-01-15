@@ -8,7 +8,26 @@ class Rol {
 				"temasView",
 				"periodosCreate",
 				"periodosEdit"
-			)
+			),
+		"SA"=>
+			array(
+				"temasView",
+				"periodosCreate",
+				"periodosEdit"
+			),
+		"P"=>
+			array(
+				"guiaConfirmation"
+			),
+		"PT"=>
+			array(
+				"guiasConfirmation"
+			),
+		"AY"=>
+			array(
+				"guiasConfirmation"
+			),
+
 		);
 
 	// PERMISOS SEGÚN ROLES //
