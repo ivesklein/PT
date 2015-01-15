@@ -26,9 +26,8 @@ Route::get('/test' ,function()
 {
 	//redirect to controller
 	$rol = new Rol;
-	$rol->funciones()->each(function($item){
-		print_r($item->permission);
-	});
+	print_r($rol->permissions());
+	
 });
 
 
