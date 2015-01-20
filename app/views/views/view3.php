@@ -6,7 +6,7 @@
         <div class="panel-body" data-ng-controller="DatepickerDemoCtrl">
             
             <form class="form-horizontal" method="POST" action="#/vista2">
-                
+                <input type="hidden" name="f" value="temas"></input>
                 <div class="form-group">
                     <label for="" class="col-sm-2">Nombre Periodo</label>
                     <div class="col-sm-10">

@@ -19,8 +19,18 @@ Route::get('/', array( "before"=>'auth' ,function()
 Route::post('/', array( "before"=>'auth' ,function()
 {
 	//redirect to controller
-	return View::make('index');
+	if(isset($_POST['f'])){
+		if(method_exists("PostRoute", $_POST['f'])){
+			return PostRoute::$_POST['f']();
+		}else{
+			return "metodo no existe";
+		}
+	}else{
+		return "no post, maybe size error";
+	}
 }));
+
+
 
 Route::get('/test' ,function()
 {
@@ -32,12 +42,15 @@ Route::get('/test' ,function()
 	
 	$soap->login();
 
-	//$res = $soap->roleList();
+	//$res = $soap->taskList();
+	//$res = $soap->caseList();
 
+	$res = $soap->routeCase("85048562054be95fc4bac53083326060","1");
+
+	print_r($res);
 	//$res = $soap->newUser("sa@uai.cl","Secretaría","Académica","sa@uai.cl",0,"sasasa");
 	//$res = $soap->groupList();
-	$res = $soap->user2group("69828821454b7b3a3b606a5046224893","11069678954b77c17b3cba5045986249");
-	print_r($res);
+	
 	
 });
 

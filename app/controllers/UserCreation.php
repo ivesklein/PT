@@ -48,7 +48,7 @@ class UserCreation {
 				$res3 = $pm->user2group($useruid,$groupid);
 
 				if(isset($res3["ok"])){
-					$return["ok"]="ok";
+					$return["ok"]=array("wc"=>$email,"pm"=>$useruid);
 				}else{
 					$return["error"]=$res3["error"];
 				}

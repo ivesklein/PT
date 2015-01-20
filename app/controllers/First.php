@@ -13,7 +13,16 @@ class First extends BaseController
 
 	public function postIndex()
 	{
-		return View::make('index');
+		if(isset($_POST['f'])){
+			if(method_exists("PostRoute", $_POST['f'])){
+				return PostRoute::$_POST['f']();
+			}else{
+				return "metodo no existe";
+			}
+		}else{
+			return "no f";
+		}
+		
 		//return "hola";
 	}
 
