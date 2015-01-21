@@ -32,16 +32,18 @@ angular.module("app",
 				.when("/",{redirectTo:"/dashboard"})
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/pages/signin",{templateUrl:"views/login"})
-				.when("/vista1",{templateUrl:"views/vista1"})
+				.when("/itemas",{templateUrl:"views/itemas"})
 				.when("/vista2",{templateUrl:"views/vista2"})
 				.when("/vista3",{templateUrl:"views/vista3"})
 				.when("/vista4",{templateUrl:"views/vista4"})
 				.when("/vista5",{templateUrl:"views/vista5"})
-				.when("/vista6",{templateUrl:"views/vista6"})
+				.when("/confirmarguia",{templateUrl:"views/confirmarguia"})
 				.when("/vista7",{templateUrl:"views/vista7"})
 				.when("/vista8",{templateUrl:"views/vista8"})
 				.when("/vista9",{templateUrl:"views/vista9"})
 				.when("/vista10",{templateUrl:"views/vista10"})
+
+
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})

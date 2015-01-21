@@ -1,0 +1,1 @@
+<tr <?php if(isset($id)){echo "n='".$id."'";}?>><?=$content?></tr>

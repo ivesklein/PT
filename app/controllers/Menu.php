@@ -6,7 +6,7 @@ class Menu {
 		"temasCreate"=>array(
 			"where"=>"periodos",
 			"place"=>"10",
-			"array"=>array("link"=>"#/vista1", "title"=>"Agregar Temas", "n"=>0)
+			"array"=>array("link"=>"#/itemas", "title"=>"Agregar Temas", "n"=>0)
 		),
 		"temasView"=>array(
 			"where"=>"dashboard",
@@ -26,7 +26,7 @@ class Menu {
 		"guiaConfirmation"=>array(
 			"where"=>"guias",
 			"place"=>"10",
-			"array"=>array("link"=>"#/vista6", "title"=>"Confirmar Guías", "n"=>2)
+			"array"=>array("link"=>"#/confirmarguia", "title"=>"Confirmar Guías", "n"=>2)
 		),
 		"guiasConfirmation"=>array(
 			"where"=>"guias",

@@ -255,11 +255,21 @@ class PMsoap {
 
 			$params = array(array('sessionId'=>$this->hash));
 			$result = $client->__SoapCall('caseList', $params);
-			$casesArray = $result->cases;
-			if ($casesArray != (object) NULL)
-			    $return["ok"] = $casesArray;
-			else 
-			    $return["error"] = "There are zero cases";
+			if(property_exists($result, "cases")){
+				$casesArray = $result->cases;
+				if ($casesArray != (object) NULL){
+					if (is_array($casesArray)){
+						$return["ok"] = $casesArray;
+					}else{
+						$return["ok"] = array($casesArray);
+					}
+				    
+				}else 
+				    $return["error"] = "cero filas";	
+			}else{
+				$return["error"] = "cero filas";
+			}
+			
 		}else{
 			$return["error"] = "no hash";
 		}
@@ -321,7 +331,7 @@ class PMsoap {
 			    'delIndex'=>$index));
 			$result = $client->__SoapCall('routeCase', $params);
 			if ($result->status_code == 0)
-			    $return["ok"] = "Case derived: $result->message";
+			    $return["ok"] = array("uid"=>$case, "message"=>"Case derived: $result->message");
 			else
 			    $return["error"] = "Error deriving case: $result->message";
 

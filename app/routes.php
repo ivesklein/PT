@@ -11,6 +11,22 @@
 |
 */
 
+//login//
+Route::get('login', function()
+{
+	return View::make("login.login");
+});
+
+Route::post('login', 'UserLogin@user');
+
+Route::get('logout', function()
+{
+	Auth::logout();
+	return Redirect::to("login");
+});
+//////////
+
+//dir base
 Route::get('/', array( "before"=>'auth' ,function()
 {
 	return View::make('index');
@@ -29,9 +45,15 @@ Route::post('/', array( "before"=>'auth' ,function()
 		return "no post, maybe size error";
 	}
 }));
+///////
+
+//dir views
+Route::controller('views','First');
+//dir lti for wc
+Route::controller('lti','WC');
 
 
-
+//tests////////////////////////////////////////
 Route::get('/test' ,function()
 {
 	//redirect to controller
@@ -68,6 +90,37 @@ Route::get('/groups' ,function()
 	print_r($res);
 	
 });
+
+
+
+
+
+
+
+Route::get('login2', array('before'=>'auth.basic', function()
+{
+	//return "holaa";
+	return "hola";
+}));
+
+Route::get('new', function()
+{
+	
+	$a = UserCreation::add(
+		"p2@uai.cl",
+		"Profesor2",
+		"Guia2",
+		"P",
+		"pppppp"
+		);
+
+
+	return "nuevopermiso";
+});
+
+
+
+
 
 /*Route::get('/save' ,function()
 {
@@ -107,29 +160,6 @@ Route::get('/groups' ,function()
 });*/
 
 
-
-Route::controller('views','First');
-
-Route::controller('lti','WC');
-
-Route::get('login2', array('before'=>'auth.basic', function()
-{
-	//return "holaa";
-	return "hola";
-}));
-
-Route::get('new', function()
-{
-	
-	$a = UserCreation::add(
-		"p2@uai.cl",
-		"Profesor2",
-		"Guia2",
-		"P",
-		"pppppp"
-		);
-
-
 	/*
 	$user = User::find(2);
 	$user->pm_id = "ca@uai.cl";
@@ -160,20 +190,3 @@ Route::get('new', function()
 	$permission->permission = "AY";
 	$permission->save();
 */
-	return "nuevopermiso";
-});
-
-
-
-Route::get('login', function()
-{
-	return View::make("login.login");
-});
-
-Route::post('login', 'UserLogin@user');
-
-Route::get('logout', function()
-{
-	Auth::logout();
-	return Redirect::to("login");
-});
