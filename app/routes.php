@@ -53,23 +53,32 @@ Route::controller('views','First');
 Route::controller('lti','WC');
 
 
+
+
 //tests////////////////////////////////////////
 Route::get('/test' ,function()
 {
+
+
+	$subj = Subject::wherePm_uid("26494984154c13585b12714036189747")->first();
+	$subj->status = "not-confirmed";
+	$subj->save();
+	
+
 	//redirect to controller
 	//$rol = new Rol;
 	//print_r($rol->permissions());
 
-	$soap = new PMsoap;
+	//$soap = new PMsoap;
 	
-	$soap->login();
+	//$soap->login();
 
 	//$res = $soap->taskList();
 	//$res = $soap->caseList();
 
-	$res = $soap->routeCase("85048562054be95fc4bac53083326060","1");
+	//$res = $soap->routeCase("85048562054be95fc4bac53083326060","1");
 
-	print_r($res);
+	//print_r($res);
 	//$res = $soap->newUser("sa@uai.cl","Secretaría","Académica","sa@uai.cl",0,"sasasa");
 	//$res = $soap->groupList();
 	

@@ -127,7 +127,7 @@ class PostRoute{
 								$subj->student1 = $fila[$EMAIL1];
 								$subj->student2 = $fila[$EMAIL2];
 								$subj->adviser = $fila[$MPROFESOR];
-								$subj->status = "start";
+								$subj->status = "confirm";
 								$subj->pm_uid = $res2["ok"]["uid"];
 								$subj->save();
 							}else{
@@ -157,6 +157,190 @@ class PostRoute{
 			return Redirect::to("login");
 		}
 	}
+
+
+	public static function ajxconfirmarguia()
+	{
+		$return = array();
+		if(Auth::check()){
+
+			if(isset($_POST['res']) && isset($_POST['id'])){
+
+				$soap = new PMsoap;
+				$res = $soap->login();
+				if(isset($res["ok"])){
+					$resp = $_POST['res'];
+					$id = $_POST['id'];
+					if($resp==0){
+						if(isset($_POST['mes'])){
+							$mes = $_POST['mes'];
+						}else{
+							$mes="";
+						}
+						//registrar en pm y routear
+						$res1 = $soap->confirmGuia($id, $resp, $mes);
+						if(isset($res1["ok"])){
+							$return["ok"]="ok0";
+							$subj = Subject::wherePm_uid($id)->first();
+							$subj->status = "not-confirmed";
+							$subj->save();
+						}else{
+							$return["error"] = $res1['error'];
+						}
+
+					}else{//resp==1
+						//registrar en pm y routear
+						$res1 = $soap->confirmGuia($id, $resp);
+						if(isset($res1["ok"])){
+							$return["ok"]="ok1";
+							$subj = Subject::wherePm_uid($id)->first();
+							$subj->status = "confirmed";
+							$subj->save();
+						}else{
+							$return["error"] = $res1['error'];
+						}
+					}
+				}else{//if soaplogin
+					$return["error"] = $res['error'];
+				}
+			}else{//if variables
+				$return["error"] = "faltan variables";
+			}
+
+			return json_encode($return);
+
+
+		}else{
+			return "not logged";
+		}
+
+	}
+
+	public static function ajxconfirmarguias()
+	{
+		$return = array();
+		if(Auth::check()){
+
+			if(isset($_POST['res']) && isset($_POST['id']) && isset($_POST['prof'])){
+
+				$soap = new PMsoap;
+				$res = $soap->login($_POST['prof']);
+				if(isset($res["ok"])){
+					$resp = $_POST['res'];
+					$id = $_POST['id'];
+					if($resp==0){
+						if(isset($_POST['mes'])){
+							$mes = $_POST['mes'];
+						}else{
+							$mes="";
+						}
+						//registrar en pm y routear
+						$res1 = $soap->confirmGuia($id, $resp, $mes);
+						if(isset($res1["ok"])){
+							$return["ok"]="ok0";
+							$subj = Subject::wherePm_uid($id)->first();
+							$subj->status = "not-confirmed";
+							$subj->save();
+						}else{
+							$return["error"] = $res1['error'];
+						}
+
+					}else{//resp==1
+						//registrar en pm y routear
+						$res1 = $soap->confirmGuia($id, $resp);
+						if(isset($res1["ok"])){
+							$return["ok"]="ok1";
+							$subj = Subject::wherePm_uid($id)->first();
+							$subj->status = "confirmed";
+							$subj->save();
+						}else{
+							$return["error"] = $res1['error'];
+						}
+					}
+				}else{//if soaplogin
+					$return["error"] = $res['error'];
+				}
+			}else{//if variables
+				$return["error"] = "faltan variables";
+			}
+
+			return json_encode($return);
+
+
+		}else{
+			return "not logged";
+		}
+
+	}
+
+	public static function ajxasignarguia()
+	{
+		$return = array();
+		if(Auth::check()){
+
+			if(isset($_POST['prof']) && isset($_POST['id'])){
+
+				$soap = new PMsoap;
+				$res = $soap->login();
+				if(isset($res["ok"])){
+					$prof = $_POST['prof'];
+					$id = $_POST['id'];
+
+						//registrar en pm y routear
+						$res1 = $soap->assignGuia($id, $prof);
+						if(isset($res1["ok"])){
+							$return["ok"]="ok0";
+							$subj = Subject::wherePm_uid($id)->first();
+							$subj->status = "confirm";
+							$subj->save();
+						}else{
+							$return["error"] = $res1['error'];
+						}
+
+				}else{//if soaplogin
+					$return["error"] = $res['error'];
+				}
+			}else{//if variables
+				$return["error"] = "faltan variables";
+			}
+
+			return json_encode($return);
+
+
+		}else{
+			return "not logged";
+		}
+
+	}
+
+	public static function newayudante()
+	{
+		if(Auth::check()){
+
+			if(isset($_POST['email']) && isset($_POST['name']) && isset($_POST['surname']) && isset($_POST['pass'])){
+
+				$res2 = UserCreation::add(
+					$_POST["email"],
+					$_POST["name"],
+					$_POST["surname"],
+					"AY",
+					$_POST["pass"]
+					);
+				if(isset($res2["ok"])){
+					return "ok";
+				}else{
+					return "error";
+				}
+
+
+			}else{
+				//error faltan variables
+			}
+		}else{
+
+		}
+	}
+
 }
 
 ?>

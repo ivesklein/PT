@@ -10,25 +10,40 @@ class PMsoap {
 	
 	}
 
-	public function login(){
+	public function login($mail = null){
 		$return = array();
 		if(Auth::check()){
-			$user = Auth::user()->pm_id;
-			$pass = Auth::user()->pmpass;
-
-			$client = new SoapClient($this->url);
-			$params = array(array('userid'=>$user,'password'=>$pass));
-			$res = $client->__SoapCall('login',$params);
-			
-			if($res->status_code==0){
-				$this->hash = $res->message;
-				$return["ok"] = $this->hash;
-				$this->status = true;
+			$ok=false;
+			if($mail==null){
+				$user = Auth::user()->pm_id;
+				$pass = Auth::user()->pmpass;
+				$ok=true;
 			}else{
-				$return["error"] = $res->message;
-				$this->status = false;
+				$dbuser = User::whereWc_id($mail)->get();
+				if(!$dbuser->isEmpty()){
+					$dbu = $dbuser->first();
+					$user = $dbu->pm_id;
+					$pass = $dbu->pmpass;
+					$ok=true;
+				}
 			}
 
+			if($ok==true){
+				$client = new SoapClient($this->url);
+				$params = array(array('userid'=>$user,'password'=>$pass));
+				$res = $client->__SoapCall('login',$params);
+				
+				if($res->status_code==0){
+					$this->hash = $res->message;
+					$return["ok"] = $this->hash;
+					$this->status = true;
+				}else{
+					$return["error"] = $res->message;
+					$this->status = false;
+				}
+			}else{
+				$return['error'] = "user not exist";
+			}
 		}else{
 			$return["error"] = "no login";
 			$this->status = false;
@@ -376,7 +391,137 @@ class PMsoap {
 		return $return;
 	}
 
+	public function sendVariables($vars, $case)
+	{
+		$return = array();
 
+		if($this->status){
+			$client = new SoapClient($this->url);
+
+			 //$vars = array('position'=>'manager', 'salary'=>3896.78, 'startdate'=>'2009-08-20');  
+			 $variables = array();
+			 foreach ($vars as $key => $val)
+			 { 
+			    $obj = new variableStruct();
+			    $obj->name = $key;
+			    $obj->value = $val;
+			    $variables[] = $obj;	 
+			 }
+			 $params = array(array('sessionId'=>$this->hash, 'caseId'=>$case, 'variables'=>$variables));
+			 $result = $client->__SoapCall('sendVariables', $params);
+			 if ($result->status_code != 0)
+			     $return["error"] = "Error: $result->message";
+			 else
+			 	$return["ok"] = $result;
+
+		}else{
+			$return["error"] = "no hash";
+		}
+		return $return;
+	}
+
+	public function confirmGuia($caseid, $res, $mes="")
+	{
+		# code...
+		$return = array();
+		$array = array("confirmarguia"=>$res,"causa"=>$mes);
+		$res1 = $this->sendVariables($array,$caseid);
+		if(isset($res1['ok'])){
+			$res2 = $this->caseList();
+			if(isset($res2["ok"])){
+				$ok = false;
+				foreach ($res2['ok'] as $case) {
+					if($case->guid==$caseid){
+						$ok = true;
+						$delIndex = $case->delIndex;
+
+						$res3 = $this->routeCase($caseid, $delIndex);
+						if(isset($res3['ok'])){
+							$return = $res3;
+						}else{
+							$return = $res3;
+						}
+
+						break;
+					}
+				}
+				if($ok==false){
+					$return['error'] = "case not found"; //$res3;
+				}
+
+			}else{
+				$return['error'] = $res2;
+			}
+
+		}else{
+			$return['error'] = $res1;
+		}
+
+		return $return;
+
+	}
+
+	public function taskCase($case){
+
+		$return = array();
+
+		if($this->status){
+			$client = new SoapClient($this->url);
+
+			 $params = array(array('sessionId'=>$this->hash, 'caseId'=>$case));
+			 $result = $client->__SoapCall('taskCase', $params);
+			 if ($result != (object) NULL)
+			      $return['ok'] = array($result->taskCases->name, $result->taskCases->guid);
+			 else
+			      $return["error"] = "No task or unable to access task.";
+
+		}else{
+			$return["error"] = "no hash";
+		}
+		return $return;
+
+	}
+
+	public function assignGuia($caseid, $prof)
+	{
+		# code...
+		$return = array();
+		$array = array("profesorguia"=>$prof,"causa"=>"");
+		$res1 = $this->sendVariables($array,$caseid);
+		if(isset($res1['ok'])){
+			$res2 = $this->caseList();
+			if(isset($res2["ok"])){
+				$ok = false;
+				foreach ($res2['ok'] as $case) {
+					if($case->guid==$caseid){
+						$ok = true;
+						$delIndex = $case->delIndex;
+
+						$res3 = $this->routeCase($caseid, $delIndex);
+						if(isset($res3['ok'])){
+							$return = $res3;
+						}else{
+							$return = $res3;
+						}
+
+						break;
+					}
+				}
+				if($ok==false){
+					$return['error'] = "case not found"; //$res3;
+				}
+
+			}else{
+				$return['error'] = $res2;
+			}
+
+		}else{
+			$return['error'] = $res1;
+		}
+
+		return $return;
+
+	}
 
 
 }

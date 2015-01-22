@@ -32,6 +32,26 @@ class Menu {
 			"where"=>"guias",
 			"place"=>"11",
 			"array"=>array("link"=>"#/vista7", "title"=>"Guías Profesores", "n"=>2)
+		),	
+		"guiasAsignar"=>array(
+			"where"=>"guias",
+			"place"=>"12",
+			"array"=>array("link"=>"#/asignarguia", "title"=>"Asignar Profesor", "n"=>2)
+		),
+		"profesores"=>array(
+			"where"=>"usuarios",
+			"place"=>"10",
+			"array"=>array("link"=>"#/profesores", "title"=>"Profesores", "n"=>0)
+		),
+		"ayudantes"=>array(
+			"where"=>"usuarios",
+			"place"=>"11",
+			"array"=>array("link"=>"#/ayudantes", "title"=>"Ayudantes", "n"=>0)
+		),
+		"alumnos"=>array(
+			"where"=>"usuarios",
+			"place"=>"12",
+			"array"=>array("link"=>"#/alumnos", "title"=>"Alumnos", "n"=>0)
 		)
 	);
 
@@ -47,6 +67,10 @@ class Menu {
 		"periodos" => array(
 			"place"=>"10",
 			"array"=>array("Periodos", "#/menu", "calendar", "orange", 0)
+		),
+		"usuarios" => array(
+			"place"=>"20",
+			"array"=>array("Usuarios", "#/menu", "user", "primary", 0)
 		)
 	);
 

@@ -7,13 +7,20 @@ class Rol {
 				"temasCreate",
 				"temasView",
 				"periodosCreate",
-				"periodosEdit"
+				"periodosEdit",
+				"guiasAsignar",
+				"profesores",
+				"ayudantes",
+				"alumnos"
 			),
 		"SA"=>
 			array(
 				"temasView",
 				"periodosCreate",
-				"periodosEdit"
+				"periodosEdit",
+				"profesores",
+				"ayudantes",
+				"alumnos"
 			),
 		"P"=>
 			array(
@@ -21,11 +28,17 @@ class Rol {
 			),
 		"PT"=>
 			array(
-				"guiasConfirmation"
+				"guiasConfirmation",
+				"profesores",
+				"ayudantes",
+				"alumnos"
 			),
 		"AY"=>
 			array(
-				"guiasConfirmation"
+				"guiasConfirmation",
+				"guiasAsignar",
+				"profesores",
+				"alumnos"
 			),
 
 		);
