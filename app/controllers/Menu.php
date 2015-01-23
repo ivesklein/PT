@@ -52,6 +52,11 @@ class Menu {
 			"where"=>"usuarios",
 			"place"=>"12",
 			"array"=>array("link"=>"#/alumnos", "title"=>"Alumnos", "n"=>0)
+		),
+		"calendario"=>array(
+			"where"=>"calendario",
+			"place"=>"20",
+			"array"=>array("link"=>"#/calendario", "title"=>"Calendario", "n"=>0)
 		)
 	);
 
@@ -71,6 +76,10 @@ class Menu {
 		"usuarios" => array(
 			"place"=>"20",
 			"array"=>array("Usuarios", "#/menu", "user", "primary", 0)
+		),
+		"calendario" => array(
+			"place"=>"19",
+			"array"=>array("Calendario", "#/menu", "calendar", "primary", 0)
 		)
 	);
 

@@ -46,7 +46,7 @@ angular.module("app",
 				.when("/ayudantes",{templateUrl:"views/ayudantes"})
 				.when("/alumnos",{templateUrl:"views/alumnos"})
 				.when("/asignarguia",{templateUrl:"views/asignarguia"})
-
+				.when("/calendario",{templateUrl:"views/calendario"})
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})

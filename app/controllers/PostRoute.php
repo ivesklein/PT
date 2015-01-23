@@ -341,6 +341,102 @@ class PostRoute{
 		}
 	}
 
+	public static function ajxnewevent()
+	{
+		$return = array();
+		if(Auth::check()){
+
+			$event = new CEvent;
+	        $event->title = $_POST["title"];
+	        $event->detail = $_POST["detail"];
+	        $event->start = $_POST["start"];
+	        $event->end = $_POST["end"];
+	        $event->color = $_POST["color"];
+	        $event->save();
+
+	        $e2s = new E2S;
+	        $e2s->event_id = $event->id;
+	        $e2s->staff_id = Auth::user()->id;
+	        $e2s->save();
+
+	        $return["ok"] = $event->id;
+        	return json_encode($return);
+
+
+		}else{
+			return "not logged";
+		}
+	}
+
+	public static function ajxeditevent()
+	{
+		$return = array();
+		if(Auth::check()){
+
+			$event = CEvent::find($_POST["id"]);
+	        $event->start = $_POST["start"];
+	        $event->end = $_POST["end"];
+	        $event->save();
+
+	        $return["ok"] = $event->id;
+        	return json_encode($return);
+
+
+		}else{
+			return "not logged";
+		}
+	}
+
+	public static function ajxmyevents()
+	{
+		$return = array();
+		if(Auth::check()){
+
+
+	        $id = Auth::user()->id;
+
+	        $events = Staff::find($id)->events()->get();
+
+	        $return['data']=array();
+	        foreach ($events as $event) {
+	        	$return['data'][] = array(
+	        			"id" => $event->id,
+				    	"title" => $event->title,
+				        "detail" => $event->detail,
+				        "start" => $event->start,
+				        "end" => $event->end,
+				        "color" => $event->color
+	        		);
+	        }
+
+
+	        $return["ok"] = $events;
+        	return json_encode($return);
+
+
+		}else{
+			return "not logged";
+		}
+	}
+
+	public static function ajxdelevent()
+	{
+		$return = array();
+		if(Auth::check()){
+
+			$e2s = E2S::whereEvent_id($_POST["id"])->delete();
+
+			$event = CEvent::find($_POST["id"])->delete();
+
+	        $return["ok"] = "ok";
+        	return json_encode($return);
+
+
+		}else{
+			return "not logged";
+		}
+	}
+
 }
 
 ?>

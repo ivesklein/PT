@@ -24,7 +24,8 @@ class Rol {
 			),
 		"P"=>
 			array(
-				"guiaConfirmation"
+				"guiaConfirmation",
+				"calendario"
 			),
 		"PT"=>
 			array(

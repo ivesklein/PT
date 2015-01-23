@@ -292,6 +292,12 @@ class First extends BaseController
 	}
 	//  USUARIOS  //
 
+	//  CALENDARIO  //
+	public function getCalendario()
+	{
+		return View::make('views.calendario.calendario');
+	}
+
 }
 
 ?>
