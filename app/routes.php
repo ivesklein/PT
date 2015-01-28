@@ -52,6 +52,8 @@ Route::controller('views','First');
 //dir lti for wc
 Route::controller('lti','WC');
 
+Route::controller('th','Typeahead');
+
 
 
 

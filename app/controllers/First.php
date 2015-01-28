@@ -298,6 +298,12 @@ class First extends BaseController
 		return View::make('views.calendario.calendario');
 	}
 
+	public function getCoordefensa()
+	{
+		return View::make('views.calendario.coordefensa');
+	}
+	//  CALENDARIO  //
+
 }
 
 ?>

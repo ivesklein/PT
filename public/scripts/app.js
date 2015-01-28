@@ -47,6 +47,7 @@ angular.module("app",
 				.when("/alumnos",{templateUrl:"views/alumnos"})
 				.when("/asignarguia",{templateUrl:"views/asignarguia"})
 				.when("/calendario",{templateUrl:"views/calendario"})
+				.when("/coordefensa",{templateUrl:"views/coordefensa"})
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})
@@ -114,7 +115,11 @@ var ajx = function(data){
             }else{
                 var data1 = JSON.parse(output);
                 if("error" in data1){
-                    alert(data1.error);
+                	if("error" in data){
+                		data.error();
+                	}else{
+                    	alert(data1.error);
+                	}
                 }else{
                     data.ok(data1);
                 }

@@ -51,7 +51,7 @@
 
             }
 
-            var edit = function(event){
+            var edit = function(event, delta, error){
 
                 var start = event.start;
                 var end = event.end;
@@ -64,7 +64,8 @@
                         start: start.format(),
                         end: end.format()
                     },
-                    ok:function(data){}
+                    ok:function(data){},
+                    error:error
                 });
 
             }

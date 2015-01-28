@@ -162,12 +162,12 @@ class PostRoute{
 	public static function ajxconfirmarguia()
 	{
 		$return = array();
-		if(Auth::check()){
+		if(Rol::hasPermission("guiaConfirmation")){
 
 			if(isset($_POST['res']) && isset($_POST['id'])){
 
 				$soap = new PMsoap;
-				$res = $soap->login();
+				$res = $soap->login();//processmaker administra los permisos del proceso
 				if(isset($res["ok"])){
 					$resp = $_POST['res'];
 					$id = $_POST['id'];
@@ -211,7 +211,7 @@ class PostRoute{
 
 
 		}else{
-			return "not logged";
+			return "not permission";
 		}
 
 	}
@@ -344,7 +344,7 @@ class PostRoute{
 	public static function ajxnewevent()
 	{
 		$return = array();
-		if(Auth::check()){
+		if(Rol::hasPermission("newevent")){
 
 			$event = new CEvent;
 	        $event->title = $_POST["title"];
@@ -364,27 +364,33 @@ class PostRoute{
 
 
 		}else{
-			return "not logged";
+			return "not permission";
 		}
 	}
 
 	public static function ajxeditevent()
 	{
 		$return = array();
-		if(Auth::check()){
+		if(isset($_POST['id']) && isset($_POST['start']) && isset($_POST['end']) ){
 
-			$event = CEvent::find($_POST["id"]);
-	        $event->start = $_POST["start"];
-	        $event->end = $_POST["end"];
-	        $event->save();
+			if(Rol::editEvent($_POST["id"])){
 
-	        $return["ok"] = $event->id;
-        	return json_encode($return);
+				$event = CEvent::find($_POST["id"]);
+		        $event->start = $_POST["start"];
+		        $event->end = $_POST["end"];
+		        $event->save();
+
+		        $return["ok"] = $event->id;
+	        	return json_encode($return);
 
 
+			}else{
+				$return["error"] = "not permission";
+			}
 		}else{
-			return "not logged";
+			$return["error"] = "faltan variables";
 		}
+		return json_encode($return);
 	}
 
 	public static function ajxmyevents()
@@ -417,6 +423,45 @@ class PostRoute{
 		}else{
 			return "not logged";
 		}
+	}
+
+	public static function ajxprofevents()
+	{
+		$return = array();
+		if(isset($_POST['prof'])){
+
+			if(Rol::hasPermission("viewProfEvents")){
+
+				$id = $_POST['prof'];
+				$profe = Staff::find($id);
+
+		        $events = Staff::find($id)->events()->get();
+
+		        $return['data']=array();
+		        foreach ($events as $event) {
+		        	$return['data'][] = array(
+		        			"id" => $event->id,
+					    	"title" => $profe->wc_id,
+					        "detail" => $event->title,
+					        "start" => $event->start,
+					        "end" => $event->end,
+					        "color" => $event->color,
+					        "editable"=>false
+		        		);
+		        }
+
+
+		        $return["ok"] = $events;
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+
+		return json_encode($return);
+
 	}
 
 	public static function ajxdelevent()

@@ -57,6 +57,11 @@ class Menu {
 			"where"=>"calendario",
 			"place"=>"20",
 			"array"=>array("link"=>"#/calendario", "title"=>"Calendario", "n"=>0)
+		),
+		"coordefensa"=>array(
+			"where"=>"calendario",
+			"place"=>"19",
+			"array"=>array("link"=>"#/coordefensa", "title"=>"Coordinar Defensas", "n"=>0)
 		)
 	);
 
@@ -127,17 +132,18 @@ class Menu {
 			echo $rows;
 
 		}else{
-			$rol = new Rol;
-			$permisos = $rol->permissions();
+			//$rol = new Rol;
+			$permisos = Rol::permissions();
 
 			//generar subrows
 			$subrows=array();
 			foreach ($permisos['permissions'] as $action) {
 				//if no existe where (row) crearla
-
-				if(!isset($subrows[self::$vistaPermiso[$action]["where"]])){$subrows[self::$vistaPermiso[$action]["where"]]=array();}
-				//agregar subrow
-				$subrows[self::$vistaPermiso[$action]["where"]][self::$vistaPermiso[$action]["place"]] = self::$vistaPermiso[$action]["array"];
+				if(isset(self::$vistaPermiso[$action])){//if existe menú para la acción
+					if(!isset($subrows[self::$vistaPermiso[$action]["where"]])){$subrows[self::$vistaPermiso[$action]["where"]]=array();}
+					//agregar subrow
+					$subrows[self::$vistaPermiso[$action]["where"]][self::$vistaPermiso[$action]["place"]] = self::$vistaPermiso[$action]["array"];
+				}
 			}
 			//print_r($subrows);
 			//order row by place
