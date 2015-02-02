@@ -48,6 +48,7 @@ angular.module("app",
 				.when("/asignarguia",{templateUrl:"views/asignarguia"})
 				.when("/calendario",{templateUrl:"views/calendario"})
 				.when("/coordefensa",{templateUrl:"views/coordefensa"})
+				.when("/periodos",{templateUrl:"views/periodos"})
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})

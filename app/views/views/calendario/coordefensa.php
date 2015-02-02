@@ -155,7 +155,7 @@
 
                         <!--dl class='cl-horizontal col-sm-8' id="tipoevento">
                             <dd-->
-                            <div class="col-sm-8">
+                            <div class="col-sm-8" id="tipoevento">
                                 <label class="ui-radio"><input type="radio" name="tipo" value="darkcyan" checked></input><span style="background:darkcyan;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid darkcyan;">Predefensa</span></label>
                                 <label class="ui-radio"><input type="radio" name="tipo" value="blue"></input><span style="background:blue;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid blue;">Defensa</span></label>
                             </div>
@@ -168,7 +168,7 @@
                         <label for="tema" class="col-sm-4">Seleccionar Tema</label>
                         <div class="col-sm-8">
                             <span class="ui-select">
-                                <select name="tema">
+                                <select name="tema" id="temas">
                                     <option>Mustard</option>
                                     <option>Ketchup</option>
                                     <option>Barbecue</option>
@@ -220,6 +220,7 @@
                         var evento = yo.profesores[profesor][n];
                         $(calel).fullCalendar('removeEvents', evento.id);
                     }
+                    delete(yo.profesores[profesor]);
 
                 }
 
@@ -227,6 +228,7 @@
                     for (i in yo.profesores) {
                         $(listel+" #P"+i).remove();
                     };
+                    yo.profesores = {};
                     $(calel).fullCalendar('removeEvents');
                 }
 
@@ -238,11 +240,30 @@
             <script type="text/javascript">
                 $('#tipoevento input[type="radio"]').on("change",function() {
                     eventcolor = $(this).val();
-                    if(eventcolor=="black"){
-                        eventdes = "Ocupado";
+                    $('#temas').html("");
+                    if(eventcolor=="darkcyan"){
+                        eventdes = "Predefensa";
+                        ajx({
+                            data:{
+                                f:'ajxdefensas',
+                                type: 1
+                            },
+                            ok:function(data){
+                                
+                                if(data.data.length==0){
+                                    $('#temas').append("<option value='sel'>No hay temas</option>");
+                                }else{
+                                    $('#temas').append("<option value='sel'>Selecione Tema</option>");
+                                    for(i in data.data){
+                                        var tema = data.data[i];
+                                        $('#temas').append("<option value='"+tema['id']+"'>"+tema['title']+"</option>");
+                                    }
+                                }
+                            }
+                        });
                     }
-                    if(eventcolor=="green"){
-                        eventdes = "Disponible";
+                    if(eventcolor=="blue"){
+                        eventdes = "Defensa";
                     }
                 });
       

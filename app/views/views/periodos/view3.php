@@ -5,12 +5,12 @@
         <div class="panel-heading"><strong><span class="glyphicon glyphicon-plus"></span> Agregar Periodo</strong></div>
         <div class="panel-body" data-ng-controller="DatepickerDemoCtrl">
             
-            <form class="form-horizontal" method="POST" action="#/vista2">
-                <input type="hidden" name="f" value="temas"></input>
+            <form class="form-horizontal" method="POST" action="#/vista4">
+                <input type="hidden" name="f" value="periodos"></input>
                 <div class="form-group">
                     <label for="" class="col-sm-2">Nombre Periodo</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control">
+                        <input type="text" name="name" class="form-control">
                     </div>
                 </div>
 

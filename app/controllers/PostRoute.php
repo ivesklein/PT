@@ -1,6 +1,28 @@
 <?php
 
 class PostRoute{
+
+	public static function periodos()
+	{
+		if(Rol::hasPermission("periodosCreate")){
+			if(isset($_POST['name'])){
+
+				$per = new Periodo;
+				$per->name = $_POST['name'];
+				$per->status = "draft";
+				$per->save();
+
+				return Redirect::to("#/periodos");
+
+			}else{
+				//error variables
+				return Redirect::to("#/periodos");
+			}
+		}else{
+			//error permisos
+			return Redirect::to("#/periodos");
+		}	
+	}
 	
 	public static function temas()
 	{	
@@ -129,6 +151,8 @@ class PostRoute{
 								$subj->adviser = $fila[$MPROFESOR];
 								$subj->status = "confirm";
 								$subj->pm_uid = $res2["ok"]["uid"];
+								$subj->periodo = $periodo;
+								$subj->defensa = 0;
 								$subj->save();
 							}else{
 								//error
@@ -195,6 +219,7 @@ class PostRoute{
 							$return["ok"]="ok1";
 							$subj = Subject::wherePm_uid($id)->first();
 							$subj->status = "confirmed";
+							$subj->defensa = 1;
 							$subj->save();
 						}else{
 							$return["error"] = $res1['error'];
@@ -252,6 +277,7 @@ class PostRoute{
 							$return["ok"]="ok1";
 							$subj = Subject::wherePm_uid($id)->first();
 							$subj->status = "confirmed";
+							$subj->defensa = 1;
 							$subj->save();
 						}else{
 							$return["error"] = $res1['error'];
@@ -481,6 +507,83 @@ class PostRoute{
 			return "not logged";
 		}
 	}
+
+	public static function ajxactivateperiod()
+	{
+		$return = array();
+		if(isset($_POST['id'])){
+
+			if(Rol::hasPermission("periodosEdit")){
+
+				$event = Periodo::find($_POST["id"]);
+		        $event->status = 'active';
+		        $event->save();
+		        $return["ok"] = $event->id;
+	        	return json_encode($return);
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);	
+	}
+
+	public static function ajxcloseperiod()
+	{
+		$return = array();
+		if(isset($_POST['id'])){
+
+			if(Rol::hasPermission("periodosEdit")){
+
+				$event = Periodo::find($_POST["id"]);
+		        $event->status = 'closed';
+		        $event->save();
+		        $return["ok"] = $event->id;
+	        	return json_encode($return);
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);	
+	}
+
+	public static function ajxdefensas()
+	{
+		$return = array();
+		if(isset($_POST['type'])){
+
+			if(Rol::hasPermission("coordefensa")){
+
+				$return["data"]=array();
+				if($_POST['type']==1){
+					$subjs = Subject::whereDefensa(1)->get();
+					if(!$subjs->isEmpty()){
+						foreach ($subjs as $subj) {
+							$return["data"][] = array("id"=>$subj->id,"title"=>$subj->subject);
+						}
+					}
+
+				}else{
+					//caso no predefensa
+				}
+
+		        $return["ok"] = "ok";
+	        	return json_encode($return);
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
 
 }
 

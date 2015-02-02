@@ -9,10 +9,9 @@ Class Staff extends Eloquent{
 		return $this->belongsToMany("CEvent", "event_staff", "staff_id", "event_id");
 	}
 
-	public function scopeBuscar($query, $term)
+	public function guias()
 	{
-		return $query->where("name", "LIKE", '%'.$term.'%')
-					->orWhere("surname", "LIKE", '%'.$term.'%');
+		return $this->hasMany('Subject','adviser','pm_id');
 	}
 
 }

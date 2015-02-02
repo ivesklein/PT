@@ -1,1 +1,1 @@
-<button class="btn btn-success add">Agregar</button>
+<?=View::make('table.button', array("title"=>"agregar","color"=>"green","class"=>"add"))?>

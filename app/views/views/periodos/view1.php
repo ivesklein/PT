@@ -13,9 +13,7 @@
                             <div class="col-sm-6">
                                 <span class="ui-select">
                                     <select name="periodo">
-                                        <option>Mustard</option>
-                                        <option>Ketchup</option>
-                                        <option>Barbecue</option>
+                                        <?=$drop?>
                                     </select>
                                 </span>
                             </div>

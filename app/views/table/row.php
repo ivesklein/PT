@@ -1,1 +1,1 @@
-<tr <?php if(isset($id)){echo "n='".$id."'";}?>><?=$content?></tr>
+<tr <?php if(isset($id)){echo "n='".$id."'";}?> <?php if(isset($class)){echo"class='"+$class+"'";} ?>><?=$content?></tr>

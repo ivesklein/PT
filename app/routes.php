@@ -62,11 +62,10 @@ Route::get('/test' ,function()
 {
 
 
-	$subj = Subject::wherePm_uid("26494984154c13585b12714036189747")->first();
-	$subj->status = "not-confirmed";
-	$subj->save();
+	$guias = Staff::find(17)->guias()->count();
 	
 
+	print_r($guias);
 	//redirect to controller
 	//$rol = new Rol;
 	//print_r($rol->permissions());

@@ -64,7 +64,16 @@ class First extends BaseController
 	//  PERIODOS  //
 	public function getItemas()
 	{
-		return View::make('views.periodos.view1');
+
+		$per = Periodo::whereStatus("active")->get();
+		if(!$per->isEmpty()){
+			$item = $per->first();
+			$drop = View::make('html.dropitem',array("value"=>$item->name,"title"=>$item->name));
+		}else{
+			$drop = View::make('html.dropitem',array("value"=>"0","title"=>"No hay periodo Activo"));
+		}
+
+		return View::make('views.periodos.view1',array("drop"=>$drop));
 	}
 
 	public function getVista2()
@@ -81,6 +90,77 @@ class First extends BaseController
 	public function getVista4()
 	{
 		return View::make('views.periodos.view4');
+	}
+
+	public function getPeriodos()
+	{
+		$ahead = array("Periodo","Creado en","Estado", "Controles");
+		$head = "";
+		foreach ($ahead as $value) {
+			$head .= View::make('table.head',array('title'=>$value));
+		}
+
+		$body="";
+
+		$pers = Periodo::all();
+		if(!$pers->isEmpty()){
+
+			$buttonactivate = View::make("table.button",array("title"=>"Activar","color"=>"green","class"=>"activate"));
+			$buttonterminate = View::make("table.button",array("title"=>"Terminar","color"=>"red","class"=>"closeper"));			
+
+			$status1 = View::make("html.label",array("title"=>"Draft","color"=>"cyan"));
+			$status2 = View::make("html.label",array("title"=>"Activo","color"=>"green"));
+			$status3 = View::make("html.label",array("title"=>"Cerrado","color"=>"blue"));
+
+			foreach ($pers as $per) {
+
+				//$res2 = $soap->taskCase($case->guid);
+
+				//$subj = Subject::wherePm_uid($case->guid)->first();
+
+				$name = $per->name;
+				$fecha = $per->created_at;
+				$button = "";
+
+				$array = array("content"=>"","id"=>$per->id);
+
+				switch ($per->status) {
+					case 'draft':
+						$button = $buttonactivate;
+						$status = $status1;
+						break;
+					case 'active':
+						$array['class'] = "success";
+						$button = $buttonterminate;
+						$status = $status2;
+						break;
+					case 'closed':
+						$array['class'] = "active";
+						$status = $status3;
+						break;
+					
+					default:
+						$status = "null";
+						break;
+				}
+
+
+				$array["content"] = View::make("table.cell",array("content"=>$name));
+				$array["content"] .= View::make("table.cell",array("content"=>$fecha));
+				$array["content"] .= View::make("table.cell",array("content"=>$status));
+				$array["content"] .= View::make("table.cell",array("content"=>$button));
+				$body .= View::make("table.row",$array);
+			}
+
+		}else{
+			$message = "No hay periodos";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
+
+		}
+		//print_r($res);
+		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
+		return View::make('views.periodos.periodoslist', array("table"=>$table));
 	}
 	//  PERIODOS  //
 	
@@ -109,10 +189,10 @@ class First extends BaseController
 			
 			foreach ($res['ok'] as $case) {
 
-				$res2 = $soap->taskCase($case->guid);
+				//$res2 = $soap->taskCase($case->guid);
 
 
-				$subj = Subject::wherePm_uid($case->guid)->first();
+				$subj = Subject::wherePeriodo(Periodo::active())->wherePm_uid($case->guid)->first();
 
 				if($subj->status=="confirm"){
 					$tema = $subj->subject;
@@ -165,27 +245,37 @@ class First extends BaseController
 
 			foreach ($res['ok'] as $case) {
 
-				$res2 = $soap->taskCase($case->guid);
+				//$res2 = $soap->taskCase($case->guid);
 
-				$subj = Subject::wherePm_uid($case->guid)->first();
+				$subjs = Subject::wherePeriodo(Periodo::active())->wherePm_uid($case->guid)->get();
+				
+				if(!$subjs->isEmpty()){
 
-				if($subj->status=="not-confirmed"){
-					$tema = $subj->subject;
-					$alumno1 = $subj->student1;
-					$alumno2 = $subj->student2;
-					$id = $case->guid;
+					$subj = $subjs->first();
+				
+					if($subj->status=="not-confirmed"){
+						$tema = $subj->subject;
+						$alumno1 = $subj->student1;
+						$alumno2 = $subj->student2;
+						$id = $case->guid;
 
 
-					$content = View::make("table.cell",array("content"=>$tema));
-					$content .= View::make("table.cell",array("content"=>$alumno1));
-					$content .= View::make("table.cell",array("content"=>$alumno2));
-					$content .= View::make("table.cell",array("content"=>$drop));
-					$content .= View::make("table.cell",array("content"=>$save));
-					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+						$content = View::make("table.cell",array("content"=>$tema));
+						$content .= View::make("table.cell",array("content"=>$alumno1));
+						$content .= View::make("table.cell",array("content"=>$alumno2));
+						$content .= View::make("table.cell",array("content"=>$drop));
+						$content .= View::make("table.cell",array("content"=>$save));
+						$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+					}else{
+
+						$content = View::make("table.cell",array("content"=>$case->delIndex));
+						$content .= View::make("table.cell",array("content"=>$case->guid));
+						$content .= View::make("table.cell",array("content"=>$subj->status));
+						$body .= View::make("table.row",array("content"=>$content));
+					}
 				}else{
-
-					$content = View::make("table.cell",array("content"=>$case->delIndex));
-					$content .= View::make("table.cell",array("content"=>$case->guid));
+					$message = "Tema no registrado";
+					$content = View::make("table.cell",array("content"=>$message));
 					$body .= View::make("table.row",array("content"=>$content));
 				}
 			}
@@ -214,7 +304,9 @@ class First extends BaseController
 		//$soap = new PMsoap;	
 		//$soap->login();
 		//$res = $soap->caseList();
-		$subjs = Subject::whereStatus("confirm")->get();
+		$subjs = Subject::wherePeriodo(Periodo::active())->whereStatus("confirm")->get();
+		//$subjs = Subject::whereStatus("confirm")->get();
+
 		if(!$subjs->isEmpty()){
 
 			$buttons = View::make("table.yesno");

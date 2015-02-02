@@ -21,7 +21,7 @@ class Menu {
 		"periodosEdit"=>array(
 			"where"=>"periodos",
 			"place"=>"9",
-			"array"=>array("link"=>"#/vista4", "title"=>"Modificar Periodo", "n"=>0)
+			"array"=>array("link"=>"#/periodos", "title"=>"Periodos", "n"=>0)
 		),
 		"guiaConfirmation"=>array(
 			"where"=>"guias",
