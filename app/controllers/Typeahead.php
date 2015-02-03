@@ -38,7 +38,11 @@ class Typeahead extends BaseController
 				$name = $value->staff->name." ".$value->staff->surname;
 				$value2 = $value->staff->id;
 				
-				$res[] = array('value'=>$value2,'label'=>$name);
+				$comisions = 0;
+
+				$comisions += Staff::find(17)->guias()->count();
+
+				$res[] = array('value'=>$value2,'label'=>$name,'comisions'=>$comisions);
 			}
 
 		}

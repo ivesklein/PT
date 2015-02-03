@@ -11,6 +11,82 @@
 |
 */
 
+//CONFIG//
+Route::get('config', function()
+{
+	$res = Staff::all();
+	if($res->isEmpty()){
+		return View::make("config");
+	}else{
+		return Redirect::to("");
+	}
+});
+Route::post('config', function()
+{
+	
+	$ok = true;
+	$message="";
+	//recibir variables
+	if(isset($_POST['upm']) && 
+		isset($_POST['ppm']) && 
+		isset($_POST['nameu']) && 
+		isset($_POST['surnameu']) && 
+		isset($_POST['mailu']) && 
+		isset($_POST['passu']) ){
+		$ok=false;
+		$message = "Faltan Variables";
+	}
+
+	//conectarse a pm
+	$soap = new PMsoap;
+	$res = $soap->login($_POST['upm'],$_POST['ppm']);
+	if(isset($res['ok'])){
+
+		//sacar variables
+		$res2 = $soap->processList();
+		if(isset($res2['ok'])){		
+
+			$res3 = $soap->taskList();
+			if(isset($res3['ok'])){		
+				//crear administrador
+
+				$res4 = UserCreation::add($_POST['mailu'],
+											$_POST['nameu'],
+											$_POST['surnameu'],
+											1,
+											$_POST['passu']
+										);
+				if(isset($res4['ok'])){
+				}else{
+					$ok=false;
+					$message = $res4['error'];
+				}		
+
+			}else{
+				$ok=false;
+				$message = "Error TaskUID:".$res3['error'];
+			}
+		}else{
+			$ok=false;
+			$message = "Error ProcessUID:".$res2['error'];
+		}
+
+		//mostrar resultado
+
+	}else{
+		$message = $res["error"];
+	}
+
+	return View::make("message", array('ok'=>$ok,'message'=>$message));
+
+
+
+});
+
+
+
+
+
 //login//
 Route::get('login', function()
 {

@@ -243,28 +243,31 @@
                     $('#temas').html("");
                     if(eventcolor=="darkcyan"){
                         eventdes = "Predefensa";
-                        ajx({
-                            data:{
-                                f:'ajxdefensas',
-                                type: 1
-                            },
-                            ok:function(data){
-                                
-                                if(data.data.length==0){
-                                    $('#temas').append("<option value='sel'>No hay temas</option>");
-                                }else{
-                                    $('#temas').append("<option value='sel'>Selecione Tema</option>");
-                                    for(i in data.data){
-                                        var tema = data.data[i];
-                                        $('#temas').append("<option value='"+tema['id']+"'>"+tema['title']+"</option>");
-                                    }
-                                }
-                            }
-                        });
+                        type=1;
                     }
                     if(eventcolor=="blue"){
                         eventdes = "Defensa";
+                        type=2;
                     }
+
+                    ajx({
+                        data:{
+                            f:'ajxdefensas',
+                            type: type
+                        },
+                        ok:function(data){
+                            
+                            if(data.data.length==0){
+                                $('#temas').append("<option value='sel'>No hay temas</option>");
+                            }else{
+                                $('#temas').append("<option value='sel'>Selecione Tema</option>");
+                                for(i in data.data){
+                                    var tema = data.data[i];
+                                    $('#temas').append("<option value='"+tema['id']+"'>"+tema['title']+"</option>");
+                                }
+                            }
+                        }
+                    });
                 });
       
                  $(function() {

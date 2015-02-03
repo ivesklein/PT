@@ -569,7 +569,12 @@ class PostRoute{
 					}
 
 				}else{
-					//caso no predefensa
+					$subjs = Subject::whereDefensa(2)->get();
+					if(!$subjs->isEmpty()){
+						foreach ($subjs as $subj) {
+							$return["data"][] = array("id"=>$subj->id,"title"=>$subj->subject);
+						}
+					}
 				}
 
 		        $return["ok"] = "ok";

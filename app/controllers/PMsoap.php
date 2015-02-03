@@ -10,14 +10,20 @@ class PMsoap {
 	
 	}
 
-	public function login($mail = null){
+	public function login($mail = null, $ppass = null){
 		$return = array();
 		if(Auth::check()){
 			$ok=false;
 			if($mail==null){
-				$user = Auth::user()->pm_id;
-				$pass = Auth::user()->pmpass;
-				$ok=true;
+				if($ppass==null){
+					$user = Auth::user()->pm_id;
+					$pass = Auth::user()->pmpass;
+					$ok=true;
+				}else{
+					$user = $mail;
+					$pass = $ppass;
+					$ok=true;
+				}
 			}else{
 				$dbuser = User::whereWc_id($mail)->get();
 				if(!$dbuser->isEmpty()){
