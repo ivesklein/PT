@@ -59,7 +59,7 @@ Route::post('config', function()
 				if(isset($res4['ok'])){
 				}else{
 					$ok=false;
-					$message = $res4['error'];
+					$message = "res4 error:".$res4['error'];
 				}		
 
 			}else{
@@ -74,7 +74,7 @@ Route::post('config', function()
 		//mostrar resultado
 
 	}else{
-		$message = $res["error"];
+		$message = "res error:".$res["error"];
 	}
 
 	return View::make("message", array('ok'=>$ok,'message'=>$message));
