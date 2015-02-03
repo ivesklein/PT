@@ -204,7 +204,7 @@ class PMsoap {
 			   }
 			   else
 			   {
-			       print "Process name: $processesArray->name, Process ID: $processesArray->guid \n";
+			       //print "Process name: $processesArray->name, Process ID: $processesArray->guid \n";
 
 		       		if($processesArray->name=="PT-UAI"){
 			       		$var = new Pmvar;
@@ -248,7 +248,7 @@ class PMsoap {
 			{
 			    foreach ($tasksArray as $task){
 			    
-			        print "Task name: $task->name, Task ID: $task->guid \n";
+			        //print "Task name: $task->name, Task ID: $task->guid \n";
 					if($task->name=="Ingreso Temas"){
 			       		$var = new Pmvar;
 			       		$var->var = "task";
