@@ -12,8 +12,9 @@ class PMsoap {
 
 	public function login($mail = null, $ppass = null){
 		$return = array();
+		$ok=false;
 		if(Auth::check()){
-			$ok=false;
+			
 			if($mail==null){
 				if($ppass==null){
 					$user = Auth::user()->pm_id;
@@ -33,26 +34,31 @@ class PMsoap {
 					$ok=true;
 				}
 			}
-
-			if($ok==true){
-				$client = new SoapClient($this->url);
-				$params = array(array('userid'=>$user,'password'=>$pass));
-				$res = $client->__SoapCall('login',$params);
-				
-				if($res->status_code==0){
-					$this->hash = $res->message;
-					$return["ok"] = $this->hash;
-					$this->status = true;
-				}else{
-					$return["error"] = $res->message;
-					$this->status = false;
-				}
-			}else{
-				$return['error'] = "user not exist";
-			}
+		}elseif($ppass != null){
+			$user = $mail;
+			$pass = $ppass;
+			$ok=true;
 		}else{
 			$return["error"] = "no login";
 			$this->status = false;
+		}
+
+
+		if($ok==true){
+			$client = new SoapClient($this->url);
+			$params = array(array('userid'=>$user,'password'=>$pass));
+			$res = $client->__SoapCall('login',$params);
+			
+			if($res->status_code==0){
+				$this->hash = $res->message;
+				$return["ok"] = $this->hash;
+				$this->status = true;
+			}else{
+				$return["error"] = $res->message;
+				$this->status = false;
+			}
+		}else{
+			$return['error'] = "user not exist";
 		}
 		
 		return $return;
