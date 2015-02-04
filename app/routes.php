@@ -33,6 +33,8 @@ Route::post('config', function()
 		isset($_POST['surnameu']) && 
 		isset($_POST['mailu']) && 
 		isset($_POST['passu']) ){
+		
+	}else{
 		$ok=false;
 		$message = "Faltan Variables";
 	}
