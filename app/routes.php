@@ -53,7 +53,7 @@ Route::post('config', function()
 				$res4 = UserCreation::add($_POST['mailu'],
 											$_POST['nameu'],
 											$_POST['surnameu'],
-											1,
+											"SA",
 											$_POST['passu'],
 											$soap
 										);
