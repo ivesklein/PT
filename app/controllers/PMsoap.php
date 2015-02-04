@@ -246,18 +246,29 @@ class PMsoap {
 			$ok=false;
 			if ($tasksArray != (object) NULL)
 			{
-			    foreach ($tasksArray as $task){
+				if (is_array($tasksArray)){
+					foreach ($tasksArray as $task){
 			    
-			        //print "Task name: $task->name, Task ID: $task->guid \n";
-					if($task->name=="Ingreso Temas"){
+				        //print "Task name: $task->name, Task ID: $task->guid \n";
+						if($task->name=="Ingreso Temas"){
+				       		$var = new Pmvar;
+				       		$var->var = "task";
+				       		$var->value = $task->guid;
+				       		$var->save();
+				       		$ok=true;
+				       	}
+
+					}
+				}else{
+					if($tasksArray->name=="Ingreso Temas"){
 			       		$var = new Pmvar;
 			       		$var->var = "task";
-			       		$var->value = $task->guid;
+			       		$var->value = $tasksArray->guid;
 			       		$var->save();
 			       		$ok=true;
 			       	}
-
 				}
+			    
 
 
 				if($ok==false){
