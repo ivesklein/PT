@@ -285,6 +285,40 @@ class PMsoap {
 		return $return;
 	}
 
+
+	public function groupList()
+	{
+
+		$return = array();
+
+		if($this->status){
+			$client = new SoapClient($this->url);
+
+			 $params = array(array('sessionId'=>$this->hash));
+			 $result = $client->__SoapCall('groupList', $params);
+			 $groupsArray = $result->groups;
+			 if (is_array($groupsArray)){
+			      foreach ($groupsArray as $group){
+			      		$dbg = new PMG;
+			      		$dbg->group =$group->name;
+			      		$dbg->uid =$group->guid;
+			      		$dbg->save();
+			       }
+			       $return['ok']=1;
+			 }else 
+			      $return['error'] = $groupsArray->name;
+	
+		}else{
+			$return["error"] = "no hash";
+		}
+		return $return;
+
+
+
+	}
+
+
+
 	public function caseList(){
 		$return = array();
 

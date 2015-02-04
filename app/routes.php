@@ -48,21 +48,28 @@ Route::post('config', function()
 
 			$res3 = $soap->taskList();
 			if(isset($res3['ok'])){		
+
+				$res4 = $soap->groupList();
+				if(isset($res4['ok'])){	
 				//crear administrador
 
-				$res4 = UserCreation::add($_POST['mailu'],
-											$_POST['nameu'],
-											$_POST['surnameu'],
-											"SA",
-											$_POST['passu'],
-											$soap
-										);
-				if(isset($res4['ok'])){
+					$res5 = UserCreation::add($_POST['mailu'],
+												$_POST['nameu'],
+												$_POST['surnameu'],
+												"SA",
+												$_POST['passu'],
+												$soap
+											);
+					if(isset($res5['ok'])){
+					}else{
+						$ok=false;
+						$message = "res4 error:".$res5['error'];
+					}		
+
 				}else{
 					$ok=false;
-					$message = "res4 error:".$res4['error'];
-				}		
-
+					$message = "Error GroupsUID:".$res4['error'];
+				}
 			}else{
 				$ok=false;
 				$message = "Error TaskUID:".$res3['error'];
