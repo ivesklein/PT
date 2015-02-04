@@ -54,7 +54,8 @@ Route::post('config', function()
 											$_POST['nameu'],
 											$_POST['surnameu'],
 											1,
-											$_POST['passu']
+											$_POST['passu'],
+											$soap
 										);
 				if(isset($res4['ok'])){
 				}else{

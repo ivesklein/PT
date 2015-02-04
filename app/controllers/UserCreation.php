@@ -1,7 +1,7 @@
 <?php
 class UserCreation {
 	
-	public static function add($email, $name, $surname, $rol, $pass = null)
+	public static function add($email, $name, $surname, $rol, $pass = null, $pm = null)
 	{	
 		$return = array();
 
@@ -35,8 +35,12 @@ class UserCreation {
 		$perm->permission = $rol;
 		$perm->save();
 
-		$pm = new PMsoap;
-		$res = $pm->login();
+		if($pm==null){
+			$pm = new PMsoap;
+			$res = $pm->login();
+		}else{
+			$res["ok"] = 1;
+		}
 		if(isset($res['ok'])){
 			$res2 = $pm->newUser($email, $name, $surname, $email, $role[$rol], $pass);
 			if(isset($res2["ok"])){
