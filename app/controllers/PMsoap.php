@@ -101,7 +101,7 @@ class PMsoap {
 		return $return;
 	}
 
-	public function groupList(){
+	/*public function groupList(){
 		$return = array();
 
 		if($this->status){
@@ -118,7 +118,7 @@ class PMsoap {
 			$return["error"] = "no hash";
 		}
 		return $return;
-	}
+	}*/
 
 	public function newUser($userId, $name, $surname, $email, $role, $pass){
 		$return = array();
