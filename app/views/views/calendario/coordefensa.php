@@ -9,7 +9,355 @@
     <script src="js/typeahead.jquery.min.js"></script-->
     <script src="jui/jquery-ui.min.js"></script>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Controles</strong></div>
+                <div class="panel-body form-horizontal">
+                    <div class="form-group">
+                        
+                        <label class="col-sm-4">Tipo de evento</label>
+
+                        <!--dl class='cl-horizontal col-sm-8' id="tipoevento">
+                            <dd-->
+                            <div class="col-sm-8" id="tipoevento">
+                                <label class="ui-radio"><input type="radio" name="tipo" value="darkcyan"></input><span style="background:darkcyan;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid darkcyan;">Predefensa</span></label>
+                                <label class="ui-radio"><input type="radio" name="tipo" value="blue"></input><span style="background:blue;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid blue;">Defensa</span></label>
+                            </div>
+                            <!--/dd>
+
+                        </dl-->
+                    </div>
+                    <hr></hr>
+                    <div class="form-group">
+                        <label for="tema" class="col-sm-4">Seleccionar Tema</label>
+                        <div class="col-sm-8">
+                            <span class="ui-select">
+                                <select name="tema" id="temas">
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+                    <hr></hr>
+                    <h3>Armar Comisión</h3>
+                    <div class="form-group ">
+                        <ul class="list-group col-sm-10 col-sm-offset-1" id="list">
+       
+                        </ul>
+                        <div class="input-group col-sm-10 col-sm-offset-1">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                            <input id="buscarprofesor" type="text" class="form-control" placeholder="buscar profesor">
+                            <input id="prof" type="hidden">
+                            <span class="input-group-btn">
+                                <button id="add" class="btn btn-default" type="button">Agregar</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button id="save" class="btn btn-warning col-sm-offset-1 col-sm-10" type="button" style="display:none;">Guardar y Notificar</button>
+                    </div>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+
+            var Eventos = function(listel, calel){
+
+                var yo = this;
+                yo.profesores = {};
+                yo.listel = listel;
+                yo.calel = calel;
+                yo.comision = {};
+
+                yo.addoriginal = function(profesor) {
+                    if(profesor in yo.comision){}else{
+                        yo.comision[profesor] = 1;
+                    }
+                    yo.modified();
+                }
+
+                yo.add = function(profesor, eventos, nombre, tipo, status) {
+                    if(profesor in yo.profesores){}else{
+                        yo.profesores[profesor] = eventos;
+                        for(n in eventos){
+                            var evento = eventos[n];
+                            $(calel).fullCalendar('renderEvent', evento, true);
+                        }
+                        if(tipo=="guia"){
+                            $(listel).prepend('<li id="P'+profesor+'" class="list-group-item">'+nombre+'<span class="badge badge-info">Profesor Guía</span></li>');    
+                        }
+                        if(tipo=="comision"){
+                            var message = "";
+                            if(status=="confirmar")
+                                message = '<span class="badge badge-warning delprof">no confirmado</span>';
+
+                            $(listel).append('<li id="P'+profesor+'" class="list-group-item">'+nombre+'<span class="badge badge-danger delprof">X</span>'+message+'</li>');    
+                        }
+                    }
+                    yo.modified();
+                }
+
+                $(listel).on('click', ".delprof", function() {
+                    var prof = $(this).parent().attr('id');
+                    var prof2 = prof.split("P");
+                    var profe = prof2[1];
+                    yo.remove(profe);
+
+                })
+
+
+                yo.remove = function(profesor) {
+                    $(listel+" #P"+profesor).remove();
+                    for(n in yo.profesores[profesor]){
+                        var evento = yo.profesores[profesor][n];
+                        $(calel).fullCalendar('removeEvents', evento.id);
+                    }
+                    delete(yo.profesores[profesor]);
+                    yo.modified();
+
+                }
+
+                yo.reset = function() {
+                    for (i in yo.profesores) {
+                        $(listel+" #P"+i).remove();
+                    };
+                    yo.profesores = {};
+                    yo.comision = {};
+                    $(calel).fullCalendar('removeEvents');
+                    yo.modified();
+                }
+
+                yo.modified = function() {
+                    
+                    var ori = 0;
+                    var now = 0;
+                    var coi = 0;
+
+                    for (prof in yo.comision) {
+                        ori++;
+                        if(prof in yo.profesores){
+                            coi++;
+                        }
+                    }
+                    for (prof in yo.profesores) {
+                        now++;
+                    }
+
+                    if(ori==coi && ori==now){
+                        //not modified
+                        $("#save").hide();
+                    }else{
+                        //modified
+                        $("#save").show();
+                    }
+                    console.log(ori+" "+now+" "+coi)
+
+
+
+                }
+
+                yo.changes = function() {
+                    
+                    var res = {"news":{},"deleted":{}};
+
+                    //deleted
+                    for (prof in yo.comision) {
+                        if(prof in yo.profesores){}else{
+                            res.deleted[prof] = 1;
+                        }
+                    }
+
+                    //news
+                    for (prof in yo.profesores) {
+                        if(prof in yo.comision){}else{
+                            res.news[prof] = 1;
+                        }
+                    }
+
+
+                    return res;
+                }
+
+
+
+            }
+
+            </script>
+            <script type="text/javascript">
+            $(function() {
+
+                $('#tipoevento input[type="radio"]').on("change",function() {
+                    eventcolor = $(this).val();
+                    $('#temas').html("");
+                    if(eventcolor=="darkcyan"){
+                        eventdes = "Predefensa";
+                        type=1;
+                    }
+                    if(eventcolor=="blue"){
+                        eventdes = "Defensa";
+                        type=2;
+                    }
+
+                    ajx({
+                        data:{
+                            f:'ajxdefensas',
+                            type: type
+                        },
+                        ok:function(data){
+                            
+                            if(data.data.length==0){
+                                $('#temas').append("<option value='sel'>No hay temas</option>");
+                            }else{
+                                $('#temas').append("<option value='sel'>Selecione Tema</option>");
+                                for(i in data.data){
+                                    var tema = data.data[i];
+                                    $('#temas').append("<option value='"+tema['id']+"'>"+tema['title']+"</option>");
+                                }
+                            }
+                        }
+                    });
+                });
+                
+                $('#temas').on("change",function() {
+                    var id = $(this).val();
+                    Lista.reset();
+                    if(id!="sel"){
+                        ajx({
+                            data:{
+                                f:'ajxcomision',
+                                id: id
+                            },
+                            ok:function(data1){
+
+                                if("guia" in data1.data){
+                                    var prof = data1.data.guia.id;
+                                    var name = data1.data.guia.name;
+
+                                    ajx({
+                                        data:{
+                                            f:'ajxprofevents',
+                                            prof: prof
+                                        },
+                                        ok:function(data){
+
+                                            Lista.add(prof,data.data,name,"guia","");
+                                            Lista.addoriginal(prof);
+                                        }
+                                    });
+                                    
+                                }
+
+                                for (var i = 1; i <= 2; i++) {
+                                    
+                                    if(i in data1.data){
+                                        var prof1 = data1.data[i].id;
+                                        var name1 = data1.data[i].name;
+                                        var status = data1.data[i].status;
+
+                                        ajx({
+                                            data:{
+                                                f:'ajxprofevents',
+                                                prof: prof1
+                                            },
+                                            ok:function(data){
+
+                                                Lista.add(prof1,data.data,name1,"comision",status);
+                                                Lista.addoriginal(prof1);
+                                            }
+                                        });
+                                        
+                                    }
+
+                                }
+
+
+                                //Lista.add(prof,data.data,name);
+
+                            }
+                        });
+                    } 
+
+
+
+                })
+                
+      
+                 
+                    
+                Lista = new Eventos("#list","#calendar");
+
+                $("#add").on("click",function() {
+                    var prof = $("#prof").val();
+                    var name = $("#buscarprofesor").val();
+
+                    ajx({
+                        data:{
+                            f:'ajxprofevents',
+                            prof: prof
+                        },
+                        ok:function(data){
+
+                            Lista.add(prof,data.data,name,"comision");
+
+                        }
+                    });
+
+                    
+                })
+
+                $( "#buscarprofesor" ).autocomplete({
+                    minLength: 2,
+                    source: "th/profesores",
+                    focus: function( event, ui ) {
+                    //$( "#buscarprofesor" ).val( ui.item.label );
+                    return false;
+                    },
+                    select: function( event, ui ) {
+                    $( "#buscarprofesor" ).val( ui.item.label );
+                    $( "#prof" ).val( ui.item.value );
+                    return false;
+                }
+                })
+                .autocomplete( "instance" )._renderItem = function( ul, item ) {
+                    return $( "<li>" )
+                    .append( "<a>" + item.label + "</a>" )
+                    .appendTo( ul );
+                };
+
+                $("#save").on("click",function() {
+                    var changes = Lista.changes();
+                    var snews = "";
+                    var sdels = "";
+                    var id = $('#temas').val();
+                    for(news in changes.news){
+                        snews += news+",";
+                    }
+                    for(dels in changes.deleted){
+                        sdels += dels+",";   
+                    }
+
+                    ajx({
+                        data:{
+                            f:'ajxsavecomision',
+                            id: id,
+                            news: snews,
+                            dels: sdels
+                        },
+                        ok:function(data) {
+
+                        }
+                    });
+
+                })
+
+            });
+
+            
+
+            </script>
+            
+        </div>
+
+                <div class="col-md-8">
             <div class="panel panel-default">
                 <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Calendario</strong></div>
                 <div class="panel-body">
@@ -144,177 +492,6 @@
             });
 
             </script>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Controles</strong></div>
-                <div class="panel-body form-horizontal">
-                    <div class="form-group">
-                        
-                        <label class="col-sm-4">Tipo de evento</label>
-
-                        <!--dl class='cl-horizontal col-sm-8' id="tipoevento">
-                            <dd-->
-                            <div class="col-sm-8" id="tipoevento">
-                                <label class="ui-radio"><input type="radio" name="tipo" value="darkcyan" checked></input><span style="background:darkcyan;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid darkcyan;">Predefensa</span></label>
-                                <label class="ui-radio"><input type="radio" name="tipo" value="blue"></input><span style="background:blue;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid blue;">Defensa</span></label>
-                            </div>
-                            <!--/dd>
-
-                        </dl-->
-                    </div>
-                    <hr></hr>
-                    <div class="form-group">
-                        <label for="tema" class="col-sm-4">Seleccionar Tema</label>
-                        <div class="col-sm-8">
-                            <span class="ui-select">
-                                <select name="tema" id="temas">
-                                    <option>Mustard</option>
-                                    <option>Ketchup</option>
-                                    <option>Barbecue</option>
-                                </select>
-                            </span>
-                        </div>
-                    </div>
-                    <hr></hr>
-                    <h3>Profesores</h3>
-                    <div class="form-group ">
-                        <ul class="list-group col-sm-10 col-sm-offset-1" id="list">
-       
-                        </ul>
-                        <div class="input-group col-sm-10 col-sm-offset-1">
-                            <span class="input-group-addon">a</span>
-                            <input id="buscarprofesor" type="text" class="form-control" placeholder="buscar">
-                            <input id="prof" type="hidden">
-                            <span class="input-group-btn">
-                                <button id="add" class="btn btn-default" type="button">Agregar</button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <script type="text/javascript">
-
-            var Eventos = function(listel, calel){
-
-                var yo = this;
-                yo.profesores = {};
-                yo.listel = listel;
-                yo.calel = calel;
-
-                yo.add = function(profesor, eventos, nombre) {
-                    if(profesor in yo.profesores){}else{
-                        yo.profesores[profesor] = eventos;
-                        for(n in eventos){
-                            var evento = eventos[n];
-                            $(calel).fullCalendar('renderEvent', evento, true);
-                        }
-                        $(listel).append('<li id="P'+profesor+'" class="list-group-item">'+nombre+'</li>');
-                    }
-                }
-
-                yo.remove = function(profesor) {
-                    $(listel+" #P"+profesor).remove();
-                    for(n in yo.profesores[profesor]){
-                        var evento = yo.profesores[profesor][n];
-                        $(calel).fullCalendar('removeEvents', evento.id);
-                    }
-                    delete(yo.profesores[profesor]);
-
-                }
-
-                yo.reset = function() {
-                    for (i in yo.profesores) {
-                        $(listel+" #P"+i).remove();
-                    };
-                    yo.profesores = {};
-                    $(calel).fullCalendar('removeEvents');
-                }
-
-
-
-            }
-
-            </script>
-            <script type="text/javascript">
-                $('#tipoevento input[type="radio"]').on("change",function() {
-                    eventcolor = $(this).val();
-                    $('#temas').html("");
-                    if(eventcolor=="darkcyan"){
-                        eventdes = "Predefensa";
-                        type=1;
-                    }
-                    if(eventcolor=="blue"){
-                        eventdes = "Defensa";
-                        type=2;
-                    }
-
-                    ajx({
-                        data:{
-                            f:'ajxdefensas',
-                            type: type
-                        },
-                        ok:function(data){
-                            
-                            if(data.data.length==0){
-                                $('#temas').append("<option value='sel'>No hay temas</option>");
-                            }else{
-                                $('#temas').append("<option value='sel'>Selecione Tema</option>");
-                                for(i in data.data){
-                                    var tema = data.data[i];
-                                    $('#temas').append("<option value='"+tema['id']+"'>"+tema['title']+"</option>");
-                                }
-                            }
-                        }
-                    });
-                });
-      
-                 $(function() {
-                    
-                    Lista = new Eventos("#list","#calendar");
-
-                    $("#add").on("click",function() {
-                        var prof = $("#prof").val();
-                        var name = $("#buscarprofesor").val();
-
-                        ajx({
-                            data:{
-                                f:'ajxprofevents',
-                                prof: prof
-                            },
-                            ok:function(data){
-
-                                Lista.add(prof,data.data,name);
-
-                            }
-                        });
-
-                        
-                    })
-
-                    $( "#buscarprofesor" ).autocomplete({
-                        minLength: 2,
-                        source: "th/profesores",
-                        focus: function( event, ui ) {
-                        //$( "#buscarprofesor" ).val( ui.item.label );
-                        return false;
-                        },
-                        select: function( event, ui ) {
-                        $( "#buscarprofesor" ).val( ui.item.label );
-                        $( "#prof" ).val( ui.item.value );
-                        return false;
-                    }
-                    })
-                    .autocomplete( "instance" )._renderItem = function( ul, item ) {
-                        return $( "<li>" )
-                        .append( "<a>" + item.label + "</a>" )
-                        .appendTo( ul );
-                    };
-                });
-
-            </script>
-            
         </div>
     </div>
 </div>

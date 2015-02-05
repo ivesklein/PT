@@ -589,7 +589,60 @@ class PostRoute{
 		return json_encode($return);
 	}
 
+	public static function ajxcomision()
+	{
+		$return = array();
+		if(isset($_POST['id'])){
 
-}
+			if(Rol::hasPermission("coordefensa")){
+
+				$return["data"]=array();
+
+				$subj = Subject::find($_POST['id']);
+				//datos prof guia
+				$guia = $subj->guia;
+				$return["data"]['guia']=array(
+						"id"=>$guia->id,
+						"name"=>$guia->name." ".$guia->surname
+					);
+
+
+				$otros = $subj->comision;
+
+				/*if($subj->defensa == 1){
+					$type = "predefensa"; 
+				}elseif($subj->defensa == 2){
+					$type = "defensa";
+				}else{
+					$type = "";
+				}*/
+
+				$i = 1;
+				foreach ($otros as $comision) {
+					//if($comision->pivot->type == $type){
+						$return['data'][$i] = array(
+							"id"=>$comision->id,
+							"name"=>$comision->name." ".$comision->surname,
+							"status"=>$comision->pivot->status
+						);
+					//}
+				}
+
+				$return["ok"]=1;
+				//datos otros
+
+
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+
+}//class
 
 ?>

@@ -148,10 +148,18 @@ Route::get('/test' ,function()
 {
 
 
-	$guias = Staff::find(17)->guias()->count();
+	//$guias = Staff::find(17)->guias()->count();
 	
+	$n = new Comision;
+	$n->staff_id = 15;
+	$n->subject_id = 1;
+	$n->type = "predefensa";
+	$n->status = "confirmar";
+	$n->save();
 
-	print_r($guias);
+	return $n->id;
+
+	//print_r($guias);
 	//redirect to controller
 	//$rol = new Rol;
 	//print_r($rol->permissions());
