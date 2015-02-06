@@ -14,4 +14,9 @@ Class Staff extends Eloquent{
 		return $this->hasMany('Subject','adviser','pm_id');
 	}
 
+	public function comision()
+	{
+		return $this->belongsToMany("Subject", "comisions", "staff_id", "subject_id")->withPivot('status','type');;
+	}
+
 }

@@ -40,7 +40,9 @@ class Typeahead extends BaseController
 				
 				$comisions = 0;
 
-				$comisions += Staff::find(17)->guias()->count();
+				$comisions += $value->staff->guias()->wherePeriodo(Periodo::active())->count();
+				$comisions += $value->staff->comision()->wherePeriodo(Periodo::active())->count();
+
 
 				$res[] = array('value'=>$value2,'label'=>$name,'comisions'=>$comisions);
 			}

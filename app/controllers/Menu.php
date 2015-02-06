@@ -24,17 +24,17 @@ class Menu {
 			"array"=>array("link"=>"#/periodos", "title"=>"Periodos", "n"=>0)
 		),
 		"guiaConfirmation"=>array(
-			"where"=>"guias",
+			"where"=>"temas",
 			"place"=>"10",
 			"array"=>array("link"=>"#/confirmarguia", "title"=>"Confirmar Guías", "n"=>2)
 		),
 		"guiasConfirmation"=>array(
-			"where"=>"guias",
+			"where"=>"temas",
 			"place"=>"11",
 			"array"=>array("link"=>"#/vista7", "title"=>"Guías Profesores", "n"=>2)
 		),	
 		"guiasAsignar"=>array(
-			"where"=>"guias",
+			"where"=>"temas",
 			"place"=>"12",
 			"array"=>array("link"=>"#/asignarguia", "title"=>"Asignar Profesor", "n"=>2)
 		),
@@ -62,6 +62,11 @@ class Menu {
 			"where"=>"calendario",
 			"place"=>"19",
 			"array"=>array("link"=>"#/coordefensa", "title"=>"Coordinar Defensas", "n"=>0)
+		),
+		"comisionConfirmation"=>array(
+			"where"=>"temas",
+			"place"=>"21",
+			"array"=>array("link"=>"#/confirmarcomision", "title"=>"Confirmar Comisión", "n"=>0)
 		)
 	);
 
@@ -70,9 +75,9 @@ class Menu {
 			"place"=>"0",
 			"array"=>array("Dashboard", "#/menu", "dashboard", "danger", 0)
 		),
-		"guias" => array(
+		"temas" => array(
 			"place"=>"11",
-			"array"=>array("Guias", "#/menu", "book", "warning", 0)
+			"array"=>array("Memorias", "#/menu", "book", "warning", 0)
 		),
 		"periodos" => array(
 			"place"=>"10",

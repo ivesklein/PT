@@ -2,6 +2,11 @@
 
     <link rel="stylesheet" href="fullcalendar/fullcalendar.css" />
     <link rel="stylesheet" href="jui/jquery-ui.min.css" />
+    <style>
+    #comisionbox .panel-heading, #fechasbox .panel-heading{
+        cursor:pointer;
+    }
+    </style>
     <script src="fullcalendar/lib/moment.min.js"></script>
     <script src="fullcalendar/fullcalendar.js"></script>
     <script src="fullcalendar/lang/es.js"></script>
@@ -11,23 +16,8 @@
     <div class="row">
         <div class="col-md-4">
             <div class="panel panel-default">
-                <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Controles</strong></div>
+                <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Tema</strong></div>
                 <div class="panel-body form-horizontal">
-                    <div class="form-group">
-                        
-                        <label class="col-sm-4">Tipo de evento</label>
-
-                        <!--dl class='cl-horizontal col-sm-8' id="tipoevento">
-                            <dd-->
-                            <div class="col-sm-8" id="tipoevento">
-                                <label class="ui-radio"><input type="radio" name="tipo" value="darkcyan"></input><span style="background:darkcyan;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid darkcyan;">Predefensa</span></label>
-                                <label class="ui-radio"><input type="radio" name="tipo" value="blue"></input><span style="background:blue;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid blue;">Defensa</span></label>
-                            </div>
-                            <!--/dd>
-
-                        </dl-->
-                    </div>
-                    <hr></hr>
                     <div class="form-group">
                         <label for="tema" class="col-sm-4">Seleccionar Tema</label>
                         <div class="col-sm-8">
@@ -37,8 +27,12 @@
                             </span>
                         </div>
                     </div>
-                    <hr></hr>
-                    <h3>Armar Comisión</h3>
+                </div>
+            </div>
+
+            <div class="panel panel-default" style="display:none;" id="comisionbox" data-ng-controller="CollapseCtrl">
+                <div class="panel-heading" ng-click="isCollapsed = !isCollapsed"><strong><span class="glyphicon glyphicon-th"></span> Armar Comisión</strong></div>
+                <div class="panel-body form-horizontal" collapse="isCollapsed">
                     <div class="form-group ">
                         <ul class="list-group col-sm-10 col-sm-offset-1" id="list">
        
@@ -55,6 +49,27 @@
                     <div class="form-group">
                         <button id="save" class="btn btn-warning col-sm-offset-1 col-sm-10" type="button" style="display:none;">Guardar y Notificar</button>
                     </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default" style="display:none;" id="fechasbox" data-ng-controller="CollapseCtrl">
+                <div class="panel-heading" ng-click="isCollapsed = !isCollapsed"><strong><span class="glyphicon glyphicon-th"></span> Fijar Fechas Defensas</strong></div>
+                <div class="panel-body form-horizontal" collapse="isCollapsed">
+                    <div class="form-group">
+                        
+                        <label class="col-sm-4">Tipo de evento</label>
+
+                        <!--dl class='cl-horizontal col-sm-8' id="tipoevento">
+                            <dd-->
+                            <div class="col-sm-8" id="tipoevento">
+                                <label class="ui-radio"><input type="radio" name="tipo" value="darkcyan"></input><span style="background:darkcyan;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid darkcyan;">Predefensa</span></label>
+                                <label class="ui-radio"><input type="radio" name="tipo" value="blue"></input><span style="background:blue;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid blue;">Defensa</span></label>
+                            </div>
+                            <!--/dd>
+
+                        </dl-->
+                    </div>
+                    
                 </div>
             </div>
 
@@ -185,9 +200,36 @@
             <script type="text/javascript">
             $(function() {
 
+                ajx({
+                    data:{
+                        f:'ajxdefensas'
+                    },
+                    ok:function(data){
+                        
+                        if(data.data.length==0){
+                            $('#temas').append("<option value='sel'>No hay temas</option>");
+                        }else{
+                            $('#temas').append("<option value='sel'>Selecione Tema</option>");
+                            for(i in data.data){
+                                var tema = data.data[i];
+                                $('#temas').append("<option value='"+tema['id']+"'>"+tema['title']+"</option>");
+                            }
+                        }
+                    }
+                });
+
+                $("#comisionbox .panel-heading, #fechasbox .panel-heading").hover(
+                function() {//adentro
+                    $(this).parent().removeClass('panel-default').addClass('panel-info');
+                },
+                function() {//fuera
+                    $(this).parent().removeClass('panel-info').addClass('panel-default');
+                })
+
+
                 $('#tipoevento input[type="radio"]').on("change",function() {
                     eventcolor = $(this).val();
-                    $('#temas').html("");
+                    //$('#temas').html("");
                     if(eventcolor=="darkcyan"){
                         eventdes = "Predefensa";
                         type=1;
@@ -197,28 +239,10 @@
                         type=2;
                     }
 
-                    ajx({
-                        data:{
-                            f:'ajxdefensas',
-                            type: type
-                        },
-                        ok:function(data){
-                            
-                            if(data.data.length==0){
-                                $('#temas').append("<option value='sel'>No hay temas</option>");
-                            }else{
-                                $('#temas').append("<option value='sel'>Selecione Tema</option>");
-                                for(i in data.data){
-                                    var tema = data.data[i];
-                                    $('#temas').append("<option value='"+tema['id']+"'>"+tema['title']+"</option>");
-                                }
-                            }
-                        }
-                    });
                 });
-                
-                $('#temas').on("change",function() {
-                    var id = $(this).val();
+
+                function loadtema () {
+                    var id = $('#temas').val();
                     Lista.reset();
                     if(id!="sel"){
                         ajx({
@@ -246,37 +270,71 @@
                                     
                                 }
 
-                                for (var i = 1; i <= 2; i++) {
-                                    
-                                    if(i in data1.data){
-                                        var prof1 = data1.data[i].id;
-                                        var name1 = data1.data[i].name;
-                                        var status = data1.data[i].status;
+                                if(1 in data1.data){
+                                    var prof1 = data1.data[1].id;
+                                    var name1 = data1.data[1].name;
+                                    var status1 = data1.data[1].status;
 
-                                        ajx({
-                                            data:{
-                                                f:'ajxprofevents',
-                                                prof: prof1
-                                            },
-                                            ok:function(data){
-
-                                                Lista.add(prof1,data.data,name1,"comision",status);
-                                                Lista.addoriginal(prof1);
-                                            }
-                                        });
-                                        
-                                    }
-
+                                    ajx({
+                                        data:{
+                                            f:'ajxprofevents',
+                                            prof: prof1
+                                        },
+                                        ok:function(data){
+                                            console.log(name1);
+                                            Lista.add(prof1,data.data,name1,"comision",status1);
+                                            Lista.addoriginal(prof1);
+                                        }
+                                    });
                                 }
 
+                                if(2 in data1.data){
+                                    var prof2 = data1.data[2].id;
+                                
+                                    ajx({
+                                        data:{
+                                            f:'ajxprofevents',
+                                            prof: prof2
+                                        },
+                                        ok:function(data){
+                                            var name2 = data1.data[2].name;
+                                            var status2 = data1.data[2].status;
+                                            console.log(name2);
+                                            Lista.add(prof2,data.data,name2,"comision",status2);
+                                            Lista.addoriginal(prof2);
+                                        }
+                                    });
+                                }
+
+                                if(3 in data1.data){
+                                    var prof3 = data1.data[3].id;
+                                    ajx({
+                                        data:{
+                                            f:'ajxprofevents',
+                                            prof: prof3
+                                        },
+                                        ok:function(data){
+                                            var name3 = data1.data[3].name;
+                                            var status3 = data1.data[3].status;
+                                            console.log(name3);
+                                            Lista.add(prof3,data.data,name3,"comision",status3);
+                                            Lista.addoriginal(prof3);
+                                        }
+                                    });
+                                }
 
                                 //Lista.add(prof,data.data,name);
 
                             }
                         });
                     } 
+                }
+                
+                $('#temas').on("change",function() {
 
 
+                    $("#comisionbox, #fechasbox").show();
+                    loadtema();
 
                 })
                 
@@ -319,7 +377,7 @@
                 })
                 .autocomplete( "instance" )._renderItem = function( ul, item ) {
                     return $( "<li>" )
-                    .append( "<a>" + item.label + "</a>" )
+                    .append( "<a>" + item.label +" ("+item.comisions+" comisiones)</a>" )
                     .appendTo( ul );
                 };
 
@@ -343,7 +401,7 @@
                             dels: sdels
                         },
                         ok:function(data) {
-
+                            loadtema();
                         }
                     });
 

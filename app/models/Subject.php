@@ -11,7 +11,7 @@ Class Subject extends Eloquent{
 
 	public function comision()
 	{
-		return $this->belongsToMany("Staff", "comisions", "subject_id", "staff_id")->withPivot('status','type');;
+		return $this->belongsToMany("Staff", "comisions", "subject_id", "staff_id")->withPivot('status','type');
 	}
 
 }

@@ -396,6 +396,52 @@ class First extends BaseController
 	}
 	//  CALENDARIO  //
 
+	// COMISIONES  //
+
+	public function getConfirmarcomision()
+	{
+		$ahead = array("Tema","Alumno 1","Alumno 2","Confirmar");
+		$head = "";
+		foreach ($ahead as $value) {
+			$head .= View::make('table.head',array('title'=>$value));
+		}
+
+		$body="";
+
+		$temas = Staff::find(Auth::user()->id)->comision()->wherePeriodo(Periodo::active())->get();
+
+		if(!$temas->isEmpty()){
+
+			$buttons = View::make("table.yesno");
+			
+			foreach ($temas as $tema) {
+
+				if($tema->pivot->status=="confirmar"){
+					$title = $tema->subject;
+					$alumno1 = $tema->student1;
+					$alumno2 = $tema->student2;
+					$id = $tema->id;
+
+
+					$content = View::make("table.cell",array("content"=>$title));
+					$content .= View::make("table.cell",array("content"=>$alumno1));
+					$content .= View::make("table.cell",array("content"=>$alumno2));
+					$content .= View::make("table.cell",array("content"=>$buttons));
+					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+				}
+			}
+
+		}else{
+			$message = "No hay comisiones pendientes de confirmación";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
+
+		}
+		//print_r($res);
+		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
+		return View::make('views.comision.confirmar', array("table"=>$table));
+	}
+
 }
 
 ?>

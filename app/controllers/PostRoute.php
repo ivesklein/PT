@@ -555,27 +555,27 @@ class PostRoute{
 	public static function ajxdefensas()
 	{
 		$return = array();
-		if(isset($_POST['type'])){
+		//if(isset($_POST['type'])){
 
 			if(Rol::hasPermission("coordefensa")){
 
 				$return["data"]=array();
-				if($_POST['type']==1){
-					$subjs = Subject::whereDefensa(1)->get();
+				//if($_POST['type']==1){
+					$subjs = Subject::wherePeriodo(Periodo::active())->get();
 					if(!$subjs->isEmpty()){
 						foreach ($subjs as $subj) {
 							$return["data"][] = array("id"=>$subj->id,"title"=>$subj->subject);
 						}
 					}
 
-				}else{
-					$subjs = Subject::whereDefensa(2)->get();
-					if(!$subjs->isEmpty()){
-						foreach ($subjs as $subj) {
-							$return["data"][] = array("id"=>$subj->id,"title"=>$subj->subject);
-						}
-					}
-				}
+				//}else{
+				//	$subjs = Subject::wherePeriodo(Periodo::active())->whereDefensa(2)->get();
+				//	if(!$subjs->isEmpty()){
+				//		foreach ($subjs as $subj) {
+				//			$return["data"][] = array("id"=>$subj->id,"title"=>$subj->subject);
+				//		}
+				//	}
+				//}
 
 		        $return["ok"] = "ok";
 	        	return json_encode($return);
@@ -583,9 +583,9 @@ class PostRoute{
 			}else{
 				$return["error"] = "not permission";
 			}
-		}else{
-			$return["error"] = "faltan variables";
-		}
+		//}else{
+		//	$return["error"] = "faltan variables";
+		//}
 		return json_encode($return);
 	}
 
@@ -626,11 +626,57 @@ class PostRoute{
 							"status"=>$comision->pivot->status
 						);
 					//}
+					$i++;
 				}
 
 				$return["ok"]=1;
 				//datos otros
 
+
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function ajxsavecomision()
+	{
+		$return = array();
+		if(isset($_POST['id']) && isset($_POST['news']) && isset($_POST['dels'])){
+
+			if(Rol::hasPermission("coordefensa")){
+
+				$news = explode("," , $_POST['news']);
+				$dels = explode("," , $_POST['dels']);
+
+
+				for ($i=0; $i < sizeof($news)-1 ; $i++) { 
+					$newprof = $news[$i];
+					//agregar profesor a comision
+					$com = new Comision;
+					$com->staff_id = $newprof;
+					$com->subject_id = $_POST['id'];
+					$com->status = "confirmar";
+					$com->save();
+
+					//AVISAR POR MAIL
+
+				}
+
+				for ($i=0; $i < sizeof($dels)-1 ; $i++) { 
+					$delprof = $dels[$i];
+					//agregar profesor a comision
+					$com = Comision::whereStaff_id($delprof)->whereSubject_id($_POST['id'])->delete();
+
+					//AVISAR POR MAIL
+
+				}
+
+				$return['ok'] = 1;
 
 
 			}else{

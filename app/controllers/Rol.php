@@ -28,7 +28,8 @@ class Rol {
 			array(
 				"guiaConfirmation",
 				"calendario",
-				"newevent"
+				"newevent",
+				"comisionConfirmation"
 			),
 		"PT"=>
 			array(
