@@ -405,13 +405,24 @@ class PostRoute{
 		        $event->start = $_POST["start"];
 		        $event->end = $_POST["end"];
 		        $event->save();
-
 		        $return["ok"] = $event->id;
-	        	return json_encode($return);
-
 
 			}else{
-				$return["error"] = "not permission";
+				$event = CEvent::find($_POST["id"]);
+				if($event->color=="blue" || $event->color=="darkcyan"){//defensa o predefensa
+					if(Rol::hasPermission("coordefensa")){
+
+				        $event->start = $_POST["start"];
+				        $event->end = $_POST["end"];
+				        $event->save();
+				        $return["ok"] = $event->id;
+
+					}else{
+						$return["error"] = "not permission";
+					}
+				}else{
+					$return["error"] = "not permission";
+				}
 			}
 		}else{
 			$return["error"] = "faltan variables";
@@ -465,15 +476,38 @@ class PostRoute{
 
 		        $return['data']=array();
 		        foreach ($events as $event) {
-		        	$return['data'][] = array(
-		        			"id" => $event->id,
-					    	"title" => $profe->wc_id,
-					        "detail" => $event->title,
-					        "start" => $event->start,
-					        "end" => $event->end,
-					        "color" => $event->color,
-					        "editable"=>false
-		        		);
+
+		        	if($event->color=="blue"){
+			        	$return['data'][] = array(
+			        			"id" => $event->id,
+						    	"title" => $profe->wc_id,
+						        "detail" => $event->detail."|".$event->title,
+						        "start" => $event->start,
+						        "end" => $event->end,
+						        "color" => $event->color,
+						        "editable"=>true
+			        		);
+		        	}elseif($event->color=="darkcyan"){
+			        	$return['data'][] = array(
+			        			"id" => $event->id,
+						    	"title" => $profe->wc_id,
+						        "detail" => $event->detail."|".$event->title,
+						        "start" => $event->start,
+						        "end" => $event->end,
+						        "color" => $event->color,
+						        "editable"=>true
+						    );
+		        	}else{
+			        	$return['data'][] = array(
+			        			"id" => $event->id,
+						    	"title" => $profe->wc_id,
+						        "detail" => $event->title,
+						        "start" => $event->start,
+						        "end" => $event->end,
+						        "color" => $event->color,
+						        "editable"=>false
+			        		);
+		        	}
 		        }
 
 
@@ -493,19 +527,31 @@ class PostRoute{
 	public static function ajxdelevent()
 	{
 		$return = array();
-		if(Auth::check()){
+		if(Rol::editEvent($_POST["id"])){
 
 			$e2s = E2S::whereEvent_id($_POST["id"])->delete();
 
 			$event = CEvent::find($_POST["id"])->delete();
 
 	        $return["ok"] = "ok";
-        	return json_encode($return);
-
 
 		}else{
-			return "not logged";
+			$event = CEvent::find($_POST["id"]);
+			if($event->color=="blue" || $event->color=="darkcyan"){//defensa o predefensa
+				if(Rol::hasPermission("coordefensa")){
+
+					$e2s = E2S::whereEvent_id($_POST["id"])->delete();
+					$event = CEvent::find($_POST["id"])->delete();
+			        $return["ok"] = "ok";
+
+				}else{
+					$return["error"] = "not permission";
+				}
+			}else{
+				$return["error"] = "not permission";
+			}
 		}
+		return json_encode($return);
 	}
 
 	public static function ajxactivateperiod()
@@ -653,6 +699,8 @@ class PostRoute{
 				$news = explode("," , $_POST['news']);
 				$dels = explode("," , $_POST['dels']);
 
+				$pre = CEvent::whereColor('darkcyan')->whereDetail($_POST['id'])->get();
+				$def = CEvent::whereColor('blue')->whereDetail($_POST['id'])->get();
 
 				for ($i=0; $i < sizeof($news)-1 ; $i++) { 
 					$newprof = $news[$i];
@@ -663,6 +711,22 @@ class PostRoute{
 					$com->status = "confirmar";
 					$com->save();
 
+					//agreagr evento si existe;
+					if(!$pre->isEmpty()){
+						$event = $pre->first();
+						$e2s = new E2S;
+				        $e2s->event_id = $event->id;
+				        $e2s->staff_id = $newprof;
+				        $e2s->save();
+					}
+					if(!$def->isEmpty()){
+						$event = $def->first();
+						$e2s = new E2S;
+				        $e2s->event_id = $event->id;
+				        $e2s->staff_id = $newprof;
+				        $e2s->save();
+					}
+
 					//AVISAR POR MAIL
 
 				}
@@ -671,6 +735,16 @@ class PostRoute{
 					$delprof = $dels[$i];
 					//agregar profesor a comision
 					$com = Comision::whereStaff_id($delprof)->whereSubject_id($_POST['id'])->delete();
+
+					//remover evento si existe;
+					if(!$pre->isEmpty()){
+						$event = $pre->first();
+						$e2s = E2S::whereEvent_id($event->id)->whereStaff_id($delprof)->delete();
+					}
+					if(!$def->isEmpty()){
+						$event = $def->first();
+						$e2s = E2S::whereEvent_id($event->id)->whereStaff_id($delprof)->delete();
+					}
 
 					//AVISAR POR MAIL
 
@@ -686,6 +760,121 @@ class PostRoute{
 			$return["error"] = "faltan variables";
 		}
 		return json_encode($return);
+	}
+
+	public static function ajxconfirmarcomision()
+	{
+		$return = array();
+		if(isset($_POST['id']) && isset($_POST['res'])){
+
+			if(Rol::hasPermission("comisionConfirmation")){
+
+				$staff_id = Auth::user()->id;
+				$subject_id = $_POST['id'];
+				$status = "";
+				if($_POST['res']==1){
+					$status = "confirmado";
+				}elseif($_POST['res']==0){
+					$status = "rechazado";
+				}
+
+				$com = Comision::whereStaff_id($staff_id)->whereSubject_id($subject_id)->first();
+				$com->status = $status;
+				$com->save();
+
+		        $return["ok"] = "ok";
+	        	return json_encode($return);
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function ajxnewcomisiondate()
+	{
+		$return = array();
+		if(isset($_POST['id']) && isset($_POST['start']) && isset($_POST['end']) && isset($_POST['color'])){
+
+			if(Rol::hasPermission("coordefensa")){
+
+				if($_POST['color']=="blue"){
+					$tipo = "Defensa";
+				}
+				if($_POST['color']=="darkcyan"){
+					$tipo = "Predefensa";
+				}
+				$subj = Subject::find($_POST['id']);
+				$title = $subj->subject;
+
+				//crear evento
+				$event = new CEvent;
+				$event->title = $tipo.": ".$title;
+				$event->start = $_POST['start'];
+				$event->end = $_POST['end'];
+
+
+		        $event->detail = $subj->id;
+		        $event->color = $_POST["color"];
+		        $event->save();
+
+				//tomar los participantes
+
+				$guia = $subj->guia;
+				//asignar evento a participantes
+				$e2s = new E2S;
+		        $e2s->event_id = $event->id;
+		        $e2s->staff_id = $guia->id;
+		        $e2s->save();
+
+				$otros = $subj->comision;
+				foreach ($otros as $comision) {
+					$e2s = new E2S;
+			        $e2s->event_id = $event->id;
+			        $e2s->staff_id = $comision->id;
+			        $e2s->save();
+				}
+
+				$return['ok'] = 1;
+
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+
+	public static function ltinew()
+	{
+		$return = array();
+		if(isset($_POST['name']) && isset($_POST['secret']) && isset($_POST['public'])){
+
+			if(Rol::hasPermission("webcursos")){
+
+				$lti = new Consumer;
+				$lti->secret = $_POST['secret'];
+				$lti->key = $_POST['public'];
+				$lti->name = $_POST['name'];
+				$lti->save();
+
+		        $return["ok"] = "ok";
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		
+		return View::make('views.webcursos.webcursos');
+
 	}
 
 

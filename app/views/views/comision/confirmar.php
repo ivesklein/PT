@@ -10,8 +10,7 @@
             var datos = {
                 "f":"ajxconfirmarcomision",
                 "res":1,
-                "id":id,
-                "mes":""
+                "id":id
             };
             ajx({
                 data:datos,
@@ -22,12 +21,10 @@
         });
         $(".confirmar").on("click", ".no",function() {
             var id = $(this).parent().parent().attr("n");
-            var mes = prompt("Causa del Rechazo (se enviará a los alumnos)");
             var datos = {
                 "f":"ajxconfirmarcomision",
                 "res":0,
-                "id":id,
-                "mes":mes
+                "id":id
             };
             ajx({
                 data:datos,

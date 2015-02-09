@@ -7716,7 +7716,7 @@ input.input-danger:focus {
   border-radius: 2px;
 }
 .ui-select > select {
-  z-index: 99;
+  z-index: 2;
   display: block;
   position: relative;
   padding: 10px 15px 10px 10px;

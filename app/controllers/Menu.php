@@ -67,6 +67,11 @@ class Menu {
 			"where"=>"temas",
 			"place"=>"21",
 			"array"=>array("link"=>"#/confirmarcomision", "title"=>"Confirmar Comisión", "n"=>0)
+		),
+		"webcursos"=>array(
+			"where"=>"webcursos",
+			"place"=>"21",
+			"array"=>array("link"=>"#/webcursos", "title"=>"Configuración", "n"=>0)
 		)
 	);
 
@@ -90,6 +95,10 @@ class Menu {
 		"calendario" => array(
 			"place"=>"19",
 			"array"=>array("Calendario", "#/menu", "calendar", "primary", 0)
+		),
+		"webcursos" => array(
+			"place"=>"21",
+			"array"=>array("Webcursos", "#/menu", "calendar", "primary", 0)
 		)
 	);
 

@@ -52,24 +52,25 @@
                 </div>
             </div>
 
-            <div class="panel panel-default" style="display:none;" id="fechasbox" data-ng-controller="CollapseCtrl">
-                <div class="panel-heading" ng-click="isCollapsed = !isCollapsed"><strong><span class="glyphicon glyphicon-th"></span> Fijar Fechas Defensas</strong></div>
-                <div class="panel-body form-horizontal" collapse="isCollapsed">
-                    <div class="form-group">
-                        
-                        <label class="col-sm-4">Tipo de evento</label>
+            <div class="panel panel-default" style="display:none;" id="fechaprebox" data-ng-controller="CollapseCtrl">
+                <div class="panel-heading" ng-click="isCollapsed = !isCollapsed"><strong><span class="glyphicon glyphicon-th"></span> Fijar Fecha Predefensa</strong></div>
+                <div class="panel-body" collapse="isCollapsed">
 
-                        <!--dl class='cl-horizontal col-sm-8' id="tipoevento">
-                            <dd-->
-                            <div class="col-sm-8" id="tipoevento">
-                                <label class="ui-radio"><input type="radio" name="tipo" value="darkcyan"></input><span style="background:darkcyan;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid darkcyan;">Predefensa</span></label>
-                                <label class="ui-radio"><input type="radio" name="tipo" value="blue"></input><span style="background:blue;padding-right:10px;color:white;font-size:.85em;border-radius:3px;border:1px solid blue;">Defensa</span></label>
-                            </div>
-                            <!--/dd>
-
-                        </dl-->
-                    </div>
+                        <ul class="list-group" id="eventdetpre">
+                            <li class="list-group-item">Inicio <font class="inicio"></font></li>
+                            <li class="list-group-item">Fin <font class="fin"></font></li>
+                        </ul>
                     
+                </div>
+            </div>
+
+            <div class="panel panel-default" style="display:none;" id="fechadefbox" data-ng-controller="CollapseCtrl">
+                <div class="panel-heading" ng-click="isCollapsed = !isCollapsed"><strong><span class="glyphicon glyphicon-th"></span> Fijar Fecha Defensa</strong></div>
+                <div class="panel-body" collapse="isCollapsed">
+                        <ul class="list-group" id="eventdetdef">
+                            <li class="list-group-item">Inicio <font class="inicio"></font></li>
+                            <li class="list-group-item">Fin <font class="fin"></font></li>
+                        </ul>
                 </div>
             </div>
 
@@ -95,7 +96,29 @@
                         yo.profesores[profesor] = eventos;
                         for(n in eventos){
                             var evento = eventos[n];
-                            $(calel).fullCalendar('renderEvent', evento, true);
+
+                            if(evento.color=="blue" || evento.color=="darkcyan"){
+                                var data = evento.detail.split("|");
+                                var title = data[1];
+                                var id = data[0];
+
+                                if(id==idtema){
+                                    evento.title = title;
+                                    evento.detail = id;
+
+                                    if($(calel).fullCalendar( 'clientEvents', evento.id ).length==0){
+                                        $(calel).fullCalendar('renderEvent', evento, true);
+                                        console.log($(calel).fullCalendar( 'clientEvents', evento.id ).length)
+                                        console.log(nombre)
+                                    }
+                                }else{
+                                    $(calel).fullCalendar('renderEvent', evento, true);
+                                }
+
+                            }else{
+                                $(calel).fullCalendar('renderEvent', evento, true);
+                            }
+
                         }
                         if(tipo=="guia"){
                             $(listel).prepend('<li id="P'+profesor+'" class="list-group-item">'+nombre+'<span class="badge badge-info">Profesor Guía</span></li>');    
@@ -103,7 +126,11 @@
                         if(tipo=="comision"){
                             var message = "";
                             if(status=="confirmar")
-                                message = '<span class="badge badge-warning delprof">no confirmado</span>';
+                                message = '<span class="badge badge-warning">no confirmado</span>';
+                            if(status=="confirmado")
+                                message = '<span class="badge badge-success">confirmado</span>';
+                            if(status=="rechazado")
+                                message = '<span class="badge badge-danger">rechazado</span>';
 
                             $(listel).append('<li id="P'+profesor+'" class="list-group-item">'+nombre+'<span class="badge badge-danger delprof">X</span>'+message+'</li>');    
                         }
@@ -198,6 +225,9 @@
 
             </script>
             <script type="text/javascript">
+
+            var idtema=-1;
+
             $(function() {
 
                 ajx({
@@ -218,30 +248,74 @@
                     }
                 });
 
-                $("#comisionbox .panel-heading, #fechasbox .panel-heading").hover(
+                $("#comisionbox .panel-heading, #fechaprebox .panel-heading, #fechadefbox .panel-heading").hover(
                 function() {//adentro
-                    $(this).parent().removeClass('panel-default').addClass('panel-info');
+                    if(!$(this).hasClass("selected"))
+                        $(this).parent().removeClass('panel-default').addClass('panel-info');
                 },
                 function() {//fuera
-                    $(this).parent().removeClass('panel-info').addClass('panel-default');
+                    if(!$(this).hasClass("selected"))
+                        $(this).parent().removeClass('panel-info').addClass('panel-default');
+                });
+
+
+                $("#fechaprebox, #fechaprebox .panel-heading, #fechaprebox .panel-body").on('click',function() {
+                    $("#fechaprebox").removeClass('panel-default').addClass('panel-info').find(".panel-heading").addClass("selected");
+
+                    $("#fechadefbox").removeClass('panel-info').addClass('panel-default').find(".panel-heading").removeClass("selected");
+                    
+                    if($("#suggestpre").length==0){
+                        $("#eventdetpre").prepend("<div class='alert alert-info' id='suggestpre'>Seleccione fecha en el calendario</>");
+                    }
+                    $("#suggestdef").remove();
+                    eventcolor = "darkcyan";
+                    eventdes = "Predefensa";
+                    type=1;
                 })
 
+                $("#fechadefbox, #fechadefbox .panel-heading, #fechadefbox .panel-body").on('click',function() {
+                     $("#fechadefbox").removeClass('panel-default').addClass('panel-info').find(".panel-heading").addClass("selected");
+
+                    $("#fechaprebox").removeClass('panel-info').addClass('panel-default').find(".panel-heading").removeClass("selected");
+                    
+                    if($("#suggestdef").length==0){
+                        $("#eventdetdef").prepend("<div class='alert alert-info' id='suggestdef'>Seleccione fecha en el calendario</>");
+                    }
+                    $("#suggestpre").remove();
+                    eventcolor = "blue";
+                    eventdes = "Defensa";
+                    type=2;
+                 })
 
                 $('#tipoevento input[type="radio"]').on("change",function() {
                     eventcolor = $(this).val();
                     //$('#temas').html("");
+                    /*
+                    if($("#suggest").length==0){
+                        $("#eventdet").prepend("<div class='alert alert-info' id='suggest'>Seleccione fecha en el calendario</>");
+                    }
+
                     if(eventcolor=="darkcyan"){
                         eventdes = "Predefensa";
                         type=1;
+                        //if(0 in $("#predefensadate"))
+                            $("#suggest").after("<li class='list-group-item' id='predefensadate'></li>");
+                            $("#predefensadate").append("<ul></ul>");
+                            $("#predefensadate ul").append("<li>Predefensa</li>");
+                            $("#predefensadate ul").append("<li>Inicio</li>");
+                            $("#predefensadate ul").append("<li>Fin</li>");                                                        
                     }
                     if(eventcolor=="blue"){
                         eventdes = "Defensa";
                         type=2;
+                        //if(0 in $("#defensadate"))
+                            $("#eventdet").append("<li class='list-group-item' id='defensadate'>Defensa</li>");
                     }
-
+                    */
                 });
 
                 function loadtema () {
+                    idtema = $('#temas').val();
                     var id = $('#temas').val();
                     Lista.reset();
                     if(id!="sel"){
@@ -333,7 +407,7 @@
                 $('#temas').on("change",function() {
 
 
-                    $("#comisionbox, #fechasbox").show();
+                    $("#comisionbox, #fechaprebox, #fechadefbox").show();
                     loadtema();
 
                 })
@@ -425,27 +499,31 @@
 
             <script type="text/javascript">
 
-            var eventcolor = "black";
-            var eventdes = "Ocupado";
+            var eventcolor = "";
 
             var add = function(start, end) {
-                var title = prompt('Event Title:');
-                var eventData;
-                if(title){
+
+                var id = $('#temas').val();
+                var title = "";
+                
+                //verificar que se sepa que tipo de evento es
+                if(id!="sel" && eventcolor!=""){
+
+                    //guardarlo
+                    var eventData;
                     ajx({
                         data:{
-                            f:'ajxnewevent',
-                            title: eventdes,
-                            detail: title,
+                            f:'ajxnewcomisiondate',
+                            id: id,
                             start: start.format(),
                             end: end.format(),
                             color: eventcolor
                         },
-                        ok:function(id) {
+                        ok:function(id, title) {
                             eventData = {
                                 //id: id.ok,
-                                title: eventdes,
-                                detail: title,
+                                title: title,
+                                detail: "",
                                 start: start,
                                 end: end,
                                 color: eventcolor
@@ -454,6 +532,15 @@
                             $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
                         
                             $('#calendar').fullCalendar('unselect');
+
+                            if(eventdes=="Predefensa"){
+                                $("#eventdetpre .inicio").html(start.format());
+                                $("#eventdetpre .fin").html(end.format());
+                            }
+                            if(eventdes=="Defensa"){
+                                $("#eventdetdef .inicio").html(start.format());
+                                $("#eventdetdef .fin").html(end.format());
+                            }
                         }
                     });
 
@@ -467,23 +554,34 @@
                 var end = event.end;
                 var id = event.id;
 
-                ajx({
-                    data:{
-                        f:'ajxeditevent',
-                        id: id,
-                        start: start.format(),
-                        end: end.format()
-                    },
-                    ok:function(data){},
-                    error:error
-                });
+                if(event.detail==idtema){
+                    var res = confirm("¿Realmente desea mover "+event.title+" a "+event.start.format()+" hasta "+event.end.format()+"?")
+                    if(res){
+                        
+                        ajx({
+                            data:{
+                                f:'ajxeditevent',
+                                id: id,
+                                start: start.format(),
+                                end: end.format()
+                            },
+                            ok:function(data){},
+                            error:error
+                        });
+                        
+                    }else{
+                        error();
+                    }
+                }else{
+                    error();
+                }
 
             }
 
             var click = function(event){
                 var del = confirm("¿Borrar "+event.detail+"?");
                 if(del==true){
-                    ajx({
+                    /*ajx({
                         data:{
                             f:'ajxdelevent',
                             id: event.id
@@ -491,12 +589,13 @@
                         ok:function(data){
                             $('#calendar').fullCalendar('removeEvents',event.id);
                         }
-                    });
+                    });*/
                 }
 
             }
 
             var load = function() {
+                /*
                 ajx({
                     data:{
                         f:'ajxmyevents'
@@ -508,7 +607,7 @@
 
                         }
                     }
-                });
+                });*/
             }
 
 
@@ -526,23 +625,24 @@
                         'agendaDay':{}
                     },
                     'businessHours':{
-                        start:"8:00",
-                        end:"20:00",
+                        start:"8:15",
+                        end:"20:40",
                         dow:[1,2,3,4,5]
                     },
                     'slotDuration':'00:15:00',
                     'snapDuration':'00:05:00',
                     'lang':'es',
+                    'defaultView':'agendaWeek',
 
                     'timezone':"-3:00",
                     selectable: true,
                     //selectHelper: true,
                     
-                    //select: add,
-                    //eventResize: edit,
-                    //eventDrop: edit,
-                    //eventClick: click,
-                    //editable: true,
+                    select: add,
+                    eventResize: edit,
+                    eventDrop: edit,
+                    eventClick: click,
+                    editable: true
                 });
 
                 load();

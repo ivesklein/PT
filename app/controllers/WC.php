@@ -14,7 +14,7 @@ class WC extends BaseController
 
 	public function postIndex()
 	{
-		return View::make("helslo");
+		return View::make("hello");
 		//return Carbon::now();
 		//return "hola";
 	}
@@ -37,7 +37,7 @@ class WC extends BaseController
 			return "Hola ".$lti['name']." ".$lti['surname']."
 			<br>";
 		}else{
-			return $lti;
+			return print_r($lti);
 		}
 
 	}

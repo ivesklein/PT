@@ -64,7 +64,7 @@ angular.module("app",
 				.when("/coordefensa",{templateUrl:"views/coordefensa"})
 				.when("/periodos",{templateUrl:"views/periodos"})
 				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision"})
-
+				.when("/webcursos",{templateUrl:"views/webcursos"})
 				
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})

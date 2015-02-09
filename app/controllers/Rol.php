@@ -36,7 +36,8 @@ class Rol {
 				"guiasConfirmation",
 				"profesores",
 				"ayudantes",
-				"alumnos"
+				"alumnos",
+				"webcursos"
 			),
 		"AY"=>
 			array(
