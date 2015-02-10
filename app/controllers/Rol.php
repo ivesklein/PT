@@ -13,7 +13,8 @@ class Rol {
 				"ayudantes",
 				"alumnos",
 				"coordefensa",
-				"viewProfEvents"
+				"viewProfEvents",
+				"editrol"
 			),
 		"SA"=>
 			array(
@@ -22,7 +23,8 @@ class Rol {
 				"periodosEdit",
 				"profesores",
 				"ayudantes",
-				"alumnos"
+				"alumnos",
+				"editrol"
 			),
 		"P"=>
 			array(

@@ -877,6 +877,34 @@ class PostRoute{
 
 	}
 
+	public static function ajxeditrol()
+	{
+		$return = array();
+		if(isset($_POST['id']) && isset($_POST['rol'])){
+
+			if(Rol::hasPermission("editrol")){
+
+				$perm = Permission::whereStaff_id($_POST['id'])->get();
+				if(!$perm->isEmpty()){
+					$per = $perm->first();
+					$per->permission = $_POST['rol'];
+					$per->save();
+				}else{
+					$return["error"] = "not exist";
+				}
+
+		        $return["ok"] = "ok";
+	        	return json_encode($return);
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
 
 }//class
 

@@ -370,6 +370,60 @@ class First extends BaseController
 	//  USUARIOS  //
 	public function getProfesores()
 	{
+
+		$ahead = array("Nombre","Apellido","Mail","Boton");
+		$head = "";
+		foreach ($ahead as $value) {
+			$head .= View::make('table.head',array('title'=>$value));
+		}
+
+		$body="";
+
+		$staffs = Staff::all();
+
+		if(!$staffs->isEmpty()){
+			
+			foreach ($staffs as $staff) {
+
+					$name = $staff->name;
+					$surname = $staff->surname;
+					$mail = $staff->wc_id;
+					$id = $staff->id;
+
+					$array = array("items"=>array(
+						"CA"=>array("title"=>"Cordinador Académico", "value"=>"CA"),
+						"SA"=>array("title"=>"Secretario Académico", "value"=>"SA"),
+						"P"=>array("title"=>"Profesor", "value"=>"P"),
+						"PT"=>array("title"=>"Profesor Taller", "value"=>"PT"),
+						"AY"=>array("title"=>"Auyudante Taller", "value"=>"AY")
+					));
+
+					$role = Permission::whereStaff_id($id)->first();
+
+					$array['items'][$role->permission]["sel"]=1;
+
+					$buttons = View::make("html.drop", $array);
+
+					$content = View::make("table.cell",array("content"=>$name));
+					$content .= View::make("table.cell",array("content"=>$surname));
+					$content .= View::make("table.cell",array("content"=>$mail));
+					$content .= View::make("table.cell",array("content"=>$buttons));
+					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+				
+			}
+
+		}else{
+			$message = "No Usuarios";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
+
+		}
+		//print_r($res);
+		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
+		return View::make('views.users.profesores', array("table"=>$table));
+
+
+
 		return View::make('views.users.profesores');
 	}
 
