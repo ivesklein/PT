@@ -16,7 +16,14 @@ Class Staff extends Eloquent{
 
 	public function comision()
 	{
-		return $this->belongsToMany("Subject", "comisions", "staff_id", "subject_id")->withPivot('status','type');;
+		return $this->belongsToMany("Subject", "comisions", "staff_id", "subject_id")->withPivot('status','type');
 	}
+
+	public function rol()
+	{
+		return $this->hasOne('Permission');
+	}
+
+
 
 }

@@ -34,8 +34,17 @@ class WC extends BaseController
 		//return View::make("hello");
 		$lti = LTI::check();
 		if($lti['status'] == "ok"){
+
+			$pt = Staff::whereWc_id($lti['email'])->get;
+			if(!$pt->isEmpty()){
+				$user = $pt->first()->rol;
+
+
+				$mes = "Tu eres ".$user->permission." en Queso.";
+			}
+
 			return "Hola ".$lti['name']." ".$lti['surname']."
-			<br>";
+			<br>".$mes;
 		}else{
 			return print_r($lti);
 		}
