@@ -35,7 +35,7 @@ class WC extends BaseController
 		$lti = LTI::check();
 		if($lti['status'] == "ok"){
 
-			$pt = Staff::whereWc_id($lti['email'])->get;
+			$pt = Staff::whereWc_id($lti['email'])->get();
 			if(!$pt->isEmpty()){
 				$user = $pt->first()->rol;
 
