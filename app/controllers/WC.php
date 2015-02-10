@@ -35,6 +35,8 @@ class WC extends BaseController
 		$lti = LTI::check();
 		if($lti['status'] == "ok"){
 
+			$mes = "No estás registrado en Queso.";
+
 			$pt = Staff::whereWc_id($lti['email'])->get();
 			if(!$pt->isEmpty()){
 				$user = $pt->first()->rol;
