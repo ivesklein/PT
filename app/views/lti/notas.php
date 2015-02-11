@@ -1,10 +1,10 @@
 <?php echo View::make('lti.header'); ?>
 
 
-<div class="panel panel-default">
+<div class="panel panel-default" style="margin-right: 7px;">
         <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Notas</strong></div>
         <div class="panel-body row">
-        	<div class="col-md-3">
+        	<div class="col-xs-3">
 	        	<div class="panel panel-info">
 				        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Entrega 1</strong></div>
 				        <div class="panel-body">
@@ -13,7 +13,7 @@
 				        </div>
 				</div>
 			</div>
-        	<div class="col-md-3">
+        	<div class="col-xs-3">
 	        	<div class="panel panel-info">
 				        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Entrega 2</strong></div>
 				        <div class="panel-body">
@@ -22,7 +22,7 @@
 				        </div>
 				</div>
 			</div>
-        	<div class="col-md-3">
+        	<div class="col-xs-3">
 	        	<div class="panel panel-info">
 				        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Entrega 3</strong></div>
 				        <div class="panel-body">
@@ -31,7 +31,7 @@
 				        </div>
 				</div>
 			</div>
-        	<div class="col-md-3">
+        	<div class="col-xs-3">
 	        	<div class="panel panel-default">
 				        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Entrega 4</strong></div>
 				        <div class="panel-body">
@@ -44,10 +44,21 @@
 
 <script src="../scripts/vendor.js"></script>
 <script src="../scripts/ui.js"></script>
+<script src="../scripts/ajx.js"></script>
 <script type="text/javascript">
 $(".btn").on("click",function() {
 	var n = $(this).attr("n");
-	location = "nota/"+n;
+
+	ajx({
+		data:{
+				f:"vernota",
+				n:n
+			},
+		ok: function(data) {
+			console.log(data);
+		}
+	})
+
 })
 </script>
 

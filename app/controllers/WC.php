@@ -14,7 +14,17 @@ class WC extends BaseController
 
 	public function postIndex()
 	{
-		return View::make("hello");
+
+		if(isset($_POST['f'])){
+			if(method_exists("PostWC", $_POST['f'])){
+				return PostWC::$_POST['f']();
+			}else{
+				return "metodo no existe";
+			}
+		}else{
+			return "no post, maybe size error";
+		}
+		//return View::make("hello");
 		//return Carbon::now();
 		//return "hola";
 	}
