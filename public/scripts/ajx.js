@@ -2,7 +2,7 @@ var ajx = function(data){
     $.ajax({
         type:"post",
         data: data.data ,
-        url: "",
+        url: "../lti",
         success: function(output){
             if(output=="not logged"){
                 alert(output);
