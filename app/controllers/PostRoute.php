@@ -27,7 +27,7 @@ class PostRoute{
 	public static function temas()
 	{	
 
-		if(Auth::check()){
+		if(Rol::hasPermission("temasCreate")){
 
 			$TEMA = 0 ;
 			$RUN1 = 1 ;
