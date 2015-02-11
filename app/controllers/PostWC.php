@@ -3,12 +3,14 @@ class PostWC {
 	
 	public static function ajxvernota()
 	{
+		$return = array();
 		$user = Session::get('wc.user' ,"0");
 		if($user!="0"){
-			return $user;//View::make("lti.notas");
+			$return['ok'] = $user;//View::make("lti.notas");
 		}else{
-			return "ah?";
+			$return["error"] = "no autentificado";
 		}
+		return json_encode($return);
 	}
 
 }
