@@ -23,7 +23,7 @@ foreach($ltis as $lti){
 <h3>Curso</h3>
 <?php 
 	$per = Periodo::active_obj();
-	if($per!=false){
+	if($per!="false"){
 		if(!$per->wc_course==""){
 			echo "<p>Curso Establecido n:".$per->wc_course."</p>";
 		}else{

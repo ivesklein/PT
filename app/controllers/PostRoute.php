@@ -946,7 +946,7 @@ class PostRoute{
 		if(isset($_POST['id'])){
 			if(Rol::hasPermission("webcursos")){
 				$per = Periodo::active_obj();
-				if($per!=false){
+				if($per!="false"){
 					$per->wc_course = $_POST['id'];
 					$per->save();
 				}else{
