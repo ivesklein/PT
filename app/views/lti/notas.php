@@ -51,7 +51,7 @@ $(".btn").on("click",function() {
 
 	ajx({
 		data:{
-				f:"vernota",
+				f:"ajxvernota",
 				n:n
 			},
 		ok: function(data) {
