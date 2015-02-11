@@ -148,8 +148,14 @@ Route::get('/test' ,function()
 {
 
 
+	$wc = new WCAPI;
+	$res = $wc->login("dklein@alumnos.uai.cl","password");
+
+	print_r($res);
+
+
 	//$guias = Staff::find(17)->guias()->count();
-	
+	/*
 	$n = new Comision;
 	$n->staff_id = 15;
 	$n->subject_id = 1;
@@ -158,7 +164,7 @@ Route::get('/test' ,function()
 	$n->save();
 
 	return $n->id;
-
+*/
 	//print_r($guias);
 	//redirect to controller
 	//$rol = new Rol;

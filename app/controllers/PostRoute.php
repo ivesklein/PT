@@ -905,6 +905,62 @@ class PostRoute{
 		return json_encode($return);
 	}
 
+	public static function ajxcursos()
+	{
+		$return = array();
+		if(isset($_POST['p'])){
+			if(Rol::hasPermission("webcursos")){
+
+				$wc = new WCAPI;
+				$res = $wc->login(Auth::user()->wc_id,$_POST['p']);
+		        
+				if(!isset($res['error'])){
+			        if(isset($res['courses'])){
+			        	$return["data"]=array();
+			        	foreach($res['courses']["ids"] as $n => $id){
+			        		$return["data"][] = array("id"=>$id, "title"=>$res['courses']["titles"][$n]);
+			        	}
+
+			        	$return["ok"] = "ok";
+			        }else{
+			        	$return["error"] = "no courses";
+			        }
+				}else{
+					$return["error"] = $res['error'];
+				}
+		        
+	        	
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function ajxsetcurso()
+	{
+		$return = array();
+		if(isset($_POST['id'])){
+			if(Rol::hasPermission("webcursos")){
+				$per = Periodo::active_obj();
+				if($per!=false){
+					$per->wc_course = $_POST['id'];
+					$per->save();
+				}else{
+					$return["error"] = "error";
+				}
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
 
 }//class
 
