@@ -53,6 +53,57 @@ class WC extends BaseController
 
 	}
 
+	public function postNotas()
+	{	
+		//return View::make("hello");
+		$lti = LTI::check();
+		if($lti['status'] == "ok"){
+
+			$mes = "No estás registrado en Queso.";
+
+			$pt = Staff::whereWc_id($lti['email'])->get();
+			if(!$pt->isEmpty()){
+				$user = $pt->first()->rol;
+
+
+				$mes = "Tu eres ".$user->permission." en Queso.";
+			}
+
+			$name = $lti['name']." ".$lti['surname'];
+
+			return View::make("lti.notas");
+
+		}else{
+			return print_r($lti);
+		}
+
+	}
+
+	public function postEvaluacion()
+	{	
+		//return View::make("hello");
+		$lti = LTI::check();
+		if($lti['status'] == "ok"){
+
+			$mes = "No estás registrado en Queso.";
+
+			$pt = Staff::whereWc_id($lti['email'])->get();
+			if(!$pt->isEmpty()){
+				$user = $pt->first()->rol;
+
+
+				$mes = "Tu eres ".$user->permission." en Queso.";
+			}
+
+			$name = $lti['name']." ".$lti['surname'];
+
+			return View::make("lti.evaluacion");
+
+		}else{
+			return print_r($lti);
+		}
+
+	}
 
 	public function postYo()
 	{
