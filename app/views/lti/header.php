@@ -14,6 +14,10 @@
         	body{
         		background-color: white !important;
         	}
+        	html{
+        		overflow: scroll;
+        		overflow-x: hidden; 
+        	}
 
         </style>
 </head>
