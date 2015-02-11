@@ -71,12 +71,23 @@ class WC extends BaseController
 
 			$name = $lti['name']." ".$lti['surname'];
 
+			Session::put('wc.user', $lti['email']);
+
 			return View::make("lti.notas");
 
 		}else{
 			return print_r($lti);
 		}
 
+	}
+
+	public function getNotas()
+	{
+		if(Session::get('wc.user' ,"0")!="0"){
+			return View::make("lti.notas");
+		}else{
+			return "ah?";
+		}
 	}
 
 	public function postEvaluacion()
@@ -103,6 +114,11 @@ class WC extends BaseController
 			return print_r($lti);
 		}
 
+	}
+
+	public function showNota($n)
+	{
+		return View::make("lti.nota");
 	}
 
 	public function postYo()

@@ -144,6 +144,12 @@ Route::controller('th','Typeahead');
 
 
 //tests////////////////////////////////////////
+
+Route::get('/a/view' ,function()
+{
+	return View::make("lti.notas");
+});
+
 Route::get('/test' ,function()
 {
 
