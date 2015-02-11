@@ -20,4 +20,15 @@ Class Periodo extends Eloquent{
 		}
 	}
 
+	public function scopeActive_obj($query){
+
+		$pers = $query->whereStatus('active')->get();
+		if(!$pers->isEmpty()){
+			$per = $pers->first();
+			return $per;
+		}else{
+			return "false";
+		}
+	}
+
 }
