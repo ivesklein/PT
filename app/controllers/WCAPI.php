@@ -264,6 +264,91 @@ LISTA DE GRUPOS
 	http://webcursos.uai.cl/group/index.php?id=26032
 	html
 
+
+AGREGAR ENTREGA
+
+	http://webcursos.uai.cl/course/modedit.php
+
+	mform_isexpanded_id_availability:1
+	assignsubmission_comments_enabled:1
+	assignfeedback_editpdf_enabled:1
+	mform_isexpanded_id_submissiontypes:1
+	conditiongraderepeats:1
+	conditionfieldrepeats:1
+	course:26032				//course id
+	coursemodule:
+	section:2 					//ubicación
+	module:31
+	modulename:assign
+	instance:
+	add:assign
+	update:0
+	return:0
+	sr:0
+	sesskey:0lmEJNKjdq 			//sesskey
+	_qf__mod_assign_mod_form:1
+	mform_isexpanded_id_general:1
+	mform_isexpanded_id_feedbacktypes:1
+	mform_isexpanded_id_submissionsettings:1
+	mform_isexpanded_id_groupsubmissionsettings:1
+	mform_isexpanded_id_notifications:1
+	mform_isexpanded_id_modstandardgrade:1
+	mform_isexpanded_id_modstandardelshdr:1
+	mform_isexpanded_id_availabilityconditionsheader:1
+	name:nombre											//titulo
+	introeditor[text]:<p>descripcion</p>				//descipcion en html
+	introeditor[format]:1
+	introeditor[itemid]:966059896
+	allowsubmissionsfromdate[day]:12 					//fecha inicio
+	allowsubmissionsfromdate[month]:2 					//fecha inicio
+	allowsubmissionsfromdate[year]:2015  				//fecha inicio
+	allowsubmissionsfromdate[hour]:0  					//fecha inicio
+	allowsubmissionsfromdate[minute]:0  				//fecha inicio
+	allowsubmissionsfromdate[enabled]:1 				//fecha inicio
+	duedate[day]:19 									//fecha fin
+	duedate[month]:2  									//fecha fin
+	duedate[year]:2015  								//fecha fin
+	duedate[hour]:0 									//fecha fin
+	duedate[minute]:0 									//fecha fin
+	duedate[enabled]:1 									//fecha fin
+	alwaysshowdescription:1
+	assignsubmission_onlinetext_enabled:1
+	assignsubmission_file_enabled:1
+	assignsubmission_file_maxfiles:1
+	assignsubmission_file_maxsizebytes:0
+	submissiondrafts:0
+	requiresubmissionstatement:0
+	attemptreopenmethod:none
+	teamsubmission:1
+	teamsubmissiongroupingid:0
+	sendnotifications:1
+	grade:0
+	advancedgradingmethod_submissions:
+	gradecat:20828
+	blindmarking:0
+	markingworkflow:0
+	visible:1
+	cmidnumber:
+	groupmode:1
+	groupingid:0
+	conditiongradegroup[0][conditiongradeitemid]:0
+	conditiongradegroup[0][conditiongrademin]:
+	conditiongradegroup[0][conditiongrademax]:
+	conditionfieldgroup[0][conditionfield]:0
+	conditionfieldgroup[0][conditionfieldoperator]:contains
+	conditionfieldgroup[0][conditionfieldvalue]:
+	showavailability:1
+	submitbutton:Guardar cambios y mostrar
+
+USER LIST
+
+	http://webcursos.uai.cl/user/index.php?roleid=0&id=26032&search&perpage=5000
+
+			  iiii 																																				  iiiiiiiiiiDDDDDii																																																																																																																																																																												  iDDDDDDDDDDDIDDDDDDDDIIIIII
+	<tr class="r1" id="user-index-participants-26032_r3"><td class="cell c0" id="user-index-participants-26032_r3_c0"><input type="checkbox" class="usercheckbox" name="user23817"></td><td class="cell c1" id="user-index-participants-26032_r3_c1"><a href="http://webcursos.uai.cl/user/view.php?id=23817&amp;course=26032"><img src="http://webcursos.uai.cl/pluginfile.php/285528/user/icon/essential/f2?rev=3339516" alt="Imagen de Pablo Jose Carrasco Melo" title="Imagen de Pablo Jose Carrasco Melo" class="userpicture" width="35" height="35"></a></td><td class="cell c2" id="user-index-participants-26032_r3_c2"><strong><a href="http://webcursos.uai.cl/user/view.php?id=23817&amp;course=26032">Pablo Jose Carrasco Melo</a></strong></td><td class="cell c3" id="user-index-participants-26032_r3_c3">18018721</td><td class="cell c4" id="user-index-participants-26032_r3_c4">pabcarrasco@alumnos.uai.cl</td><td class="cell c5" id="user-index-participants-26032_r3_c5">Santiago</td><td class="cell c6" id="user-index-participants-26032_r3_c6">Chile</td><td class="cell c7" id="user-index-participants-26032_r3_c7">2 días 23 horas</td></tr>
+
+	<tr class="r.".+name="user([0-9]+)">.+>(.+@.*uai.cl)<
+
 */
 
 
