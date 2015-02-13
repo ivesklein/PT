@@ -961,6 +961,22 @@ class PostRoute{
 		return json_encode($return);
 	}
 
+	public static function ajxregistrarwc()
+	{
+		//ver el n para ver de donde empezar
+
+		//cargar lista de usuarios y sus respectivos roles y grupos
+
+		//verificar si está registrado
+			//si no registrar y guardar uid
+			//si si guardar uid y comprobar rol
+
+		//asignar grupo
+
+		//devolver lista con 
+
+	}
+
 
 }//class
 
