@@ -963,11 +963,239 @@ class PostRoute{
 
 	public static function ajxregistrarwc()
 	{
+		$return = array();
+		if(isset($_POST['p'])){
+			if(Rol::hasPermission("webcursos")){
+				$temas = Subject::wherePeriodo(Periodo::active())->get();
+	            $reg = 0;
+	            $notreg = 0;
+	            $users = array();
+	            //cargar lista de usuarios y sus respectivos roles y grupos
+	            if(!$temas->isEmpty()){
+
+
+            	    //obtener lista de usuarios de wc
+            		$wc = new WCAPI;
+            		$wc->login(Auth::user()->wc_id,$_POST['p']);
+
+            		$wcres1 = $wc->userList();
+            		if(!isset($wcres1["error"])){
+            			$wcusers = $wcres1["users"];
+            		}
+
+                	//obtener lista de grupos de wc
+            		$wcres2 = $wc->groupList();
+            		if(!isset($wcres2["error"])){
+            			$wcgroups = $wcres2["groups"];
+            		}
+
+	                foreach ($temas as $tema) {
+
+	                	$grupo = explode("@",$tema->student1)[0]." & ".explode("@",$tema->student2)[0]."(".$tema->id.")";
+	                    
+	                    $guia = $tema->guia;
+	                    if(isset($users[$guia->wc_id])){
+	                    	$users[$guia->wc_id]['grupo'][]=$grupo;
+	                    }else{
+	                    	if(!empty($guia->wc_uid)){
+		                        $users[$guia->wc_id] = array("rol"=>"prof", "status"=>1, "uid"=>$guia->wc_uid, "grupo"=>array($grupo), "res"=>array());
+		                    }else{
+		                        $users[$guia->wc_id] = array("rol"=>"prof", "status"=>0, "grupo"=>array($grupo), "res"=>array());
+		                    }
+	                    }
+
+
+	                    
+	                    $comision = $tema->comision;
+	                    if(!$comision->isEmpty()){
+	                        foreach ($comision as $prof) {
+	                            if(isset($users[$prof->wc_id])){
+			                    	$users[$prof->wc_id]['grupo'][]=$grupo;
+			                    }else{
+			                    	if(!empty($prof->wc_uid)){
+				                        $users[$prof->wc_id] = array("rol"=>"prof", "status"=>1, "uid"=>$prof->wc_uid, "grupo"=>array($grupo), "res"=>array());
+				                    }else{
+				                        $users[$prof->wc_id] = array("rol"=>"prof", "status"=>0, "grupo"=>array($grupo), "res"=>array());
+				                    }
+			                    }
+	                        }
+	                    }
+
+
+	                    $alumno1 = $tema->ostudent1;
+	                    $alumno2 = $tema->ostudent2;
+	                    
+	                    //print_r($alumno1);
+	                    if(!empty($alumno1->wc_uid)){
+	                        $users[$alumno1->wc_id] = array("rol"=>"alumno", "status"=>1, "uid"=>$alumno1->wc_uid, "grupo"=>array($grupo), "res"=>array());
+	                    }else{
+	                        $users[$alumno1->wc_id] = array("rol"=>"alumno", "status"=>0, "grupo"=>array($grupo), "res"=>array());
+	                    }
+	                    
+	                    if(!empty($alumno2->wc_uid)){
+	                        $users[$alumno2->wc_id] = array("rol"=>"alumno", "status"=>1, "uid"=>$alumno2->wc_uid, "grupo"=>array($grupo), "res"=>array());
+	                    }else{
+	                        $users[$alumno2->wc_id] = array("rol"=>"alumno", "status"=>0, "grupo"=>array($grupo), "res"=>array());
+	                    }
+
+	                   	//verificar que grupo existe en wc
+		                if(isset($wcgroups[$grupo])){
+		                	//sisi sacar idgrupo
+						}else{
+		                	//sino crear y sacar idgrupo
+		                	$res = $wc->createGroup($grupo,$tema->id);
+		                	if(isset($res["ok"])){
+		                		$wcgroups[$grupo] = $res["ok"];
+		                	}/*else{
+		                		$wcgroups[$grupo] = 
+		                	}*/
+	                    }  
+	            
+	                }//each tema
+
+
+
+
+	                //verificar si está registrado
+	                foreach ($users as $user=>$value) {
+	                    if($value['status']==0){
+	                    	//si no registrar y guardar uid, asignar grupo
+	                    	if(isset($wcusers[$user])){
+	                    		//guardar uid
+	                    		if($value['rol']=="profesor"){
+	                    			$prof = Staff::whereWc_id($user)->first();
+	                    			$prof->wc_uid = $wcusers[$user]['uid'];
+	                    			$prof->save();
+
+	                    			//if(in_array($value["grupo"], $os))
+
+	                    			foreach ($value["grupo"] as $grupo) {
+	                    				if(!isset($wcusers[$user]['grupos'][$grupo])){
+		                    				//asignar grupo
+	                    					$wc->user2group($wcusers[$user]['uid'], $wcgroups[$grupo]);
+		                    				$users[$user]["res"][] = "Agregado a ".$grupo;
+		                    			}
+	                    			}
+	                    			
+
+	                    			if(!isset($wcusers[$user]['roles'][4])){
+	                    				//asignar rol
+
+	                    				$wcres7 = $wc->role2user($wcusers[$user]['uid'], 4);
+		                				if(isset($wcres7['ok'])){
+		                					$users[$user]["res"][] = "Agregado Rol Ayudante Corrector";
+		                				}else{
+		                					$users[$user]["res"][] = "Error al agregar Rol Ayudante Corrector";
+		                				}
+
+	                    			}
+	                    		}elseif ($value['rol']=="alumno") {
+	                    			$alumn = Student::whereWc_id($user)->first();
+	                    			$alumn->wc_uid = $wcusers[$user]['uid'];
+	                    			$alumn->save();
+
+	                    			if(!isset($wcusers[$user]['grupos'][$value["grupo"][0]])){
+	                    				//asignar grupo
+	                    				$wc->user2group($wcusers[$user]['uid'], $wcgroups[$value["grupo"][0]]);
+	                    				$users[$user]["res"][] = "Agregado a ".$value["grupo"][0];
+	                    			}
+
+	                    			if(!isset($wcusers[$user]['roles'][5])){
+	                    				//asignar rol
+
+	                    				$wcres6 = $wc->role2user($wcusers[$user]['uid'], 5);
+		                				if(isset($wcres6['ok'])){
+		                					$users[$user]["res"][] = "Agregado Rol Estudiante";
+		                				}else{
+		                					$users[$user]["res"][] = "Error al agregar Rol Estudiante";
+		                				}
+	                    			}
+	                    				
+	                    		}
+	                    		//verificar rol y grupo
+	                    	}else{
+	                    		//buscar y registrar
+	                    		$wcres3 = $wc->searchUser($user);
+	                    		if(isset($wcres3["ok"])){
+	                    			$uid = $wcres3["ok"]->id;
+	                    			//registrar en curso
+	                    			if($value['rol']=="profesor"){
+	                    				$rol = 4;
+	                    			}elseif ($value['rol']=="alumno") {
+	                    				$rol = 5;
+	                    			}
+	                    			$wcres4 = $wc->enrolUser($uid,$rol);
+	                    			if(isset($wcres3["ok"])){
+	                    				//guardar uid
+	                    				if($value['rol']=="profesor"){
+			                    			$prof = Staff::whereWc_id($user)->first();
+			                    			$prof->wc_uid = $uid;
+			                    			$prof->save();
+			                    			$users[$user]["res"][] = "Guardado uid wc";
+			                    		}elseif ($value['rol']=="alumno") {
+			                    			$alumn = Student::whereWc_id($user)->first();
+			                    			$alumn->wc_uid = $uid;
+			                    			$alumn->save();
+			                    			$users[$user]["res"][] = "Guardado uid wc";
+			                    		}
+	                    			}
+	                    			//asignar grupo
+	                    			foreach ($value["grupo"] as $grupo) {
+	                    				$wc->user2group($uid, $wcgroups[$grupo]);
+	                    				$users[$user]["res"][] = "Agregado a ".$grupo;
+	                    			}
+	                    			
+	                    			$users[$user]["res"]="Registrado";
+
+	                    		}elseif (isset($wcres3["warning"])) {
+	                    			$users[$user]["res"][]="No existe en Webcursos";
+	                    		}elseif (isset($wcres3["error"])) {
+	                    			$users[$user]["res"][]="Error busqueda usuario";
+	                    		}
+	                    	}
+	                        
+	                    }elseif ($value['status']==1) {
+	                        //sisi comprobar rol y grupo
+                    	    foreach ($value["grupo"] as $grupo) {
+                				if(!isset($wcusers[$user]['grupos'][$grupo])){
+                    				//asignar grupo
+                    				$wc->user2group($value["uid"], $wcgroups[$grupo]);
+	                    			$users[$user]["res"][] = "Agregado a ".$grupo;
+                    			}
+                			}
+
+                			if($value['rol']=="profesor"){
+                				$rol = 4;
+                			}elseif ($value['rol']=="alumno") {
+                				$rol = 5;
+                			}
+                			if(!isset($wcusers[$user]['roles'][$rol])){
+                				//asignar rol
+                				$wcres5 = $wc->role2user($value["uid"], $rol);
+                				if(isset($wcres5['ok'])){
+                					$users[$user]["res"][] = "Agregado Rol ".$rol;
+                				}else{
+                					$users[$user]["res"][] = "Error al agregar Rol ".$rol;
+                				}
+                				
+                			}
+	                    }
+	                }//for
+	            }else{
+	                $return['warning'] "no hay temas";
+	            }
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
 		//ver el n para ver de donde empezar
 
-		//cargar lista de usuarios y sus respectivos roles y grupos
+		
 
-		//verificar si está registrado
+		
 			//si no registrar y guardar uid
 			//si si guardar uid y comprobar rol
 

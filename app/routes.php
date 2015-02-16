@@ -157,7 +157,12 @@ Route::get('/test' ,function()
 	$wc = new WCAPI;
 	$res = $wc->login("dklein@alumnos.uai.cl","password");
 
-	print_r($res);
+	//$res1 = $wc->userList();
+	//$res2 = $wc->groupList();
+	$res2 = $wc->searchUser("karol.suchan@uai.cl");
+	
+
+	print_r($res2);
 
 
 	//$guias = Staff::find(17)->guias()->count();
