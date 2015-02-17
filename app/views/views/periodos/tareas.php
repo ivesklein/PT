@@ -1,55 +1,207 @@
 <?php //Ingreso Temas Memoria ?>
 <div class="page page-table">
 
+    <link rel="stylesheet" href="bootstrap-datepicker/css/datepicker.css" />
+    <script src="bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+
+    <?php $n = count($data); ?>
+
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading"><strong><span class="glyphicon glyphicon-th-list"></span> Configurar Tareas</strong></div>
                 <div class="panel-body">
-                	<form class="form-horizontal" method="POST" action="#/vista2" enctype="multipart/form-data">
+                	<div class="form-horizontal" >
                          <input type="hidden" name="f" value="temas"></input>
                         <div class="form-group">
                             <label for="" class="col-sm-3">N° de Entregas (Incluyendo defensas)</label>
-                            <div class="col-sm-9">
-                                <input class="form-control" type="text" id="ntareas" value="0"></input>
+                            <div class="col-xs-4">
+                                <div class="input-group" data-ui-spinner id="spinnercont">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-primary nchange" data-spin="up">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </span>
+                                    <input type="text" class="spinner-input form-control disabled" id="ntareas" data-min="0" value="<?=$n?>">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default nchange" data-spin="down">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <h3 class="col-sm-offset-1">Entrega 1</h3>
-	                	<div class="form-group">
-	                		<label for="" class="col-sm-3">Título Entrega</label>
-                            <div class="col-sm-9">
-                                <input class="form-control tarea" n="1" type="text" value="0"></input>
-                            </div>
-	                	</div>
-                        <div class="form-group">
-                            <label for="" class="col-sm-3">Fecha Entrega</label>
-                            <div class="col-sm-9">
-                                <input class="form-control tarea" n="1" type="text" value="0"></input>
-                            </div>
-                        </div>
-	                	<div class="form-group">
+
+	                	<div class="form-group submit">
                             <div class="col-sm-offset-3 col-sm-9">
-	                		    <input type="submit" class="btn btn-success" value="Guardar">
+	                		    <button id="guardar" class="btn btn-success">Guardar</button>
                 		    </div>
                         </div>
-                	</form>
+                	</div>
                 </div>
             </div>
 
         </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading"><strong><span class="glyphicon glyphicon-save"></span> Plantilla de Ejemplo</strong></div>
-                <div class="panel-body">
-                	<a href="examples/temas.csv"><span class="glyphicon glyphicon-file"></span> Plantilla Ejemplo.csv</a>
 
-                </div>
-            </div>         
-        </div>
     </div>
 
+
     <script type="text/javascript">
-    	//$('#subir').bootstrapFileInput();
+
+        var setted = <?php echo json_encode($data) ?>;
+        
+
+        function tareaview (i, titulo, fecha, tipo) {
+
+            return      '<div class="thumbnail e'+i+'">'+
+                        '<h3 class="col-sm-offset-1 e'+i+'">Entrega '+i+'</h3>'+
+                        '<div class="form-group e'+i+'">'+
+                        '    <label for="" class="col-sm-2">Título Entrega</label>'+
+                        '    <div class="col-sm-2">'+
+                        '        <input class="form-control titulo" n="'+i+'" type="text" value="'+titulo+'"></input>'+
+                        '    </div>'+
+
+                        '    <label for="" class="col-sm-2">Fecha Entrega</label>'+
+                        '    <div class="col-sm-2">'+
+
+                        '       <div class="input-group">'+
+                        '           <input type="text" '+
+                        '               class="form-control datepicker" value="'+fecha+'" required>'+
+                        '           <span class="input-group-addon"><i class="fa fa-calendar"></i></span>'+
+                        '       </div>'+
+
+
+
+                        '    </div>'+
+
+                        '    <label for="" class="col-sm-2">Tipo de Entrega</label>'+
+                        '    <div class="col-sm-2">'+
+                        '        <input class="form-control tipo" n="'+i+'" type="text" value="'+tipo+'"></input>'+
+                        '    </div>'+
+                        '</div>'+
+                        '</div>';
+        }
+
+        function update() {
+            var n = +$("#ntareas").val();
+            console.log(n);
+
+            for (var i = 1; i<100; i++) {
+                var els = $(".e"+i);
+                if(els.length>0){
+
+                    //if n es menor borrar
+                    if(n<i){
+                        els.hide();
+                    }else{
+                        els.show();
+                    }
+
+                }else{
+                    if(n>=i){
+                        var tit = "";
+                        var dat = "";
+                        var tip = "";
+                        if(i in setted){
+                            tit = setted[i].title;
+                            dat = setted[i].date;
+                            tip = setted[i].tipo;
+                        }
+                        $('.submit').before(tareaview(i,tit,dat,tip));
+                        $('.e'+i+" .datepicker").datepicker({autoclose:true});
+                        $('.e'+i+" .datepicker").next().on("click",function() {
+                            $(this).prev().datepicker("show");
+                        })
+                    
+                    }else{
+                        break;
+                    }
+                }
+            };
+
+
+        }
+
+    	//$("#ntareas").on("spinstop", update);
+
+        $("#spinnercont").spinner('delay', 1).spinner('changed', function(e, newVal, oldVal){
+            update();
+        })
+
+
+
+        $(function(){
+
+            if(<?php echo $dis==true?"true":"false"; ?>){
+                $('.nchange').addClass("disabled");
+                $("#ntareas").attr("disabled",1);
+            }
+
+            update();
+        });
+
+        function isValidDate(d) {
+          if ( Object.prototype.toString.call(d) !== "[object Date]" )
+            return false;
+          return !isNaN(d.getTime());
+        }
+
+        $('#guardar').on("click",function() {
+            
+            var n = +$("#ntareas").val();
+            console.log(n);
+
+            var data = {};
+
+            var ok = true;
+            var err = 0;
+
+            for (var i = 1; i<=n; i++) {
+                var els = $(".e"+i);
+                if(els.length>0){
+                    data[i] = {
+                                "title":$(".thumbnail.e"+i+" .titulo").val(),
+                                "date":$(".thumbnail.e"+i+" .datepicker").val(),
+                                "tipo":$(".thumbnail.e"+i+" .tipo").val()
+                              }
+
+                    var d = new Date($(".thumbnail.e"+i+" .datepicker").val());
+                    if(!isValidDate(d)){
+                        ok = false;
+                        err = i;
+                    }
+
+                }else{
+                    //error
+                }
+            };
+
+            if(ok){
+
+                $('.alert').hide();
+                var datos = {
+                    "f":"ajxtareas",
+                    "n":n,
+                    "data":JSON.stringify(data)
+                };
+
+                ajx({
+                    data:datos,
+                    ok:function(data) {
+                        
+                        console.log(data);   
+
+
+                    }
+                });
+            }else{
+
+                $('.thumbnail.e'+err).append("<div class='alert alert-danger'>Seleccione Fecha</div>");
+
+            }
+
+
+        })
     </script>
 
 </div>
