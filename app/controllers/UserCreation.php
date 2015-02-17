@@ -5,11 +5,28 @@ class UserCreation {
 	{	
 		$return = array();
 
-		$user = new User;
-		$user->name = $name;
-		$user->surname = $surname;
-		$user->wc_id = $email;
-		$user->pm_id = $email;
+		$profedb = User::whereWc_id($email)->get();
+		if(!$profedb->isEmpty()){
+			//agregar
+			$user = $profedb->first();
+			$pass = $user->pmpass;
+
+		}else{
+
+			$user = new User;
+			$user->name = $name;
+			$user->surname = $surname;
+			$user->wc_id = $email;
+			$user->pm_id = $email;
+
+			if($pass==null){
+				$pass = rand(10000,99999);
+			}
+
+			$user->password = Hash::make($pass);
+			$user->pmpass = $pass;
+			$user->save();
+		}
 
 		$role = array(
 			"P"=>2,
@@ -18,15 +35,6 @@ class UserCreation {
 			"CA"=>1,
 			"AY"=>2
 		);
-
-		if($pass==null){
-			$pass = rand(10000,99999);
-		}
-
-		$user->password = Hash::make($pass);
-		$user->pmpass = $pass;
-
-		$user->save();
 
 		$userid = User::whereWc_id($email)->first()->id;
 

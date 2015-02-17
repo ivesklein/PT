@@ -82,6 +82,37 @@ class PMsoap {
 		return $return;
 	}
 
+
+
+	public function updaterole($userId, $role)//0, 1, 2
+	{
+		
+		$return = array();
+
+		$roles = array("PROCESSMAKER_ADMIN","PROCESSMAKER_MANAGER", "PROCESSMAKER_OPERATOR");
+
+		if($this->status){
+			$client = new SoapClient($this->url);
+			$params = array(array(
+				'sessionId'=>$this->hash,
+				'userUid' => $userId,
+			    'role'=>$roles[$role]
+			    ));
+			$result = $client->__SoapCall('UpdateUser', $params);
+			if ($result->status_code == 0) 
+			    $return["ok"] = "ok"; 
+			else 
+			    $return["error"] = $result->status_code.":".$result->message;
+
+		}else{
+			$return["error"] = "no hash";
+		}
+		return $return;
+
+	}
+
+
+
 	public function usersList(){
 
 		$return = array();
@@ -161,6 +192,29 @@ class PMsoap {
 			    ));
 
 			$result = $client->__SoapCall('assignUserToGroup', $params);
+			if ($result->status_code == 0) 
+			    $return["ok"] = $result;  
+			else 
+			    $return["error"] = $result->status_code.":".$result->message;
+
+		}else{
+			$return["error"] = "no hash";
+		}
+		return $return;
+	}
+
+	public function userleftgroup($userId, $group){
+		$return = array();
+
+		if($this->status){
+			$client = new SoapClient($this->url);
+			$params = array(array(
+				'sessionId'=>$this->hash,
+				'userId' => $userId,
+			    'groupId'=>$group
+			    ));
+
+			$result = $client->__SoapCall('removeUserFromGroup', $params);
 			if ($result->status_code == 0) 
 			    $return["ok"] = $result;  
 			else 

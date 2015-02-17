@@ -6,7 +6,26 @@ angular.module("app.ui.ctrls",[])
 	.controller("NotifyCtrl",["$scope","logger",function($scope,logger){return $scope.notify=function(type){switch(type){case"info":return logger.log("Heads up! This alert needs your attention, but it's not super important.");case"success":return logger.logSuccess("Well done! You successfully read this important alert message.");case"warning":return logger.logWarning("Warning! Best check yo self, you're not looking too good.");case"error":return logger.logError("Oh snap! Change a few things up and try submitting again.")}}}])
 
 	.controller("AlertDemoCtrl",["$scope",function($scope){return $scope.alerts=[{type:"success",msg:"Well done! You successfully read this important alert message."},{type:"info",msg:"Heads up! This alert needs your attention, but it is not super important."},{type:"warning",msg:"Warning! Best check yo self, you're not looking too good."},{type:"danger",msg:"Oh snap! Change a few things up and try submitting again."}],$scope.addAlert=function(){var num,type;switch(num=Math.ceil(4*Math.random()),type=void 0,num){case 0:type="info";break;case 1:type="success";break;case 2:type="info";break;case 3:type="warning";break;case 4:type="danger"}return $scope.alerts.push({type:type,msg:"Another alert!"})},$scope.closeAlert=function(index){return $scope.alerts.splice(index,1)}}])
-	.controller("ProgressDemoCtrl",["$scope",function($scope){return $scope.max=200,$scope.random=function(){var type,value;value=Math.floor(100*Math.random()+10),type=void 0,type=25>value?"success":50>value?"info":75>value?"warning":"danger",$scope.showWarning="danger"===type||"warning"===type,$scope.dynamic=value,$scope.type=type},$scope.random()}])
+	
+
+	.controller(
+			"ProgressDemoCtrl",
+			[
+				"$scope",
+				function($scope){
+					return $scope.max=100,
+					$scope.update=function(){
+						var type;
+						type="danger",
+						type=25>$scope.dynamic?"success":50>$scope.dynamic?"warning":75>$scope.dynamic?"info":"danger",
+						$scope.type=type
+					},
+					$scope.dynamic = 1;
+				}
+			]
+		)
+	
+
 	.controller("AccordionDemoCtrl",["$scope",function($scope){$scope.oneAtATime=!0,$scope.groups=[{title:"Dynamic Group Header - 1",content:"Dynamic Group Body - 1"},{title:"Dynamic Group Header - 2",content:"Dynamic Group Body - 2"},{title:"Dynamic Group Header - 3",content:"Dynamic Group Body - 3"}],$scope.items=["Item 1","Item 2","Item 3"],$scope.addItem=function(){var newItemNo;newItemNo=$scope.items.length+1,$scope.items.push("Item "+newItemNo)}}])
 	.controller("CollapseCtrl",["$scope",function($scope){return $scope.isCollapsed=1}])
 
@@ -65,6 +84,7 @@ angular.module("app",
 				.when("/periodos",{templateUrl:"views/periodos"})
 				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision"})
 				.when("/webcursos",{templateUrl:"views/webcursos"})
+				.when("/tareas",{templateUrl:"views/tareas"})
 				
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})

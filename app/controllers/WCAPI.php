@@ -5,8 +5,12 @@ class WCAPI {
 	var $cookie="";
 	var $course=0;
 	var $sesskey="";
+	var $count=0;
+	var $times=array();
 
 	function wget($url,$ref_url,$data,$cookie="",$proxy = "null" ,$proxystatus = "false"){
+
+		$time_start = microtime(true);
 
 	    try {
 
@@ -55,11 +59,14 @@ class WCAPI {
 	         	curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
 	         }
 
+	         
 	         $res = curl_exec($ch);// execute the curl command
 	         curl_close ($ch);
 	         unset($ch);
 
-
+	         $time_end = microtime(true);
+			 $time = $time_end - $time_start;
+			 $this->times[] = array("url"=>$url, "time"=>$time);
 	         return array("ok"=>$res,'cookie'=>$cookie); 
 
 
@@ -75,6 +82,10 @@ class WCAPI {
 	
 	}
 
+	public function getTimes()
+	{
+		return $this->times;
+	}
 
 
 	public function login($user, $pass)
@@ -186,7 +197,7 @@ class WCAPI {
 			if(isset($contenido["ok"])){
 				try {
 
-					preg_match_all('|<tr class="userinforow.+id="user_([0-9]+)">.+class="subfield subfield.email">(.+)<.div><.td.+<div class="roles">(.+<.div>)<.div>.+<div class="groups">(.+<.div>)<.div><div class="addgroup">|Uus', $contenido["ok"], $matches);
+					preg_match_all('|<tr class="userinforow.+id="user_([0-9]+)">.+class="subfield subfield.email">(.+)<.div><.td.+<div class="roles">(.*)<.div><.td>.+<div class="groups">(.*)<.div><div class="addgroup">|Uus', $contenido["ok"], $matches);
 					//.+<div class="subfield subfield_email">(.+)<.div></td.+<div class="roles">(.+<.div>)<.div>.+<div class="groups">(.+<.div>)<.div><div class="addgroup">
 					//preg_match_all('|<tr class="userinforow.+" id="user_([0-9]+)">.+<div class="subfield subfield_email">(.+)<.div></td.+<div class="roles">(.+<.div>)<.div>.+<div class="groups">(.+<.div>)<.div><div class="addgroup">|U', $contenido["ok"], $matches);
 					foreach ($matches[2] as $key => $user) {
@@ -200,7 +211,7 @@ class WCAPI {
 						$grupos = array();
 						preg_match_all('|<div class="group" rel="([0-9]+)">(.+)<|Uus', $matches[4][$key], $groupsmatch);
 						foreach ($groupsmatch[2] as $key3 => $idgroup) {
-							$grupos[$idgroup] = $groupsmatch[1][$key3];
+							$grupos[html_entity_decode($idgroup)] = $groupsmatch[1][$key3];
 						}
 
 						$return["users"][$user] = array("uid"=>$matches[1][$key], "roles"=>$roles, "grupos"=>$grupos);
@@ -252,7 +263,7 @@ class WCAPI {
 					preg_match_all('|<option value="([0-9]+)">(.+)<.option>|Uus', $matches[1][0], $groupsmatch);
 					foreach ($groupsmatch[2] as $key3 => $idgroup) {
 						if($groupsmatch[1][$key3]!=0){
-							$return["groups"][$idgroup] = $groupsmatch[1][$key3];
+							$return["groups"][html_entity_decode($idgroup)] = $groupsmatch[1][$key3];
 						}
 					}
 
@@ -467,7 +478,7 @@ class WCAPI {
 				"action"=>"assign",
 				"sesskey"=>$this->sesskey,
 				"roleid"=>$rol,
-				"user"=>$user
+				"user"=>$uid
 			);
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
 			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);

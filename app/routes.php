@@ -154,16 +154,34 @@ Route::get('/test' ,function()
 {
 
 
+	/*$pm = new PMsoap;
+	
+	$res1 = $pm->login();
+
+	$uid = Staff::whereWc_id("Edgar.Cisternas@uai.cl")->first()->pm_uid;
+
+	$groupid = PMG::whereGroup("PT")->first()->uid;
+
+	//$res2 = $pm->user2group($uid,$groupid);
+	$res2 = $pm->userleftgroup($uid,$groupid);
+
+	print_r(array($res1,$res2));
+*/
+
+
+
+
+	
 	$wc = new WCAPI;
 	$res = $wc->login("dklein@alumnos.uai.cl","password");
 
-	//$res1 = $wc->userList();
+	$res1 = $wc->userList();
 	//$res2 = $wc->groupList();
-	$res2 = $wc->searchUser("karol.suchan@uai.cl");
+	//$res2 = $wc->searchUser("karol.suchan@uai.cl");
 	
 
-	print_r($res2);
-
+	print_r($res1);
+	
 
 	//$guias = Staff::find(17)->guias()->count();
 	/*

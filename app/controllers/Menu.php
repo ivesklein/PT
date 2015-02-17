@@ -16,12 +16,12 @@ class Menu {
 		"periodosCreate"=>array(
 			"where"=>"periodos",
 			"place"=>"8",
-			"array"=>array("link"=>"#/vista3", "title"=>"Crear Periodo", "n"=>0)
+			"array"=>array("link"=>"#/vista3", "title"=>"Crear Semestre", "n"=>0)
 		),
 		"periodosEdit"=>array(
 			"where"=>"periodos",
 			"place"=>"9",
-			"array"=>array("link"=>"#/periodos", "title"=>"Periodos", "n"=>0)
+			"array"=>array("link"=>"#/periodos", "title"=>"Semestres", "n"=>0)
 		),
 		"guiaConfirmation"=>array(
 			"where"=>"temas",
@@ -72,6 +72,11 @@ class Menu {
 			"where"=>"webcursos",
 			"place"=>"21",
 			"array"=>array("link"=>"#/webcursos", "title"=>"Configuración", "n"=>0)
+		),
+		"tareas"=>array(
+			"where"=>"periodos",
+			"place"=>"21",
+			"array"=>array("link"=>"#/tareas", "title"=>"Configurar Tareas", "n"=>0)
 		)
 	);
 
@@ -86,7 +91,7 @@ class Menu {
 		),
 		"periodos" => array(
 			"place"=>"10",
-			"array"=>array("Periodos", "#/menu", "calendar", "orange", 0)
+			"array"=>array("Semestre", "#/menu", "calendar", "orange", 0)
 		),
 		"usuarios" => array(
 			"place"=>"20",

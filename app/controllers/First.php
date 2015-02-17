@@ -162,6 +162,13 @@ class First extends BaseController
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
 		return View::make('views.periodos.periodoslist', array("table"=>$table));
 	}
+	
+	public function getTareas()
+	{
+		return View::make('views.periodos.tareas');
+	}
+
+
 	//  PERIODOS  //
 	
 
