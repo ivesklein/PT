@@ -42,7 +42,7 @@
                         }else{
                             $users[$alumno1->wc_id] = 0;
                         }
-                        
+
                         if(!empty($alumno2->wc_uid)){
                             $users[$alumno2->wc_id] = 1;
                         }else{
@@ -60,10 +60,11 @@
                         }
                     }
                 }else{
-                    echo "mmm";
+                    $message = "<div class='alert alert-warning'>No hay temas de memoria registrados.</div>";
                 }
 
                 ?>
+                <?php echo isset($message)? $message : ""; ?>
                 <div class="row">
                     <div class="col-lg-3 .col-xsm-6">
                         <div class="panel mini-box">
@@ -108,8 +109,26 @@
                         <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Webcursos</strong></div>
                         <div class="panel-body">
                             <div class="btn btn-warning">Actualizar</div><div class="space"></div>
-                            <div class="btn btn-warning">Registrar Usuarios</div><div class="space"></div>
+                            <div class="btn btn-warning" id="regusers">Registrar Usuarios</div><div class="space"></div>
                             <div class="btn btn-warning">Crear Recursos en Curso</div>
+
+                            <div class="row" id="porcregistrado" data-ng-controller="ProgressDemoCtrl">
+                                <h3>Progreso</h3>
+                                <div class="col-xs-12">
+                                    <progressbar  class="progress-striped active" value="dynamic" type="{{type}}">{{dynamic}}%</progressbar>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableusers">
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
                 </div>
 
@@ -122,7 +141,7 @@
                 ";
             }
         }else{
-            echo "<div class='alert alert-danger'>No hay periodo activo. Coordinación debe activar un periodo para poder continuar.</div>";
+            echo "<div class='alert alert-danger'>No hay semestre activo. Coordinación debe activar un semestre para poder continuar.</div>";
         }
     ?>
 
@@ -189,6 +208,63 @@ foreach($ltis as $lti){
             	location.reload();
             }
         });
-	})
+	});
+
+
+    function regusers (limit, pass) {
+        
+
+            var datos = {
+                "f":"ajxregistrarwc",
+                "p":pass,
+                "n":limit
+            };
+            ajx({
+                data:datos,
+                ok:function(data) {
+                    console.log(data);
+                    if("continue" in data){
+
+                        asd = data;
+                        var total = Object.keys(data.users).length;
+                        var actual = +data["continue"]-1;
+                        var perc = Math.floor(actual*90/total);
+
+                        var scope = angular.element($("#porcregistrado")).scope();
+                        scope.$apply(function(s){s.dynamic=10+perc;s.update;})
+                        regusers(data["continue"],pass);
+                    }else{
+                        var perc = 90;
+                        console.log(perc);
+                        var scope = angular.element($("#porcregistrado")).scope();
+                        scope.$apply(function(s){s.dynamic=10+perc;s.update;});
+                         $('#regusers').removeClass("disabled");
+                        //desbloquear, actualizar, etc
+                    }
+                }
+            });
+
+
+
+    }
+
+    $('#regusers').on("click", function() {
+        var res = prompt("Ingrese contraseña de webcursos(<?=Auth::user()->wc_id ?>) :");
+        if(res!=null && res!=""){
+
+            //desabilitar botones
+            $('#regusers').addClass("disabled");
+            $('#regusers').addClass("disabled");
+            $('#regusers').addClass("disabled");
+
+            var scope = angular.element($("#porcregistrado")).scope();
+            scope.$apply(function(s){s.dynamic=20;s.update;})
+            //esperando
+            //$("#progress-bar").append('<progressbar class="progress-striped active" value="dynamic" type="{{type}}">{{type}}</progressbar>');
+
+            regusers(1,res);
+        }
+
+    });
 
 </script>

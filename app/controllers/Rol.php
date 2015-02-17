@@ -40,7 +40,8 @@ class Rol {
 				"profesores",
 				"ayudantes",
 				"alumnos",
-				"webcursos"
+				"webcursos",
+				"tareas"
 			),
 		"AY"=>
 			array(
@@ -49,7 +50,8 @@ class Rol {
 				"profesores",
 				"alumnos",
 				"coordefensa",
-				"viewProfEvents"
+				"viewProfEvents",
+				"tareas"
 			),
 
 		);
