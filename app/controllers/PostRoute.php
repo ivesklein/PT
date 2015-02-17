@@ -1399,6 +1399,51 @@ class PostRoute{
 
 	}
 
+	public static function ajxtareas()
+	{
+		$return = array();
+		if(isset($_POST['n']) && isset($_POST['data'])){
+			if(Rol::hasPermission("tareas")){
+				$per = Periodo::active_obj();
+				if($per!="false"){
+					
+					$data = json_decode($_POST['data']);
+					foreach ($data as $key => $value) {
+
+						$tarea = Tarea::wherePeriodo_name($per->name)->whereN($key)->get();
+
+						if($tarea->isEmpty()){
+							$tarea = new Tarea;
+							$tarea->title = $value->title;
+							$tarea->date = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date);
+							$tarea->tipo = $value->tipo;
+							$tarea->periodo_name = $per->name;
+							$tarea->n = $key;
+							$tarea->save();
+						}else{
+							$tarea = $tarea->first();
+							$tarea->title = $value->title;
+							$tarea->date = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date);
+							$tarea->tipo = $value->tipo;
+							$tarea->save();
+						}
+
+
+					}
+					$return["ok"] = 1;
+
+				}else{
+					$return["error"] = "no hay semestre activo";
+				}
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
 
 }//class
 

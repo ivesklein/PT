@@ -164,8 +164,35 @@ class First extends BaseController
 	}
 	
 	public function getTareas()
-	{
-		return View::make('views.periodos.tareas');
+	{	
+
+		$res = Periodo::active_obj();
+		if($res!="false"){
+			if(empty($res->resources)){
+				$dis = false;
+			}else{
+				if($res->resources==1){
+					$dis = true;
+				}else{
+					$dis = false;
+				}
+			}
+		}else{
+			$dis = true;
+		}
+
+		$data = array();
+		$tareas = Tarea::wherePeriodo_name($res->name)->orderBy('n', 'ASC')->get();
+
+		if(!$tareas->isEmpty()){
+			foreach ($tareas as $tarea) {
+				$cdate = Carbon::parse($tarea->date);
+				$data[$tarea->n] = array("title"=>$tarea->title, "date"=>$cdate->format('m/d/Y'), "tipo"=>$tarea->tipo);
+			}
+		}
+
+
+		return View::make('views.periodos.tareas', array("dis"=>$dis,"data"=>$data));
 	}
 
 
