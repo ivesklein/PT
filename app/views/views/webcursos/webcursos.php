@@ -110,12 +110,12 @@
                         <div class="panel-body">
                             <div class="btn btn-warning">Actualizar</div><div class="space"></div>
                             <div class="btn btn-warning" id="regusers">Registrar Usuarios</div><div class="space"></div>
-                            <div class="btn btn-warning">Crear Recursos en Curso</div>
-
-                            <div class="row" id="porcregistrado" data-ng-controller="ProgressDemoCtrl">
+                            <div class="btn btn-warning" id="recursos">Crear Recursos en Curso</div>
+                            <div id="mensaje" class='alert alert-danger' style="display:none;"></div>
+                            <div class="row" id="porcregistrado" data-ng-controller="ProgressCtrl">
                                 <h3>Progreso</h3>
                                 <div class="col-xs-12">
-                                    <progressbar  class="progress-striped active" value="dynamic" type="{{type}}">{{dynamic}}%</progressbar>
+                                    <progressbar class="progress-striped active" value="dynamic" type="{{type}}">{{dynamic}}%</progressbar>
                                 </div>
                                 <table class="table">
                                     <thead>
@@ -128,6 +128,8 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            
 
                         </div>
                 </div>
@@ -145,7 +147,7 @@
         }
     ?>
 
-</div>
+
 
 
 <!--h3>Crear Conexión</h3>
@@ -254,8 +256,6 @@ foreach($ltis as $lti){
 
             //desabilitar botones
             $('#regusers').addClass("disabled");
-            $('#regusers').addClass("disabled");
-            $('#regusers').addClass("disabled");
 
             var scope = angular.element($("#porcregistrado")).scope();
             scope.$apply(function(s){s.dynamic=20;s.update;})
@@ -267,4 +267,49 @@ foreach($ltis as $lti){
 
     });
 
+    $('#recursos').on("click", function() {
+        var res = prompt("Ingrese contraseña de webcursos(<?=Auth::user()->wc_id ?>) :");
+        if(res!=null && res!=""){
+
+            //desabilitar botones
+            $('#recursos').addClass("disabled");
+
+            var datos = {
+                "f":"ajxcrearrecursos",
+                "p":res
+            };
+            ajx({
+                data:datos,
+                ok:function(data) {
+                    console.log(data);
+                    $('#recursos').removeClass("disabled");
+                    $("#mensaje").hide();
+
+                },
+                error:function(data){
+                    if(data=="bad wc login"){
+                        $("#mensaje").html("Contraseña erronea")
+                    }
+                    if(data=="no tareas"){
+                        $("#mensaje").html("No se ha configurado las tareas <a href='<?=url("#/tareas")?>' class='btn btn-info'>Configurar Tareas</a>")
+                    }
+                    if(data=="no hay semestre activo"){
+                        $("#mensaje").html("No hay semestre activo. Coordinación debe activar un semestre para poder continuar.</a>")
+                    }
+                    if(data=="not permission"){
+                        $("#mensaje").html("Session Caducada, porfavor ingrese otra vez <a href='<?=url("login")?>' class='btn btn-info'>Ingresar</a>")
+                    }
+                    if(data=="faltan variables"){
+                        $("#mensaje").html("Ingrese Contraseña")
+                    }
+                    $("#mensaje").show();
+                    $('#recursos').removeClass("disabled");
+
+                }
+            });
+        }
+
+    });
 </script>
+
+</div>

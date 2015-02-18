@@ -506,6 +506,212 @@ class WCAPI {
 		return $return;
 	}
 
+	public function createTarea($title,$date)
+	{
+		$return = array();
+		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
+			$url = "http://webcursos.uai.cl/course/modedit.php";//&perpage=5000";
+
+			$datestart = $date->copy()->subDays(7);
+
+			$startday = $datestart->day;
+			$startmonth = $datestart->month;
+			$startyear = $datestart->year;
+			$endday = $date->day;
+			$endmonth = $date->month;
+			$endyear = $date->year;
+
+
+			$data = array(	
+				"mform_isexpanded_id_availability"=>"1",
+				"assignsubmission_comments_enabled"=>"1",
+				"assignfeedback_editpdf_enabled"=>"1",
+				"mform_isexpanded_id_submissiontypes"=>"1",
+				"conditiongraderepeats"=>"1",
+				"conditionfieldrepeats"=>"1",
+				"course"=>$this->course,				//course id
+				"coursemodule"=>"",
+				"section"=>"2", 					//ubicación
+				"module"=>"31",
+				"modulename"=>"assign",
+				"instance"=>"",
+				"add"=>"assign",
+				"update"=>"0",
+				"return"=>"0",
+				"sr"=>"0",
+				"sesskey"=>$this->sesskey, 			//sesskey
+				"_qf__mod_assign_mod_form"=>"1",
+				"mform_isexpanded_id_general"=>"1",
+				"mform_isexpanded_id_feedbacktypes"=>"1",
+				"mform_isexpanded_id_submissionsettings"=>"1",
+				"mform_isexpanded_id_groupsubmissionsettings"=>"1",
+				"mform_isexpanded_id_notifications"=>"1",
+				"mform_isexpanded_id_modstandardgrade"=>"1",
+				"mform_isexpanded_id_modstandardelshdr"=>"1",
+				"mform_isexpanded_id_availabilityconditionsheader"=>"1",
+				"name"=>$title,											//titulo
+				"introeditor[text]"=>"<p>Entregar antes de ".$date->format('m/d/Y')." a las 23:55</p>",				//descipcion en html
+				"introeditor[format]"=>"1",
+				"introeditor[itemid]"=>"966059896",
+				"allowsubmissionsfromdate[day]"=>$startday, 					//fecha inicio
+				"allowsubmissionsfromdate[month]"=>$startmonth, 					//fecha inicio
+				"allowsubmissionsfromdate[year]"=>$startyear,  				//fecha inicio
+				"allowsubmissionsfromdate[hour]"=>"0",  					//fecha inicio
+				"allowsubmissionsfromdate[minute]"=>"0",  				//fecha inicio
+				"allowsubmissionsfromdate[enabled]"=>"1", 				//fecha inicio
+				"duedate[day]"=>$endday, 									//fecha fin
+				"duedate[month]"=>$endmonth,  									//fecha fin
+				"duedate[year]"=>$endyear,  								//fecha fin
+				"duedate[hour]"=>"23", 									//fecha fin
+				"duedate[minute]"=>"55", 									//fecha fin
+				"duedate[enabled]"=>"1", 									//fecha fin
+				"alwaysshowdescription"=>"1",
+				"assignsubmission_onlinetext_enabled"=>"1",
+				"assignsubmission_file_enabled"=>"1",
+				"assignsubmission_file_maxfiles"=>"1",
+				"assignsubmission_file_maxsizebytes"=>"0",
+				"submissiondrafts"=>"0",
+				"requiresubmissionstatement"=>"0",
+				"attemptreopenmethod"=>"none",
+				"teamsubmission"=>"1",
+				"teamsubmissiongroupingid"=>"0",
+				"sendnotifications"=>"1",
+				"grade"=>"0",
+				"advancedgradingmethod_submissions"=>"",
+				"gradecat"=>"20828",
+				"blindmarking"=>"0",
+				"markingworkflow"=>"0",
+				"visible"=>"1",
+				"cmidnumber"=>"",
+				"groupmode"=>"1",
+				"groupingid"=>"0",
+				"conditiongradegroup[0][conditiongradeitemid]"=>"0",
+				"conditiongradegroup[0][conditiongrademin]"=>"",
+				"conditiongradegroup[0][conditiongrademax]"=>"",
+				"conditionfieldgroup[0][conditionfield]"=>"0",
+				"conditionfieldgroup[0][conditionfieldoperator]"=>"contains",
+				"conditionfieldgroup[0][conditionfieldvalue]"=>"",
+				"showavailability"=>"1",
+				"submitbutton"=>"Guardar cambios y mostrar"
+			);
+			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
+			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
+			
+			if(isset($contenido["ok"])){
+				try {
+
+					preg_match_all('|cmid-([0-9]+)|', $contenido["ok"], $matches);
+
+					if(isset($matches[0][0])){
+						$return["ok"] = $matches[1][0];
+					}else{
+						$return["error"] = "Error";
+					}
+
+				} catch (Exception $e) {
+					$return["error"] = $e->getMessage();
+				}
+			}else{
+				$return["error"] = $contenido["error"];
+			}
+		}else{
+			$return["error"]="not-logged:".$this->sesskey."-".$this->course;
+		}
+
+		return $return;
+	}
+
+	public function createLTI($title,$urllti,$icon="")
+	{
+		$return = array();
+		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
+			$url = "http://webcursos.uai.cl/course/modedit.php";//&perpage=5000";
+			
+			$key = "webcursos";
+			$con = Consumer::whereKey($key)->get();
+			if(!$con->isEmpty()){
+				$secret = $con->first()->secret;
+			}else{
+				$secret = "";
+			}
+
+			$data = array(	
+				"urlmatchedtypeid"=>"undefined",
+				"conditiongraderepeats"=>"1",
+				"conditionfieldrepeats"=>"1",
+				"course"=>$this->course,
+				"coursemodule"=>"",
+				"section"=>"1",
+				"module"=>"28",
+				"modulename"=>"lti",
+				"instance"=>"",
+				"add"=>"lti",
+				"update"=>"0",
+				"return"=>"0",
+				"sr"=>"0",
+				"sesskey"=>$this->sesskey,
+				"_qf__mod_lti_mod_form"=>"1",
+				"mform_showmore_id_general"=>"1",
+				"mform_showmore_id_modstandardelshdr"=>"0",
+				"mform_isexpanded_id_general"=>"1",
+				"mform_isexpanded_id_privacy"=>"0",
+				"mform_isexpanded_id_modstandardelshdr"=>"0",
+				"mform_isexpanded_id_availabilityconditionsheader"=>"0",
+				"name"=>$title,
+				"introeditor[text]"=>"",
+				"introeditor[format]"=>"1",
+				"introeditor[itemid]"=>"781240441",
+				"showtitlelaunch"=>"0",
+				"typeid"=>"0",
+				"toolurl"=>$urllti,
+				"securetoolurl"=>"",
+				"launchcontainer"=>"2",
+				"resourcekey"=>$key,
+				"password"=>$secret,
+				"instructorcustomparameters"=>"",
+				"icon"=>$icon,
+				"secureicon"=>"",
+				"instructorchoicesendname"=>"1",
+				"instructorchoicesendemailaddr"=>"1",
+				"instructorchoiceacceptgrades"=>"0",
+				"visible"=>"1",
+				"cmidnumber"=>"",
+				"conditiongradegroup[0][conditiongradeitemid]"=>"0",
+				"conditiongradegroup[0][conditiongrademin]"=>"",
+				"conditiongradegroup[0][conditiongrademax]"=>"",
+				"conditionfieldgroup[0][conditionfield]"=>"0",
+				"conditionfieldgroup[0][conditionfieldoperator]"=>"contains",
+				"conditionfieldgroup[0][conditionfieldvalue]"=>"",
+				"showavailability"=>"1",
+				"submitbutton"=>"Guardar cambios y mostrar"
+			);
+			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
+			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
+			
+			if(isset($contenido["ok"])){
+				try {
+
+					preg_match_all('|cmid-([0-9]+)|', $contenido["ok"], $matches);
+
+					if(isset($matches[0][0])){
+						$return["ok"] = $matches[1][0];
+					}else{
+						$return["error"] = "no Matches";
+					}
+
+				} catch (Exception $e) {
+					$return["error"] = $e->getMessage();
+				}
+			}else{
+				$return["error"] = $contenido["error"];
+			}
+		}else{
+			$return["error"]="not-logged:".$this->sesskey."-".$this->course;
+		}
+
+		return $return;
+	}
+
 
 /*
 LOGIN
@@ -793,6 +999,67 @@ iiiiiiiiiiiiiiiiiiiiii
 
 <select name="filtergroup" id="id_filtergroup">(.+)<.select>
 <option value="([0-9]+)">(.+)<.option>
+
+
+
+
+CREATE LTI
+
+	http://webcursos.uai.cl/course/modedit.php
+
+	urlmatchedtypeid:undefined
+	conditiongraderepeats:1
+	conditionfieldrepeats:1
+	course:26032
+	coursemodule:
+	section:1
+	module:28
+	modulename:lti
+	instance:
+	add:lti
+	update:0
+	return:0
+	sr:0
+	sesskey:Zf1dkYMDUn
+	_qf__mod_lti_mod_form:1
+	mform_showmore_id_general:1
+	mform_showmore_id_modstandardelshdr:0
+	mform_isexpanded_id_general:1
+	mform_isexpanded_id_privacy:0
+	mform_isexpanded_id_modstandardelshdr:0
+	mform_isexpanded_id_availabilityconditionsheader:0
+	name:qwc
+	introeditor[text]:
+	introeditor[format]:1
+	introeditor[itemid]:781240441
+	showtitlelaunch:0
+	typeid:0
+	toolurl:http://sfa.ck/alsc
+	securetoolurl:
+	launchcontainer:1
+	resourcekey:key
+	password:secret
+	instructorcustomparameters:
+	icon:
+	secureicon:
+	instructorchoicesendname:1
+	instructorchoicesendemailaddr:1
+	instructorchoiceacceptgrades:0
+	visible:1
+	cmidnumber:
+	conditiongradegroup[0][conditiongradeitemid]:0
+	conditiongradegroup[0][conditiongrademin]:
+	conditiongradegroup[0][conditiongrademax]:
+	conditionfieldgroup[0][conditionfield]:0
+	conditionfieldgroup[0][conditionfieldoperator]:contains
+	conditionfieldgroup[0][conditionfieldvalue]:
+	showavailability:1
+	submitbutton:Guardar cambios y mostrar
+
+
+
+
+
 
 */
 

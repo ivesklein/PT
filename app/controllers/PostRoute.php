@@ -1166,7 +1166,7 @@ class PostRoute{
 	                		$limit = 1;
 	                	}
 
-	                	if($time_for2-$time_start>2){//tiempo limite
+	                	if($time_for2-$time_start>20){//tiempo limite
 	                		$return['continue'] = $n;
 	                		break;
 	                	}
@@ -1432,6 +1432,99 @@ class PostRoute{
 					}
 					$return["ok"] = 1;
 
+				}else{
+					$return["error"] = "no hay semestre activo";
+				}
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function ajxcrearrecursos()
+	{
+		$return = array();
+		if(isset($_POST['p'])){
+			if(Rol::hasPermission("webcursos")){
+				$per = Periodo::active_obj();
+				if($per!="false"){
+					
+					//verificar que hayan tareas
+					$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->get();
+					if(!$tareas->isEmpty()){
+						//if ! key&secret create
+						$res = Consumer::whereKey("webcursos")->get();
+						if($res->isEmpty()){
+							$new = new Consumer;
+							$new->key = "webcursos";
+							$new->secret = "wcsecret".rand(1000000,9999999);
+							$new->name = "Webcursos";
+							$new->save();
+						}
+            		
+            		
+
+						$wc = new WCAPI;
+						$res1 = $wc->login(Auth::user()->wc_id,$_POST['p']);
+						if(!isset($res1["error"])){
+
+							
+							//create tareas
+							
+							foreach ($tareas as $tarea) {
+								$title = $tarea->title;
+								$date = Carbon::parse($tarea->date);
+
+								//$date->year
+								//$date->month
+								//$date->day
+
+								$res2 = $wc->createTarea($title,$date);
+								if(isset($res2["ok"])){
+									$tarea->wc_uid = $res2["ok"];
+								}else{
+
+								}
+							}
+
+							
+
+							//create ltis
+							$res2 = $wc->createLTI("Notas",url("lti/notas"),"http://webcursos.uai.cl/theme/image.php/essential/emarking/1421344949/icon");
+							
+							if(isset($res2["ok"])){
+								//$tarea->wc_uid = $res2["ok"];
+							}else{
+
+							}
+
+
+
+							$res2 = $wc->createLTI("Defensas",url("lti/defensas"),url("icon/defensas.png"));
+							if(isset($res2["ok"])){
+								//$tarea->wc_uid = $res2["ok"];
+							}else{
+
+							}
+
+							$res2 = $wc->createLTI("Evaluación Docente",url("lti/evaluacion"),url("icon/evaluacion.png"));
+							if(isset($res2["ok"])){
+								//$tarea->wc_uid = $res2["ok"];
+							}else{
+
+							}
+							
+
+
+						}else{
+							$return["error"] = "bad wc login";
+						}
+					}else{
+						$return["error"] = "no tareas";
+					}
 				}else{
 					$return["error"] = "no hay semestre activo";
 				}

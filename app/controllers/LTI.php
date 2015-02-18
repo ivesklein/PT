@@ -154,7 +154,12 @@ class LTI extends BaseController{
 
 		//ver consumerkey y buscar en db
 
-		$secret = Consumer::whereKey($consumer)->first()->secret;
+		$con = Consumer::whereKey($consumer)->get();
+		if(!$con->isEmpty()){
+			$secret = $con->first()->secret;
+		}else{
+			$secret = "";
+		}
 		//$secret = "b9d5229df69a51be9741fa895e3a51bc";
 		return $secret;
 
