@@ -173,14 +173,16 @@ Route::get('/test' ,function()
 
 	
 	$wc = new WCAPI;
-	$res = $wc->login("dklein@alumnos.uai.cl","dav.2d77");
+	//$res = $wc->login("dklein@alumnos.uai.cl","dav.2d77");
 
-	$res1 = $wc->userList();
+	//$res1 = $wc->createTarea("Agregemos una Tarea", Carbon::now()->addMonth());
+
+	//$res1 = $wc->createLTI("Notas",url("lti/notas"),url("icon/notas.png"));
 	//$res2 = $wc->groupList();
 	//$res2 = $wc->searchUser("karol.suchan@uai.cl");
-	
+	//$res1 = array("Notas",url("lti/notas"),url("icon/notas.png"));
 
-	print_r($res1);
+	//print_r($res1);
 	
 
 	//$guias = Staff::find(17)->guias()->count();
