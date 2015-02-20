@@ -168,11 +168,11 @@ Route::get('/test' ,function()
 	print_r(array($res1,$res2));
 */
 
-
+	print_r(CarbonLocale::now()->subDay()->diffForHumans());
 
 
 	
-	$wc = new WCAPI;
+	//$wc = new WCAPI;
 	//$res = $wc->login("dklein@alumnos.uai.cl","dav.2d77");
 
 	//$res1 = $wc->createTarea("Agregemos una Tarea", Carbon::now()->addMonth());

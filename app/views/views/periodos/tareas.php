@@ -53,7 +53,7 @@
 
         function tareaview (i, titulo, fecha, tipo) {
 
-            return      '<div class="thumbnail e'+i+'">'+
+            return      '<div class="thumbnail bloque e'+i+'">'+
                         '<h3 class="col-sm-offset-1 e'+i+'">Entrega '+i+'</h3>'+
                         '<div class="form-group e'+i+'">'+
                         '    <label for="" class="col-sm-2">Título Entrega</label>'+
@@ -112,6 +112,11 @@
                         $('.e'+i+" .datepicker").next().on("click",function() {
                             $(this).prev().datepicker("show");
                         })
+                        if(i in setted){
+                            if("wc" in setted[i])
+                                $('.bloque.e'+i).removeClass("thumbnail").addClass("alert").addClass("alert-info").prepend("<a target='_blanc' class='btn btn-info pull-right' href='http://webcursos.uai.cl/mod/assign/view.php?id="+setted[i].wc+"'>Ver Recurso</a>");
+                        }
+
                     
                     }else{
                         break;
@@ -160,12 +165,12 @@
                 var els = $(".e"+i);
                 if(els.length>0){
                     data[i] = {
-                                "title":$(".thumbnail.e"+i+" .titulo").val(),
-                                "date":$(".thumbnail.e"+i+" .datepicker").val(),
-                                "tipo":$(".thumbnail.e"+i+" .tipo").val()
+                                "title":$(".bloque.e"+i+" .titulo").val(),
+                                "date":$(".bloque.e"+i+" .datepicker").val(),
+                                "tipo":$(".bloque.e"+i+" .tipo").val()
                               }
 
-                    var d = new Date($(".thumbnail.e"+i+" .datepicker").val());
+                    var d = new Date($(".bloque.e"+i+" .datepicker").val());
                     if(!isValidDate(d)){
                         ok = false;
                         err = i;
@@ -178,7 +183,7 @@
 
             if(ok){
 
-                $('.alert').hide();
+                $('.mensaje').hide();
                 var datos = {
                     "f":"ajxtareas",
                     "n":n,
@@ -196,7 +201,7 @@
                 });
             }else{
 
-                $('.thumbnail.e'+err).append("<div class='alert alert-danger'>Seleccione Fecha</div>");
+                $('.bloque.e'+err).append("<div class='mensaje alert alert-danger'>Seleccione Fecha</div>");
 
             }
 

@@ -77,6 +77,11 @@ class Menu {
 			"where"=>"periodos",
 			"place"=>"21",
 			"array"=>array("link"=>"#/tareas", "title"=>"Configurar Tareas", "n"=>0)
+		),
+		"listanotas"=>array(
+			"where"=>"temas",
+			"place"=>"22",
+			"array"=>array("link"=>"#/listanotas", "title"=>"Evaluar Entregas", "n"=>0)
 		)
 	);
 
