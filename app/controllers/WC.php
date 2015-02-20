@@ -82,8 +82,51 @@ class WC extends BaseController
 			$name = $lti['name']." ".$lti['surname'];
 
 			Session::put('wc.user', $lti['email']);
+			$user = $lti['email'];
 
-			return View::make("lti.notas");
+			$notas = "";
+
+			$temas = Subject::wherePeriodo(Periodo::active())->whereStudent1($user)->orWhere("student2",$user)->get();
+			if(!$temas->isEmpty()){
+				$tema = $temas->first();
+				
+				$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->get();
+
+				if(!$tareas->isEmpty()){
+
+					foreach ($tareas as $tarea) {
+						$title = $tarea->title;
+						$date = CarbonLocale::parse($tarea->date);
+
+						$active = 0; //0 es futura, 1 es activa, 2 es pasado con eval.
+						$now = Carbon::now();
+						if($date>$now){//futura
+							$active = 0;
+							$nota="";
+							$feedback="";
+						}else{
+							$active = 1;
+							$nota="";
+							$feedback="";
+							//get notas de tarea para el grupo
+							$nota = Nota::whereSubject_id($tema->id)->whereTarea_id($tarea->id)->get();
+							if(!$nota->isEmpty()){
+								$notita = $nota->first();
+								$nota = $notita->nota;
+								$feedback = $notita->feedback;
+							}
+							
+						}
+
+						$notas .= View::make('lti.nota',array("active"=>$active,"title"=>$title,"tarea"=>$tarea->id,"nota"=>$nota));
+
+					}
+
+				}
+
+			}
+
+			return View::make("lti.notas",array("notas"=>$notas));
 
 		}else{
 			return print_r($lti);

@@ -32,7 +32,9 @@ class Rol {
 				"guiaConfirmation",
 				"calendario",
 				"newevent",
-				"comisionConfirmation"
+				"comisionConfirmation",
+				"listanotas",
+				"evaluartarea"
 			),
 		"PT"=>
 			array(
@@ -121,7 +123,21 @@ class Rol {
 		}
 	}
 
+	public static function setNota($temaId)
+	{
+		if(Auth::check()) {
+			//ver si es guia
+			$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->whereId($temaId)->get();
+			if($temas->isEmpty()){
+				return false;
+			}else{
+				return true;
+			}
 
+		}else{
+			return false;
+		}
+	}
 
 	public static function permissions(){
 		$res = array("permissions"=>array());

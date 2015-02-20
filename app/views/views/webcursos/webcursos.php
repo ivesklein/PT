@@ -108,10 +108,15 @@
                 <div class="panel panel-default">
                         <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Webcursos</strong></div>
                         <div class="panel-body">
-                            <div class="btn btn-warning">Actualizar</div><div class="space"></div>
-                            <div class="btn btn-warning" id="regusers">Registrar Usuarios</div><div class="space"></div>
-                            <div class="btn btn-warning" id="recursos">Crear Recursos en Curso</div>
-                            <div id="mensaje" class='alert alert-danger' style="display:none;"></div>
+                            <div class="col-xs-2"><input class="form-control" type="password" id="passi" placeholder="wc pass"></input></div>
+                            <div class="col-xs-8">
+                                <div class="btn btn-warning">Actualizar</div><div class="space"></div>
+                                <div class="btn btn-warning" id="regusers">Registrar Usuarios</div><div class="space"></div>
+                                <div class="btn btn-warning" id="recursos">Crear Recursos en Curso</div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div id="mensaje" class='alert alert-danger' style="display:none;"></div>
+                            </div>
                             <div class="row" id="porcregistrado" data-ng-controller="ProgressCtrl">
                                 <h3>Progreso</h3>
                                 <div class="col-xs-12">
@@ -137,7 +142,8 @@
                 <?php
 
             }else{
-                echo "<div class='alert alert-warning'>Aun no se selecciona curso para llevar el proceso</div><div class='btn btn-warning' id='confcourse'>Configurar</div>
+                echo "<div class='alert alert-warning'>Aun no se selecciona curso para llevar el proceso</div><div class='col-xs-2'><input class='form-control' type='password' id='passi' placeholder='wc pass'></input></div><div class='btn btn-warning' id='confcourse'>Configurar</div>
+                <div id='mensaje' class='alert alert-danger' style='display:none;'></div>
                 <div id='selectcourse'></div>
                 <div id='btnselectcourse'></div>
                 ";
@@ -177,8 +183,9 @@ foreach($ltis as $lti){
 <script type="text/javascript">
 	
 	$('#confcourse').on("click", function() {
-		var res = prompt("Ingrese contraseña de webcursos(<?=Auth::user()->wc_id ?>) :");
+		var res=$('#passi').val();
 		if(res!=null && res!=""){
+             $('#mensaje').hide();
             var datos = {
                 "f":"ajxcursos",
                 "p":res
@@ -194,7 +201,10 @@ foreach($ltis as $lti){
                     $('#btnselectcourse').append("<div class='btn btn-success sel'>Elegir</div>")
                 }
             });
-		}
+		}else{
+            $('#mensaje').html("Debe ingresar contraseña de webcursos para poder realizar los cambios.").show();
+            $("#passi").focus();
+        }
 
 	});
 
@@ -251,9 +261,9 @@ foreach($ltis as $lti){
     }
 
     $('#regusers').on("click", function() {
-        var res = prompt("Ingrese contraseña de webcursos(<?=Auth::user()->wc_id ?>) :");
+        var res=$('#passi').val();
         if(res!=null && res!=""){
-
+            $('#mensaje').hide();
             //desabilitar botones
             $('#regusers').addClass("disabled");
 
@@ -263,14 +273,17 @@ foreach($ltis as $lti){
             //$("#progress-bar").append('<progressbar class="progress-striped active" value="dynamic" type="{{type}}">{{type}}</progressbar>');
 
             regusers(1,res);
+        }else{
+            $('#mensaje').html("Debe ingresar contraseña de webcursos para poder realizar los cambios.").show();
+            $("#passi").focus();
         }
 
     });
 
     $('#recursos').on("click", function() {
-        var res = prompt("Ingrese contraseña de webcursos(<?=Auth::user()->wc_id ?>) :");
+        var res=$('#passi').val();
         if(res!=null && res!=""){
-
+            $('#mensaje').hide();
             //desabilitar botones
             $('#recursos').addClass("disabled");
 
@@ -307,6 +320,9 @@ foreach($ltis as $lti){
 
                 }
             });
+        }else{
+            $('#mensaje').html("Debe ingresar contraseña de webcursos para poder realizar los cambios.").show();
+            $("#passi").focus();
         }
 
     });

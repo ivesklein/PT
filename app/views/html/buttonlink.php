@@ -1,4 +1,7 @@
-<?php 
+<?php
+
+if(!isset($title))
+	$title ="link";
 
 if(isset($color)){
 	switch ($color) {
@@ -22,11 +25,9 @@ if(isset($color)){
 	 		$colorclass="default";
 	 		break;
 	 } 
-	
 }
 
-if(!isset($title)){
-	$title="label";
-}
+if(isset($url)){$urlink = $url;}else{$urlink = "#";}
+if(isset($tab)){$target = "target='_blanc'";}else{$target = "";}
 
-?><span class="label label-<?=$colorclass?>"><?=$title?></span>
+?><a href="<?=$urlink?>" class="btn btn-<?=$colorclass?>" <?=$target?>><?=$title?></a>

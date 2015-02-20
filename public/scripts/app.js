@@ -9,21 +9,33 @@ angular.module("app.ui.ctrls",[])
 	
 
 	.controller(
-			"ProgressDemoCtrl",
+			"ProgressCtrl",
 			[
 				"$scope",
 				function($scope){
 					return $scope.max=100,
 					$scope.update=function(){
 						var type;
-						type="danger",
-						type=25>$scope.dynamic?"success":50>$scope.dynamic?"warning":75>$scope.dynamic?"info":"danger",
-						$scope.type=type
-					},
-					$scope.dynamic = 1;
+						type="danger";
+						type=25>$scope.dynamic?"success":50>$scope.dynamic?"warning":75>$scope.dynamic?"info":"danger";
+						$scope.type=type; 
+					};
+					$scope.dynamic = 10;	
 				}
 			]
 		)
+
+	.controller(
+		"TareaController",
+		//[
+		//	"$scope",
+			function($scope, $route, $routeParams){
+				var idtarea = $routeParams.idtarea+"";
+				$scope.tema = idtarea;
+				//console.log($routeParams);
+			}
+		//]
+	)
 	
 
 	.controller("AccordionDemoCtrl",["$scope",function($scope){$scope.oneAtATime=!0,$scope.groups=[{title:"Dynamic Group Header - 1",content:"Dynamic Group Body - 1"},{title:"Dynamic Group Header - 2",content:"Dynamic Group Body - 2"},{title:"Dynamic Group Header - 3",content:"Dynamic Group Body - 3"}],$scope.items=["Item 1","Item 2","Item 3"],$scope.addItem=function(){var newItemNo;newItemNo=$scope.items.length+1,$scope.items.push("Item "+newItemNo)}}])
@@ -85,6 +97,8 @@ angular.module("app",
 				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision"})
 				.when("/webcursos",{templateUrl:"views/webcursos"})
 				.when("/tareas",{templateUrl:"views/tareas"})
+				.when("/listanotas",{templateUrl:"views/listanotas"})
+				.when("/evaluartarea/:idtarea",{templateUrl:"views/evaluartarea",controller: 'TareaController'})
 				
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
@@ -154,7 +168,7 @@ var ajx = function(data){
                 var data1 = JSON.parse(output);
                 if("error" in data1){
                 	if("error" in data){
-                		data.error();
+                		data.error(data1['error']);
                 	}else{
                     	alert(data1.error);
                 	}
