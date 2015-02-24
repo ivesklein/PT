@@ -191,7 +191,7 @@
                         //modified
                         $("#save").show();
                     }
-                    console.log(ori+" "+now+" "+coi)
+                    //console.log(ori+" "+now+" "+coi)
 
 
 
@@ -318,6 +318,7 @@
                     idtema = $('#temas').val();
                     var id = $('#temas').val();
                     Lista.reset();
+                    console.log("RESET");
                     if(id!="sel"){
                         ajx({
                             data:{
@@ -398,6 +399,14 @@
                                 }
 
                                 //Lista.add(prof,data.data,name);
+
+                                //agregar tareas
+                                if("tareas" in data1){
+                                    for(i in data1.tareas){
+                                        $('#calendar').fullCalendar('renderEvent', data1.tareas[i], true);
+                                        console.log(data1.tareas[i].title);
+                                    }
+                                }
 
                             }
                         });

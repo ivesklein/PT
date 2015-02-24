@@ -82,7 +82,13 @@ class Menu {
 			"where"=>"temas",
 			"place"=>"22",
 			"array"=>array("link"=>"#/listanotas", "title"=>"Evaluar Entregas", "n"=>0)
+		),
+		"hojaderutaĺista"=>array(
+			"where"=>"temas",
+			"place"=>"23",
+			"array"=>array("link"=>"#/listahojasruta", "title"=>"Hojas de Ruta", "n"=>0)
 		)
+
 	);
 
 	static $Menus = array(

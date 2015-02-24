@@ -34,7 +34,9 @@ class Rol {
 				"newevent",
 				"comisionConfirmation",
 				"listanotas",
-				"evaluartarea"
+				"evaluartarea",
+				"hojaderutaĺista",
+				"firmarhojaprofesor"
 			),
 		"PT"=>
 			array(

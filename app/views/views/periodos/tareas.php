@@ -1,8 +1,8 @@
 <?php //Ingreso Temas Memoria ?>
 <div class="page page-table">
 
-    <link rel="stylesheet" href="bootstrap-datepicker/css/datepicker.css" />
-    <script src="bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <link rel="stylesheet" href="bootstrap-datepicker/css/datepicker2.css" />
+    <script src="bootstrap-datepicker/js/bootstrap-datepicker2.js"></script>
 
     <?php $n = count($data); ?>
 
@@ -53,6 +53,10 @@
 
         function tareaview (i, titulo, fecha, tipo) {
 
+            var t0 = tipo==0?"selected":"";
+            var t1 = tipo==1?"selected":"";
+            var t2 = tipo==2?"selected":"";
+
             return      '<div class="thumbnail bloque e'+i+'">'+
                         '<h3 class="col-sm-offset-1 e'+i+'">Entrega '+i+'</h3>'+
                         '<div class="form-group e'+i+'">'+
@@ -64,19 +68,21 @@
                         '    <label for="" class="col-sm-2">Fecha Entrega</label>'+
                         '    <div class="col-sm-2">'+
 
-                        '       <div class="input-group">'+
-                        '           <input type="text" '+
-                        '               class="form-control datepicker" value="'+fecha+'" required>'+
-                        '           <span class="input-group-addon"><i class="fa fa-calendar"></i></span>'+
+                        '       <div class="input-group date">'+
+                        '       <input type="text" class="form-control datepicker" value="'+fecha+'"><span class="input-group-addon"><i class="fa fa-calendar"></i></span>'+
                         '       </div>'+
-
-
 
                         '    </div>'+
 
-                        '    <label for="" class="col-sm-2">Tipo de Entrega</label>'+
-                        '    <div class="col-sm-2">'+
-                        '        <input class="form-control tipo" n="'+i+'" type="text" value="'+tipo+'"></input>'+
+                        '    <label for="" class="col-sm-1">Tipo de Entrega</label>'+
+                        '    <div class="col-sm-3">'+
+                        '        <span class="ui-select">'+
+                        '        <select n="'+i+'" class="tipo">'+
+                        '            <option value="0" '+t0+'>Entrega</option>'+
+                        '            <option value="1" '+t1+'>Predefensa</option>'+
+                        '            <option value="2" '+t2+'>Defensa</option>'+
+                        '        </select>'+
+                        '        </span>'+
                         '    </div>'+
                         '</div>'+
                         '</div>';
@@ -108,10 +114,17 @@
                             tip = setted[i].tipo;
                         }
                         $('.submit').before(tareaview(i,tit,dat,tip));
-                        $('.e'+i+" .datepicker").datepicker({autoclose:true});
+
+                        $('.e'+i+' .input-group.date').datepicker({
+                            todayBtn: true,
+                            language: "es"
+                            });
+
+                        /*$('.e'+i+" .datepicker").datepicker({autoclose:true,"orientation":"top"});
                         $('.e'+i+" .datepicker").next().on("click",function() {
                             $(this).prev().datepicker("show");
-                        })
+                        })*/
+
                         if(i in setted){
                             if("wc" in setted[i])
                                 $('.bloque.e'+i).removeClass("thumbnail").addClass("alert").addClass("alert-info").prepend("<a target='_blanc' class='btn btn-info pull-right' href='http://webcursos.uai.cl/mod/assign/view.php?id="+setted[i].wc+"'>Ver Recurso</a>");
@@ -129,9 +142,14 @@
 
     	//$("#ntareas").on("spinstop", update);
 
-        $("#spinnercont").spinner('delay', 1).spinner('changed', function(e, newVal, oldVal){
-            update();
-        })
+        $("#spinnercont").spinner(
+            {
+            delay: 1,
+            changed:function(e, newVal, oldVal){
+                update();
+            }
+            }
+        );
 
 
 
@@ -141,8 +159,10 @@
                 $('.nchange').addClass("disabled");
                 $("#ntareas").attr("disabled",1);
             }
-
-            update();
+            setTimeout(function() {
+                update();
+            },500)
+            
         });
 
         function isValidDate(d) {

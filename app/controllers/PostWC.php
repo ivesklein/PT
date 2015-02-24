@@ -8,7 +8,7 @@ class PostWC {
 		if($user!="0"){
 
 			if(isset($_POST["n"])){
-				$temas = Subject::wherePeriodo(Periodo::active())->whereStudent1($user)->orWhere("student2",$user)->get();
+				$temas = Subject::studentfind($user)->get();
 				if(!$temas->isEmpty()){
 					$tema = $temas->first();
 					
