@@ -408,7 +408,7 @@ class First extends BaseController
 	public function getProfesores()
 	{
 
-		$ahead = array("Nombre","Apellido","Mail","Boton");
+		$ahead = array("Nombre","Apellido","Mail","Rol");
 		$head = "";
 		foreach ($ahead as $value) {
 			$head .= View::make('table.head',array('title'=>$value));
@@ -625,6 +625,61 @@ class First extends BaseController
 		
 		return View::make('views.temas.evaluartarea');
 	}
+
+
+	// HOJA DE RUTA //
+	public function getListahojasruta()
+	{
+		$ahead = array("Grupo","Estado","Ver");
+		$head = "";
+		foreach ($ahead as $value) {
+			$head .= View::make('table.head',array('title'=>$value));
+		}
+
+		$body="";
+
+		$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->get();
+
+		if(!$temas->isEmpty()){
+
+			foreach ($temas as $tema) {
+
+					$st1 = explode("@",$tema->student1);
+			    	$st2 = explode("@",$tema->student2);
+			    	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
+
+			    	$evallink = url("#/firmarhojaprofesor/".$tema->id);
+
+
+			    	$buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"green","url"=>$evallink));
+
+			    	$nota = View::make("html.nota",array());
+					$id = $tema->id;
+
+
+					$content = View::make("table.cell",array("content"=>$grupo));
+					$content .= View::make("table.cell",array("content"=>"asd"));
+					$content .= View::make("table.cell",array("content"=>$buttons));
+					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+			}
+
+		}else{
+			$message = "No hay grupos a evaluar";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
+
+		}
+
+		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
+		return View::make('views.hojaruta.lista',array("table"=>$table));
+	}
+
+	public function getFirmarhojaprofesor()
+	{
+		
+		return View::make('views.hojaruta.firmaprofesor');
+	}
+	// HOJA DE RUTA //
 
 }
 

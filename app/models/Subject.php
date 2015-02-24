@@ -24,12 +24,10 @@ Class Subject extends Eloquent{
 		return $this->hasOne('Student', "wc_id", "student2");
 	}
 
-	/*public function scopeStudents()
+	public function scopeStudentfind($query, $student)
 	{
-		$s1 = $this->student1;
-		$s2 = $this->student2;
-		return array($s1,$s2);
-	}*/
+		return $query->wherePeriodo(Periodo::active())->whereStudent1($student)->orWhere("student2",$student);
+	}
 	/*public function students()
 	{
 		$s1 = $this->hasOne('Student', "wc_id", "student1");

@@ -398,6 +398,7 @@ class PostRoute{
 	        $event->start = $_POST["start"];
 	        $event->end = $_POST["end"];
 	        $event->color = $_POST["color"];
+	        $event->type = "personal";
 	        $event->save();
 
 	        $e2s = new E2S;
@@ -630,7 +631,12 @@ class PostRoute{
 					$subjs = Subject::wherePeriodo(Periodo::active())->get();
 					if(!$subjs->isEmpty()){
 						foreach ($subjs as $subj) {
-							$return["data"][] = array("id"=>$subj->id,"title"=>$subj->subject);
+
+							$st1 = explode("@",$subj->student1);
+		                	$st2 = explode("@",$subj->student2);
+		                	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+
+							$return["data"][] = array("id"=>$subj->id,"title"=>$grupo);
 						}
 					}
 
@@ -675,14 +681,6 @@ class PostRoute{
 
 				$otros = $subj->comision;
 
-				/*if($subj->defensa == 1){
-					$type = "predefensa"; 
-				}elseif($subj->defensa == 2){
-					$type = "defensa";
-				}else{
-					$type = "";
-				}*/
-
 				$i = 1;
 				foreach ($otros as $comision) {
 					//if($comision->pivot->type == $type){
@@ -693,6 +691,26 @@ class PostRoute{
 						);
 					//}
 					$i++;
+				}
+
+				$tareas = Tarea::wherePeriodo_name(Periodo::active())->get();
+				if(!$tareas->isEmpty()){
+					$return['tareas'] = array();
+					foreach ($tareas as $tarea) {
+						$eventos = CEvent::whereColor('orange')->whereDetail($tarea->id)->get();
+						if(!$eventos->isEmpty()){
+							$evento = $eventos->first();
+							$return['tareas'][] = array(
+								"id"=>"t".$evento->id,
+								"title"=>$evento->title,
+								"color"=>$evento->color,
+								"start"=>$evento->start,
+								"editable"=>false,
+								"allDay"=>true
+								);
+						}
+
+					}
 				}
 
 				$return["ok"]=1;
@@ -836,6 +854,7 @@ class PostRoute{
 				$event->start = $_POST['start'];
 				$event->end = $_POST['end'];
 
+				$event->type = $tipo;
 
 		        $event->detail = $subj->id;
 		        $event->color = $_POST["color"];
@@ -1420,12 +1439,39 @@ class PostRoute{
 							$tarea->periodo_name = $per->name;
 							$tarea->n = $key;
 							$tarea->save();
+
+							//set event
+							$evento = new CEvent;
+							$evento->color = "orange";
+							$evento->title = $value->title;
+							$evento->start = Carbon::createFromFormat('m/d/Y', $value->date);
+							$evento->type = "tarea";
+							$evento->detail = $tarea->id;
+							$evento->save();
+
+
 						}else{
 							$tarea = $tarea->first();
 							$tarea->title = $value->title;
 							$tarea->date = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date);
 							$tarea->tipo = $value->tipo;
 							$tarea->save();
+
+							$eventos = CEvent::whereDetail($tarea->id)->get();
+							if(!$eventos->isEmpty()){
+								$evento = $eventos->first();
+								$evento->title = $value->title;
+								$evento->start = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date);
+								$evento->save();
+							}else{
+								$evento = new CEvent;
+								$evento->color = "orange";
+								$evento->title = $value->title;
+								$evento->start = Carbon::createFromFormat('m/d/Y', $value->date);
+								$evento->type = "tarea";
+								$evento->detail = $tarea->id;
+								$evento->save();
+							}
 						}
 
 
@@ -1453,7 +1499,7 @@ class PostRoute{
 				if($per!="false"){
 					
 					//verificar que hayan tareas
-					$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->get();
+					$tareas = Tarea::tareas()->get();
 					if(!$tareas->isEmpty()){
 						//if ! key&secret create
 						$res = Consumer::whereKey("webcursos")->get();
@@ -1512,6 +1558,13 @@ class PostRoute{
 							}
 
 							$res2 = $wc->createLTI("Evaluación Docente",url("lti/evaluacion"),url("icon/evaluacion.png"));
+							if(isset($res2["ok"])){
+								//$tarea->wc_uid = $res2["ok"];
+							}else{
+
+							}
+
+							$res2 = $wc->createLTI("Hoja de Ruta",url("lti/hojaruta"),url("icon/hojaruta.png"));
 							if(isset($res2["ok"])){
 								//$tarea->wc_uid = $res2["ok"];
 							}else{
