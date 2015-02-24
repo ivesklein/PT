@@ -36,6 +36,17 @@ angular.module("app.ui.ctrls",[])
 			}
 		//]
 	)
+	.controller(
+		"HojaRuta",
+		//[
+		//	"$scope",
+			function($scope, $route, $routeParams){
+				var idtema = $routeParams.idtema+"";
+				$scope.idtema = idtema;
+				//console.log($routeParams);
+			}
+		//]
+	)
 	
 
 	.controller("AccordionDemoCtrl",["$scope",function($scope){$scope.oneAtATime=!0,$scope.groups=[{title:"Dynamic Group Header - 1",content:"Dynamic Group Body - 1"},{title:"Dynamic Group Header - 2",content:"Dynamic Group Body - 2"},{title:"Dynamic Group Header - 3",content:"Dynamic Group Body - 3"}],$scope.items=["Item 1","Item 2","Item 3"],$scope.addItem=function(){var newItemNo;newItemNo=$scope.items.length+1,$scope.items.push("Item "+newItemNo)}}])
@@ -99,6 +110,8 @@ angular.module("app",
 				.when("/tareas",{templateUrl:"views/tareas"})
 				.when("/listanotas",{templateUrl:"views/listanotas"})
 				.when("/evaluartarea/:idtarea",{templateUrl:"views/evaluartarea",controller: 'TareaController'})
+				.when("/listahojasruta",{templateUrl:"views/listahojasruta"})
+				.when("/firmarhojaprofesor/:idtema",{templateUrl:"views/firmarhojaprofesor",controller: 'HojaRuta'})
 				
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
