@@ -2,7 +2,7 @@
 <div class="page page-table">
 
     <div class="panel panel-default periodos">
-        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Periodos</strong></div>
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Semestres</strong></div>
         <?=$table?>
     </div>
 

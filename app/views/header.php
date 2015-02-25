@@ -19,7 +19,7 @@
     </div>
 
     <div class="top-nav">
-        <ul class="nav-left list-unstyled">
+        <!--ul class="nav-left list-unstyled">
             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
                     <i class="fa fa-comment-o"></i>
@@ -156,7 +156,7 @@
                     </div>
                 </div>
             </li>
-        </ul>
+        </ul-->
 
         <ul class="nav-right pull-right list-unstyled">
             <!--li class="dropdown langs text-normal" data-ng-controller="LangCtrl">
@@ -209,21 +209,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#/tasks">
-                            <i class="fa fa-check"></i>
-                            <span data-i18n="My Tasks"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#/pages/lock-screen">
+                        <a href="#/profile/changepass">
                             <i class="fa fa-lock"></i>
-                            <span data-i18n="Lock"></span>
+                            <span>Cambiar Contraseña</span>
                         </a>
                     </li>
                     <li>
                         <a href="logout">
                             <i class="fa fa-sign-out"></i>
-                            <span data-i18n="Log Out"></span>
+                            <span>Cerrar Sessión</span>
                         </a>
                     </li>
                 </ul>

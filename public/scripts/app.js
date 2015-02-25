@@ -92,7 +92,7 @@ angular.module("app",
 				.when("/vista2",{templateUrl:"views/vista2"})
 				.when("/vista3",{templateUrl:"views/vista3"})
 				.when("/vista4",{templateUrl:"views/vista4"})
-				.when("/vista5",{templateUrl:"views/vista5"})
+				.when("/listatemas",{templateUrl:"views/listatemas"})
 				.when("/confirmarguia",{templateUrl:"views/confirmarguia"})
 				.when("/vista7",{templateUrl:"views/vista7"})
 				.when("/vista8",{templateUrl:"views/vista8"})
@@ -112,7 +112,9 @@ angular.module("app",
 				.when("/evaluartarea/:idtarea",{templateUrl:"views/evaluartarea",controller: 'TareaController'})
 				.when("/listahojasruta",{templateUrl:"views/listahojasruta"})
 				.when("/firmarhojaprofesor/:idtema",{templateUrl:"views/firmarhojaprofesor",controller: 'HojaRuta'})
-				
+				.when("/profile/changepass",{templateUrl:"views/changepass"})
+				.when("/definiraleatorio",{templateUrl:"views/definiraleatorio"})
+
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})
