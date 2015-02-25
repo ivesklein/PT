@@ -87,6 +87,11 @@ class Menu {
 			"where"=>"temas",
 			"place"=>"23",
 			"array"=>array("link"=>"#/listahojasruta", "title"=>"Hojas de Ruta", "n"=>0)
+		),
+		"rutaaleatorio"=>array(
+			"where"=>"hojaruta",
+			"place"=>"24",
+			"array"=>array("link"=>"#/definiraleatorio", "title"=>"Revisor Aleatorio", "n"=>0)
 		)
 
 	);
@@ -115,6 +120,10 @@ class Menu {
 		"webcursos" => array(
 			"place"=>"21",
 			"array"=>array("Webcursos", "#/menu", "calendar", "primary", 0)
+		),
+		"hojaruta" => array(
+			"place"=>"22",
+			"array"=>array("Hoja de ruta", "#/menu", "calendar", "primary", 0)
 		)
 	);
 

@@ -35,6 +35,11 @@ class First extends BaseController
 		//return "hola";
 	}
 
+	public function getChangepass()
+	{
+		return View::make('profile.changepass');
+	}
+
 
 	//  ESTRUCTURA  //
 	public function getHeader()
@@ -94,7 +99,7 @@ class First extends BaseController
 
 	public function getPeriodos()
 	{
-		$ahead = array("Periodo","Creado en","Estado", "Controles");
+		$ahead = array("Semestre","Creado en","Estado", "Controles");
 		$head = "";
 		foreach ($ahead as $value) {
 			$head .= View::make('table.head',array('title'=>$value));
@@ -202,9 +207,11 @@ class First extends BaseController
 	//  PERIODOS  //
 	
 
-	public function getVista5()
+	public function getListatemas()
 	{
-		return View::make('views.view5');
+
+
+		return View::make('views.temas.lista', array("table"=>array()));
 	}
 	
 	//  GUIAS  //
@@ -638,6 +645,8 @@ class First extends BaseController
 
 		$body="";
 
+		//if($temas)
+
 		$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->get();
 
 		if(!$temas->isEmpty()){
@@ -648,23 +657,37 @@ class First extends BaseController
 			    	$st2 = explode("@",$tema->student2);
 			    	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
 
-			    	$evallink = url("#/firmarhojaprofesor/".$tema->id);
-
-
-			    	$buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"green","url"=>$evallink));
+			    	if($tema->hojaruta == "falta-guia"){
+			    		$evallink = url("#/firmarhojaprofesor/".$tema->id);
+			    		$buttons = View::make("html.buttonlink",array("title"=>"Firmar","color"=>"green","url"=>$evallink));
+			    	}else{
+			    		$evallink = url("#/hojaprofesor/".$tema->id);
+			    		$buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"cyan","url"=>$evallink));
+			    	}
 
 			    	$nota = View::make("html.nota",array());
 					$id = $tema->id;
 
+					if(empty($tema->hojaruta)){
+						$estado = "En blanco";
+					}elseif(strpos($tema->hojaruta, "@")!==false){
+						$estado = "Una firma";
+					}elseif($tema->hojaruta=="falta-guia"){
+						$estado = "Solicitud de Firma";
+					}else{
+						$estado = "otro";
+					}
+
+
 
 					$content = View::make("table.cell",array("content"=>$grupo));
-					$content .= View::make("table.cell",array("content"=>"asd"));
+					$content .= View::make("table.cell",array("content"=>$estado));
 					$content .= View::make("table.cell",array("content"=>$buttons));
 					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
 			}
 
 		}else{
-			$message = "No hay grupos a evaluar";
+			$message = "No hay grupos activos.";
 			$content = View::make("table.cell",array("content"=>$message));
 			$body .= View::make("table.row",array("content"=>$content));
 
@@ -679,7 +702,73 @@ class First extends BaseController
 		
 		return View::make('views.hojaruta.firmaprofesor');
 	}
+
+	public function getDefiniraleatorio()
+	{
+		
+		$ahead = array("Grupo","Tema","Asignar");
+		$head = "";
+		foreach ($ahead as $value) {
+			$head .= View::make('table.head',array('title'=>$value));
+		}
+
+		$body="";
+
+		//$soap = new PMsoap;	
+		//$soap->login();
+		//$res = $soap->caseList();
+		$subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("definir-aleatorio")->get();
+		//$subjs = Subject::whereStatus("confirm")->get();
+
+		if(!$subjs->isEmpty()){
+
+			$buttons = View::make("table.yesno");
+
+			foreach ($subjs as $subj) {
+
+				//$res2 = $soap->taskCase($case->guid);
+
+				//$subj = Subject::wherePm_uid($case->guid)->first();
+
+				$tema = $subj->subject;
+				$alumno1 = $subj->student1;
+				$alumno2 = $subj->student2;
+				$profesor = $subj->adviser;
+				$id = $subj->pm_uid;
+
+
+				$content = View::make("table.cell",array("content"=>$tema));
+				$content .= View::make("table.cell",array("content"=>$alumno1));
+				$content .= View::make("table.cell",array("content"=>$alumno2));
+				$content .= View::make("table.cell",array("content"=>$profesor));
+				$content .= View::make("table.cell",array("content"=>$buttons));
+				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+				/*else{
+
+					$content = View::make("table.cell",array("content"=>$case->delIndex));
+					$content .= View::make("table.cell",array("content"=>$case->guid));
+					$body .= View::make("table.row",array("content"=>$content));
+				}*/
+			}
+
+		}else{
+			$message = "No hay temas por confirmar";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
+
+		}
+		//print_r($res);
+		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
+		return View::make('views.guias.confirmarguias-ay', array("table"=>$table));
+
+		return View::make('views.hojaruta.definiraleatorio', array("table"=>""));
+	}
+
+
+
+
 	// HOJA DE RUTA //
+
 
 }
 

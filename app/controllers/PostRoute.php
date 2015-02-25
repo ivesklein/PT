@@ -185,7 +185,7 @@ class PostRoute{
 					}
 				}
 
-				return "ok";
+				return Redirect::to("#/listatemas");
 
 
 
@@ -938,6 +938,7 @@ class PostRoute{
 					$ant = $per->permission; //CA SA P
 					$new = $_POST['rol']; // CA SA P
 					//borrar ant
+
 					$pm = new PMsoap;
 					$res1 = $pm->login();
 					if(isset($res1['ok'])){
@@ -1094,6 +1095,23 @@ class PostRoute{
 
             		//$fortime0 = array();
 
+
+            		//ver ayudantes, coordinadora y secretaria ?
+
+            		$perms = Permission::wherePermission("AY")->get();
+            		if(!$perms->isEmpty()){
+            			foreach ($perms as $perm) {
+
+	                    	if(!empty($perm->staff->wc_uid)){
+		                        $users[$perm->staff->wc_id] = array("rol"=>"ayudante", "status"=>1, "uid"=>$perm->staff->wc_uid, "grupo"=>array(), "res"=>array());
+		                    }else{
+		                        $users[$perm->staff->wc_id] = array("rol"=>"ayudante", "status"=>0, "grupo"=>array(), "res"=>array());
+		                    }
+
+						}
+            		}
+
+
 	                foreach ($temas as $tema) {
 	                	//$time_for1 = microtime(true);
 
@@ -1246,6 +1264,24 @@ class PostRoute{
 			                				}
 		                    			}
 		                    				
+		                    		}elseif ($value['rol']=="ayudante") {
+		                    			$prof = Staff::whereWc_id($user)->first();
+		                    			$prof->wc_uid = $wcusers[$user]['uid'];
+		                    			$prof->save();
+
+
+		                    			if(!isset($wcusers[$user]['roles'][3])){
+		                    				//asignar rol
+
+		                    				$wcres7 = $wc->role2user($wcusers[$user]['uid'], 3);
+			                				if(isset($wcres7['ok'])){
+			                					$users[$user]["res"][] = "Agregado Rol Profesor";
+			                				}else{
+			                					$users[$user]["res"][] = "Error al agregar Rol Profesor";
+			                				}
+
+		                    			}
+		                    				
 		                    		}
 		                    		//verificar rol y grupo
 		                    	}else{
@@ -1258,6 +1294,8 @@ class PostRoute{
 		                    				$rol = 4;
 		                    			}elseif ($value['rol']=="alumno") {
 		                    				$rol = 5;
+		                    			}elseif ($value['rol']=="ayudante") {
+		                    				$rol = 3;
 		                    			}
 		                    			$wcres4 = $wc->enrolUser($uid,$rol);
 		                    			if(isset($wcres3["ok"])){
@@ -1271,6 +1309,11 @@ class PostRoute{
 				                    			$alumn = Student::whereWc_id($user)->first();
 				                    			$alumn->wc_uid = $uid;
 				                    			$alumn->save();
+				                    			$users[$user]["res"][] = "Guardado uid wc";
+				                    		}elseif ($value['rol']=="ayudante") {
+				                    			$prof = Staff::whereWc_id($user)->first();
+				                    			$prof->wc_uid = $uid;
+				                    			$prof->save();
 				                    			$users[$user]["res"][] = "Guardado uid wc";
 				                    		}
 		                    			}
@@ -1306,7 +1349,10 @@ class PostRoute{
 		                				$rol = 4;
 		                			}elseif ($value['rol']=="alumno") {
 		                				$rol = 5;
+		                			}elseif ($value['rol']=="ayudante") {
+		                				$rol = 3;
 		                			}
+
 		                			if(!isset($wcusers[$user]['roles'][$rol])){
 		                				//asignar rol
 		                				$wcres5 = $wc->role2user($value["uid"], $rol);
@@ -1328,6 +1374,8 @@ class PostRoute{
 		                    				$rol = 4;
 		                    			}elseif ($value['rol']=="alumno") {
 		                    				$rol = 5;
+		                    			}elseif ($value['rol']=="ayudante") {
+		                    				$rol = 3;
 		                    			}
 		                    			$wcres4 = $wc->enrolUser($uid,$rol);
 		                    			if(isset($wcres4['ok'])){
@@ -1725,6 +1773,73 @@ class PostRoute{
 				} catch (Exception $e) {
 					$return["error"] = "tarea no existe";
 				}
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function ajxgettema()
+	{
+		$return = array();
+		if(isset($_POST['id'])){
+
+			if(Rol::setNota($_POST['id'])){
+
+				$return["data"]=array();
+				//if($_POST['type']==1){
+					$subjs = Subject::wherePeriodo(Periodo::active())->whereId($_POST['id'])->get();
+					if(!$subjs->isEmpty()){
+						$subj = $subjs->first();
+
+						$st1 = explode("@",$subj->student1);
+	                	$st2 = explode("@",$subj->student2);
+	                	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+						$return["data"] = array("id"=>$subj->id,"grupo"=>$grupo, "titulo"=>$subj->subject);
+
+					}
+
+
+		        $return["ok"] = "ok";
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function ajxfirmaprofesor()
+	{
+		$return = array();
+		if(isset($_POST['id'])){
+
+			if(Rol::setNota($_POST['id'])){
+
+				$subjs = Subject::wherePeriodo(Periodo::active())->whereId($_POST['id'])->get();
+				if(!$subjs->isEmpty()){
+					$subj = $subjs->first();
+
+					if($subj->hojaruta=="falta-guia"){
+						$subj->hojaruta = "asignar-revisor";
+						$subj->save();
+						$return["ok"] = "ok";	
+					}else{
+						$return["error"] = "Hoja de ruta en otro en estado: ".$subj->hojaruta;
+					}
+					
+
+				}else{
+					$return["error"] = "Tema no encontrado";
+				}
+
+		        
+
 			}else{
 				$return["error"] = "not permission";
 			}

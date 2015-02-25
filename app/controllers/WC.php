@@ -250,7 +250,7 @@ class WC extends BaseController
 
 			}elseif(!$ps->isEmpty()){//alumno
 				//get data
-
+				Session::put('wc.user', $lti['email']);
 				$subj = Subject::studentfind($lti['email'])->get();
 				if(!$subj->isEmpty()){
 					$tema = $subj->first();
@@ -268,7 +268,7 @@ class WC extends BaseController
 									$declaracion = $declaracion->first();
 									$declaracion = $declaracion->parrafo;
 								}else{
-									$declaracion = "Declaro ante mi que este trabajo es obra mía.";
+									$declaracion = "Declaro ante mi que el trabajo \"".$tema->subject."\" es obra mía.";
 								}
 
 								return View::make("lti.hojaruta", array(
