@@ -262,7 +262,7 @@ class WCAPI {
 					$grupos = array();
 					preg_match_all('|<option value="([0-9]+)">(.+)<.option>|Uus', $matches[1][0], $groupsmatch);
 					foreach ($groupsmatch[2] as $key3 => $idgroup) {
-						if($groupsmatch[1][$key3]!=0){
+						if($groupsmatch[1][$key3]!=0){//sd & ger = 1234
 							$return["groups"][html_entity_decode($idgroup)] = $groupsmatch[1][$key3];
 						}
 					}

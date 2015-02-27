@@ -224,46 +224,87 @@ class First extends BaseController
 		}
 
 		$body="";
-		$soap = new PMsoap;	
-		$soap->login();
-		$res = $soap->caseList();
 
-		if(isset($res['ok'])){
-			$buttons = View::make("table.yesno");
-			
-			foreach ($res['ok'] as $case) {
+		if(false){//con processmaker
 
-				//$res2 = $soap->taskCase($case->guid);
+			$soap = new PMsoap;	
+			$soap->login();
+			$res = $soap->caseList();
+
+			$subjs = Subject::wherePeriodo(Periodo::active())->whereAdviser(Auth::user()->wc_id)->whereStatus("confirm")->get();
+
+			if(isset($res['ok'])){
+				$buttons = View::make("table.yesno");
+				
+				foreach ($res['ok'] as $case) {
+
+					//$res2 = $soap->taskCase($case->guid);
 
 
-				$subj = Subject::wherePeriodo(Periodo::active())->wherePm_uid($case->guid)->first();
+					$subjs = Subject::wherePeriodo(Periodo::active())->wherePm_uid($case->guid)->get();
+					if(!$subjs->isEmpty()){
+						$subj = $subjs->first();
+						if($subj->status=="confirm"){
+							$tema = $subj->subject;
+							$alumno1 = $subj->student1;
+							$alumno2 = $subj->student2;
+							$id = $case->guid;
 
-				if($subj->status=="confirm"){
+
+							$content = View::make("table.cell",array("content"=>$tema));
+							$content .= View::make("table.cell",array("content"=>$alumno1));
+							$content .= View::make("table.cell",array("content"=>$alumno2));
+							$content .= View::make("table.cell",array("content"=>$buttons));
+							$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+						}else{
+
+							$content = View::make("table.cell",array("content"=>$case->delIndex));
+							$content .= View::make("table.cell",array("content"=>$case->guid));
+							$body .= View::make("table.row",array("content"=>$content));
+						}
+					}
+				}
+
+			}else{
+				$message = "No hay temas pendientes de confirmación";
+				$content = View::make("table.cell",array("content"=>$message));
+				$body .= View::make("table.row",array("content"=>$content));
+
+			}
+
+
+		}else{//sin pm
+
+			$subjs = Subject::wherePeriodo(Periodo::active())->whereAdviser(Auth::user()->wc_id)->whereStatus("confirm")->get();
+
+			if(!$subjs->isEmpty()){
+				$buttons = View::make("table.yesno");
+				
+				foreach ($subjs as $subj) {
+
 					$tema = $subj->subject;
 					$alumno1 = $subj->student1;
 					$alumno2 = $subj->student2;
-					$id = $case->guid;
-
+					$id = $subj->id;
 
 					$content = View::make("table.cell",array("content"=>$tema));
 					$content .= View::make("table.cell",array("content"=>$alumno1));
 					$content .= View::make("table.cell",array("content"=>$alumno2));
 					$content .= View::make("table.cell",array("content"=>$buttons));
 					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-				}else{
-
-					$content = View::make("table.cell",array("content"=>$case->delIndex));
-					$content .= View::make("table.cell",array("content"=>$case->guid));
-					$body .= View::make("table.row",array("content"=>$content));
+				
+					
 				}
+
+			}else{
+				$message = "No hay temas pendientes de confirmación";
+				$content = View::make("table.cell",array("content"=>$message));
+				$body .= View::make("table.row",array("content"=>$content));
+
 			}
 
-		}else{
-			$message = "No hay temas pendientes de confirmación";
-			$content = View::make("table.cell",array("content"=>$message));
-			$body .= View::make("table.row",array("content"=>$content));
-
 		}
+
 		//print_r($res);
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
 		return View::make('views.guias.view6', array("table"=>$table));
@@ -278,59 +319,96 @@ class First extends BaseController
 		}
 
 		$body="";
-		$soap = new PMsoap;	
-		$soap->login();
-		$res = $soap->caseList();
 
-		if(isset($res['ok'])){
+		if(false){//con pm
 
-			$drop = View::make("table.profesor-drop");
-			$save = View::make("table.btn-agregar");
+			$soap = new PMsoap;	
+			$soap->login();
+			$res = $soap->caseList();
 
-			foreach ($res['ok'] as $case) {
+			if(isset($res['ok'])){
 
-				//$res2 = $soap->taskCase($case->guid);
+				$drop = View::make("table.profesor-drop");
+				$save = View::make("table.btn-agregar");
 
-				$subjs = Subject::wherePeriodo(Periodo::active())->wherePm_uid($case->guid)->get();
-				
-				if(!$subjs->isEmpty()){
+				foreach ($res['ok'] as $case) {
 
-					$subj = $subjs->first();
-				
-					if($subj->status=="not-confirmed"){
-						$tema = $subj->subject;
-						$alumno1 = $subj->student1;
-						$alumno2 = $subj->student2;
-						$id = $case->guid;
+					//$res2 = $soap->taskCase($case->guid);
+
+					$subjs = Subject::wherePeriodo(Periodo::active())->wherePm_uid($case->guid)->get();
+					
+					if(!$subjs->isEmpty()){
+
+						$subj = $subjs->first();
+					
+						if($subj->status=="not-confirmed"){
+							$tema = $subj->subject;
+							$alumno1 = $subj->student1;
+							$alumno2 = $subj->student2;
+							$id = $case->guid;
 
 
-						$content = View::make("table.cell",array("content"=>$tema));
-						$content .= View::make("table.cell",array("content"=>$alumno1));
-						$content .= View::make("table.cell",array("content"=>$alumno2));
-						$content .= View::make("table.cell",array("content"=>$drop));
-						$content .= View::make("table.cell",array("content"=>$save));
-						$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+							$content = View::make("table.cell",array("content"=>$tema));
+							$content .= View::make("table.cell",array("content"=>$alumno1));
+							$content .= View::make("table.cell",array("content"=>$alumno2));
+							$content .= View::make("table.cell",array("content"=>$drop));
+							$content .= View::make("table.cell",array("content"=>$save));
+							$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+						}else{
+
+							$content = View::make("table.cell",array("content"=>$case->delIndex));
+							$content .= View::make("table.cell",array("content"=>$case->guid));
+							$content .= View::make("table.cell",array("content"=>$subj->status));
+							$body .= View::make("table.row",array("content"=>$content));
+						}
 					}else{
-
-						$content = View::make("table.cell",array("content"=>$case->delIndex));
-						$content .= View::make("table.cell",array("content"=>$case->guid));
-						$content .= View::make("table.cell",array("content"=>$subj->status));
+						$message = "Tema no registrado";
+						$content = View::make("table.cell",array("content"=>$message));
 						$body .= View::make("table.row",array("content"=>$content));
 					}
-				}else{
-					$message = "Tema no registrado";
-					$content = View::make("table.cell",array("content"=>$message));
-					$body .= View::make("table.row",array("content"=>$content));
 				}
+
+			}else{
+				$message = "No hay temas rechazados";
+				$content = View::make("table.cell",array("content"=>$message));
+				$body .= View::make("table.row",array("content"=>$content));
+
 			}
 
-		}else{
-			$message = "No hay temas rechazados";
-			$content = View::make("table.cell",array("content"=>$message));
-			$body .= View::make("table.row",array("content"=>$content));
+
+		}else{//sin pm
+
+			$subjs = Subject::wherePeriodo(Periodo::active())->whereStatus("not-confirmed")->get();
+
+			if(!$subjs->isEmpty()){
+
+				$drop = View::make("table.profesor-drop");
+				$save = View::make("table.btn-agregar");
+
+				foreach ($subjs as $subj) {
+					
+					$tema = $subj->subject;
+					$alumno1 = $subj->student1;
+					$alumno2 = $subj->student2;
+					$id = $subj->id;
+
+					$content = View::make("table.cell",array("content"=>$tema));
+					$content .= View::make("table.cell",array("content"=>$alumno1));
+					$content .= View::make("table.cell",array("content"=>$alumno2));
+					$content .= View::make("table.cell",array("content"=>$drop));
+					$content .= View::make("table.cell",array("content"=>$save));
+					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+				}
+
+			}else{
+				$message = "No hay temas rechazados";
+				$content = View::make("table.cell",array("content"=>$message));
+				$body .= View::make("table.row",array("content"=>$content));
+
+			}
 
 		}
-		//print_r($res);
+
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
 		return View::make('views.guias.asignarguia', array("table"=>$table));
 	}
@@ -345,9 +423,6 @@ class First extends BaseController
 
 		$body="";
 
-		//$soap = new PMsoap;	
-		//$soap->login();
-		//$res = $soap->caseList();
 		$subjs = Subject::wherePeriodo(Periodo::active())->whereStatus("confirm")->get();
 		//$subjs = Subject::whereStatus("confirm")->get();
 
@@ -357,16 +432,11 @@ class First extends BaseController
 
 			foreach ($subjs as $subj) {
 
-				//$res2 = $soap->taskCase($case->guid);
-
-				//$subj = Subject::wherePm_uid($case->guid)->first();
-
 				$tema = $subj->subject;
 				$alumno1 = $subj->student1;
 				$alumno2 = $subj->student2;
 				$profesor = $subj->adviser;
-				$id = $subj->pm_uid;
-
+				$id = $subj->id;
 
 				$content = View::make("table.cell",array("content"=>$tema));
 				$content .= View::make("table.cell",array("content"=>$alumno1));
@@ -374,12 +444,7 @@ class First extends BaseController
 				$content .= View::make("table.cell",array("content"=>$profesor));
 				$content .= View::make("table.cell",array("content"=>$buttons));
 				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-				/*else{
 
-					$content = View::make("table.cell",array("content"=>$case->delIndex));
-					$content .= View::make("table.cell",array("content"=>$case->guid));
-					$body .= View::make("table.row",array("content"=>$content));
-				}*/
 			}
 
 		}else{
@@ -594,7 +659,7 @@ class First extends BaseController
 					    	$evallink = url("#/evaluartarea/".$tema->id);
 
 
-					    	$buttons = View::make("html.buttonlink",array("title"=>"Evaluar","color"=>"cyan","url"=>$evallink));
+					    	$buttons = View::make("html.buttonlink",array("title"=>"Ingresar","color"=>"cyan","url"=>$evallink));
 					    	//buscar en tabla notas
 					    	//$notaarray = array();
 					    	//if(!empty())
@@ -717,30 +782,25 @@ class First extends BaseController
 		//$soap = new PMsoap;	
 		//$soap->login();
 		//$res = $soap->caseList();
-		$subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("definir-aleatorio")->get();
+		$subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("asignar-revisor")->get();
 		//$subjs = Subject::whereStatus("confirm")->get();
 
 		if(!$subjs->isEmpty()){
 
-			$buttons = View::make("table.yesno");
-
 			foreach ($subjs as $subj) {
 
-				//$res2 = $soap->taskCase($case->guid);
-
-				//$subj = Subject::wherePm_uid($case->guid)->first();
+				$st1 = explode("@",$subj->student1);
+		    	$st2 = explode("@",$subj->student2);
+		    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
 
 				$tema = $subj->subject;
-				$alumno1 = $subj->student1;
-				$alumno2 = $subj->student2;
-				$profesor = $subj->adviser;
-				$id = $subj->pm_uid;
+				$id = $subj->id;
 
+				$evallink = url("#/hojaasignar/".$subj->id);
+			    $buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"cyan","url"=>$evallink));
 
-				$content = View::make("table.cell",array("content"=>$tema));
-				$content .= View::make("table.cell",array("content"=>$alumno1));
-				$content .= View::make("table.cell",array("content"=>$alumno2));
-				$content .= View::make("table.cell",array("content"=>$profesor));
+				$content = View::make("table.cell",array("content"=>$grupo));
+				$content .= View::make("table.cell",array("content"=>$tema));
 				$content .= View::make("table.cell",array("content"=>$buttons));
 				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
 				/*else{
@@ -752,7 +812,7 @@ class First extends BaseController
 			}
 
 		}else{
-			$message = "No hay temas por confirmar";
+			$message = "No hay Hojas de Ruta a asignar.";
 			$content = View::make("table.cell",array("content"=>$message));
 			$body .= View::make("table.row",array("content"=>$content));
 
@@ -764,7 +824,11 @@ class First extends BaseController
 		return View::make('views.hojaruta.definiraleatorio', array("table"=>""));
 	}
 
-
+	public function getHojaasignar()
+	{
+		
+		return View::make('views.hojaruta.asignar');
+	}
 
 
 	// HOJA DE RUTA //

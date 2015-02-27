@@ -52,6 +52,34 @@ class Typeahead extends BaseController
 		return json_encode($res);
 	}
 
+	public function getStaffs()
+	{
+		
+		$res = array();	
+		$term = Input::get('term');
+		$users = Staff::where('name',"LIKE","%".$term."%")->orWhere('surname',"LIKE","%".$term."%")->get();
+
+		if(!$users->isEmpty()){
+			foreach ($users as $user) {
+
+				$name = $user->name." ".$user->surname." ".$user->wc_id;
+				$value2 = $user->id;
+				
+				$comisions = 0;
+
+				$comisions += $user->guias()->wherePeriodo(Periodo::active())->count();
+				$comisions += $user->comision()->wherePeriodo(Periodo::active())->count();
+
+
+				$res[] = array('value'=>$value2,'label'=>$name,'comisions'=>$comisions);
+				
+
+			}
+		}
+
+		return json_encode($res);
+	}
+
 }
 
 ?>

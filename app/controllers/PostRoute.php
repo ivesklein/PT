@@ -29,6 +29,8 @@ class PostRoute{
 
 		if(Rol::hasPermission("temasCreate")){
 
+			$activepm = false;
+
 			$TEMA = 0 ;
 			$RUN1 = 1 ;
 			$NOMBRE1 = 2 ;
@@ -43,7 +45,6 @@ class PostRoute{
 			$MPROFESOR = 11 ;
 
 			$periodo = $_POST['periodo'];
-
 
 			$file = Files::post("csv");
 
@@ -60,9 +61,7 @@ class PostRoute{
 				$profesores = array();
 				foreach ($res as $n => $fila) {
 					if($n!=0){
-
 						//verificar solidez de los datos
-
 						//usar los datos
 						//si no está el profesor
 						if(!isset($profesores[$fila[$MPROFESOR]])){
@@ -71,28 +70,39 @@ class PostRoute{
 							$profedb = User::whereWc_id($fila[$MPROFESOR])->get();
 							if(!$profedb->isEmpty()){
 								//agregar
-								$proferow = $profedb->first();
-								if(empty($proferow->pm_uid)){
+								
+								if($activepm==true){//con pm
 
-									$res2 = UserCreation::add(
-									$fila[$MPROFESOR],
-									$fila[$NPROFESOR],
-									$fila[$APROFESOR],
-									"P");
+									$proferow = $profedb->first();
+									if(empty($proferow->pm_uid)){
 
-									if(isset($res2["ok"])){
-										$profesores[$res2["ok"]["wc"]] = $res2["ok"]["pm"];
-										//agregar
-										//guardar datos para operaciones siguientes
+										$res2 = UserCreation::add(
+										$fila[$MPROFESOR],
+										$fila[$NPROFESOR],
+										$fila[$APROFESOR],
+										"P");
+
+										if(isset($res2["ok"])){
+											$profesores[$res2["ok"]["wc"]] = $res2["ok"]["pm"];
+											//agregar
+											//guardar datos para operaciones siguientes
+										}else{
+											//error
+											print_r($res2["error"]);
+
+										}
+
 									}else{
-										//error
-										print_r($res2["error"]);
-
+										$profesores[$proferow->wc_id] = $proferow->pm_uid;
 									}
 
 								}else{
-									$profesores[$proferow->wc_id] = $proferow->pm_uid;
+									$proferow = $profedb->first();
+									$profesores[$proferow->wc_id] = "";
+											
 								}
+
+
 								//guardar datos para operaciones siguientes
 							}else{
 							//sino
@@ -104,14 +114,26 @@ class PostRoute{
 									$fila[$APROFESOR],
 									"P");
 
-								if(isset($res2["ok"])){
-									$profesores[$res2["ok"]["wc"]] = $res2["ok"]["pm"];
-									//agregar
-									//guardar datos para operaciones siguientes
-								}else{
-									//error
-									print_r($res2["error"]);
+								if($activepm==true){//con pm
+									if(isset($res2["ok"])){
+										$profesores[$res2["ok"]["wc"]] = $res2["ok"]["pm"];
+										//agregar
+										//guardar datos para operaciones siguientes
+									}else{
+										//error
+										print_r($res2["error"]);
 
+									}
+								}else{//sin pm
+									if(isset($res2["ok"])){
+										$profesores[$res2["ok"]["wc"]] = "";
+										//agregar
+										//guardar datos para operaciones siguientes
+									}else{
+										//error
+										print_r($res2["error"]);
+
+									}
 								}
 							}//if existe
 						}//if está
@@ -143,6 +165,7 @@ class PostRoute{
 						$name = $fila[$NOMBRE2];
 						$surname = $fila[$APELLIDO2];
 						$mail = $fila[$EMAIL2];
+						$studentdb = Student::whereWc_id($mail)->get();
 						if($studentdb->isEmpty()){
 							$student = new Student;
 							$student->wc_id = $mail;
@@ -159,35 +182,49 @@ class PostRoute{
 				foreach ($res as $n => $fila) {
 					if($n!=0){
 
-						$pm = new PMsoap;
-						$res = $pm->login();
-						if(isset($res['ok'])){
-							$res2 = $pm->newTema($fila[$TEMA], $fila[$EMAIL1], $fila[$EMAIL2], $fila[$MPROFESOR]);
-							if(isset($res2["ok"])){
-								$subj = new Subject;
-								$subj->subject = $fila[$TEMA];
-								$subj->student1 = $fila[$EMAIL1];
-								$subj->student2 = $fila[$EMAIL2];
-								$subj->adviser = $fila[$MPROFESOR];
-								$subj->status = "confirm";
-								$subj->pm_uid = $res2["ok"]["uid"];
-								$subj->periodo = $periodo;
-								$subj->defensa = 0;
-								$subj->save();
+						if($activepm==true){
+
+							$pm = new PMsoap;
+							$res = $pm->login();
+							if(isset($res['ok'])){
+								$res2 = $pm->newTema($fila[$TEMA], $fila[$EMAIL1], $fila[$EMAIL2], $fila[$MPROFESOR]);
+								if(isset($res2["ok"])){
+									$subj = new Subject;
+									$subj->subject = $fila[$TEMA];
+									$subj->student1 = $fila[$EMAIL1];
+									$subj->student2 = $fila[$EMAIL2];
+									$subj->adviser = $fila[$MPROFESOR];
+									$subj->status = "confirm";
+									$subj->pm_uid = $res2["ok"]["uid"];
+									$subj->periodo = $periodo;
+									$subj->defensa = 0;
+									$subj->save();
+								}else{
+									//error
+								}
+
 							}else{
 								//error
 							}
 
+						}else{//no pm
 
-						}else{
-							//error
+							$subj = new Subject;
+							$subj->subject = $fila[$TEMA];
+							$subj->student1 = $fila[$EMAIL1];
+							$subj->student2 = $fila[$EMAIL2];
+							$subj->adviser = $fila[$MPROFESOR];
+							$subj->status = "confirm";
+							$subj->pm_uid = "";
+							$subj->periodo = $periodo;
+							$subj->defensa = 0;
+							$subj->save();
+
 						}
 					}
 				}
 
 				return Redirect::to("#/listatemas");
-
-
 
 			}else{
 				//error con el archivo
@@ -195,11 +232,77 @@ class PostRoute{
 			}
 
 
-
-
 		}else{
 			return Redirect::to("login");
 		}
+	}
+
+	public static function ajxagregarusuario()
+	{
+		$return = array();
+
+		if(Rol::hasPermission("profesores")){
+
+			if(isset($_POST['name']) && isset($_POST['surname']) && isset($_POST['email']) && isset($_POST['rol'])){
+
+				$role = Staff::find(Auth::user()->id)->rol->permission;
+
+			    if($role == "CA" || $role == "SA"){
+			        $array = array(
+			            "CA"=>1,
+			            "SA"=>1,
+			            "P"=>1,
+			            "PT"=>1,
+			            "AY"=>1
+			        );
+			    }elseif($role == "PT"){
+			        $array = array(
+			            "P"=>1,
+			            "PT"=>1,
+			            "AY"=>1
+			        );
+			    }elseif($role == "AY"){
+			        $array = array(
+			            "P"=>1,
+			            "AY"=>1
+			        );
+			    }else{
+			        $array = array(); 
+			    }
+			    //print_r($rol);
+
+			    if(isset($array[$_POST['rol']])){
+
+			    	$staffs = Staff::whereWc_id($_POST['email'])->get();
+			    	if($staffs->isEmpty()){
+			    		$res = UserCreation::add(
+						$_POST["email"],
+						$_POST["name"],
+						$_POST["surname"],
+						$_POST['rol']);
+
+			    		if(isset($res["error"])){
+			    			$return["error"] = $res["error"];
+			    		}else{
+			    			$return["ok"] = 1;
+			    		}
+
+			    	}else{
+			    		$return["error"] = "Usuario existe";
+			    	}
+			    }else{
+			    	$return["error"] = "not permission";
+			    }
+
+			}else{
+				$return["error"] = "faltan variables";
+			}
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+
 	}
 
 
@@ -210,44 +313,85 @@ class PostRoute{
 
 			if(isset($_POST['res']) && isset($_POST['id'])){
 
-				$soap = new PMsoap;
-				$res = $soap->login();//processmaker administra los permisos del proceso
-				if(isset($res["ok"])){
+				if(false){
+
+					$soap = new PMsoap;
+					$res = $soap->login();//processmaker administra los permisos del proceso
+					if(isset($res["ok"])){
+						$resp = $_POST['res'];
+						$id = $_POST['id'];
+						if($resp==0){
+							if(isset($_POST['mes'])){
+								$mes = $_POST['mes'];
+							}else{
+								$mes="";
+							}
+							//registrar en pm y routear
+							$res1 = $soap->confirmGuia($id, $resp, $mes);
+							if(isset($res1["ok"])){
+								$return["ok"]="ok0";
+								$subj = Subject::wherePm_uid($id)->first();
+								$subj->status = "not-confirmed";
+								$subj->save();
+							}else{
+								$return["error"] = $res1['error'];
+							}
+
+						}else{//resp==1
+							//registrar en pm y routear
+							$res1 = $soap->confirmGuia($id, $resp);
+							if(isset($res1["ok"])){
+								$return["ok"]="ok1";
+								$subj = Subject::wherePm_uid($id)->first();
+								$subj->status = "confirmed";
+								$subj->defensa = 1;
+								$subj->save();
+							}else{
+								$return["error"] = $res1['error'];
+							}
+						}
+					}else{//if soaplogin
+						$return["error"] = $res['error'];
+					}
+
+				}else{//no pm
+
+					
+				
 					$resp = $_POST['res'];
 					$id = $_POST['id'];
-					if($resp==0){
-						if(isset($_POST['mes'])){
-							$mes = $_POST['mes'];
+
+					$subjs = Subject::whereId($id)->get();
+
+					if(!$subjs->isEmpty()){
+						$subj = $subjs->first();
+						if($subj->adviser==Auth::user()->wc_id){
+
+							if($resp==0){
+								
+								$return["ok"]="ok0";
+								$subj->status = "not-confirmed";
+								$subj->save();
+
+								//avisar a alumnos MAIL!!!!!!
+
+							}else{//resp==1
+								$return["ok"]="ok1";
+								$subj->status = "confirmed";
+								$subj->defensa = 1;
+								$subj->save();
+							}
+
 						}else{
-							$mes="";
-						}
-						//registrar en pm y routear
-						$res1 = $soap->confirmGuia($id, $resp, $mes);
-						if(isset($res1["ok"])){
-							$return["ok"]="ok0";
-							$subj = Subject::wherePm_uid($id)->first();
-							$subj->status = "not-confirmed";
-							$subj->save();
-						}else{
-							$return["error"] = $res1['error'];
+							$return["error"] = "not permission";
 						}
 
-					}else{//resp==1
-						//registrar en pm y routear
-						$res1 = $soap->confirmGuia($id, $resp);
-						if(isset($res1["ok"])){
-							$return["ok"]="ok1";
-							$subj = Subject::wherePm_uid($id)->first();
-							$subj->status = "confirmed";
-							$subj->defensa = 1;
-							$subj->save();
-						}else{
-							$return["error"] = $res1['error'];
-						}
+					}else{
+						$return["error"] = "Tema no existe";
 					}
-				}else{//if soaplogin
-					$return["error"] = $res['error'];
+
 				}
+
 			}else{//if variables
 				$return["error"] = "faltan variables";
 			}
@@ -264,47 +408,84 @@ class PostRoute{
 	public static function ajxconfirmarguias()
 	{
 		$return = array();
-		if(Auth::check()){
+		if(Rol::hasPermission("guiasConfirmation")){// permiso para confirmar
 
 			if(isset($_POST['res']) && isset($_POST['id']) && isset($_POST['prof'])){
 
-				$soap = new PMsoap;
-				$res = $soap->login($_POST['prof']);
-				if(isset($res["ok"])){
+				if(false){//con pm
+
+					$soap = new PMsoap;
+					$res = $soap->login($_POST['prof']);
+					if(isset($res["ok"])){
+						$resp = $_POST['res'];
+						$id = $_POST['id'];
+						if($resp==0){
+							if(isset($_POST['mes'])){
+								$mes = $_POST['mes'];
+							}else{
+								$mes="";
+							}
+							//registrar en pm y routear
+							$res1 = $soap->confirmGuia($id, $resp, $mes);
+							if(isset($res1["ok"])){
+								$return["ok"]="ok0";
+								$subj = Subject::wherePm_uid($id)->first();
+								$subj->status = "not-confirmed";
+								$subj->save();
+							}else{
+								$return["error"] = $res1['error'];
+							}
+
+						}else{//resp==1
+							//registrar en pm y routear
+							$res1 = $soap->confirmGuia($id, $resp);
+							if(isset($res1["ok"])){
+								$return["ok"]="ok1";
+								$subj = Subject::wherePm_uid($id)->first();
+								$subj->status = "confirmed";
+								$subj->defensa = 1;
+								$subj->save();
+							}else{
+								$return["error"] = $res1['error'];
+							}
+						}
+					}else{//if soaplogin
+						$return["error"] = $res['error'];
+					}
+
+				}else{//sin pm
+
+
+					
 					$resp = $_POST['res'];
 					$id = $_POST['id'];
-					if($resp==0){
-						if(isset($_POST['mes'])){
-							$mes = $_POST['mes'];
-						}else{
-							$mes="";
-						}
-						//registrar en pm y routear
-						$res1 = $soap->confirmGuia($id, $resp, $mes);
-						if(isset($res1["ok"])){
+
+					$subjs = Subject::whereId($id)->get();
+
+					if(!$subjs->isEmpty()){
+						$subj = $subjs->first();
+
+						if($resp==0){
+							
 							$return["ok"]="ok0";
-							$subj = Subject::wherePm_uid($id)->first();
 							$subj->status = "not-confirmed";
 							$subj->save();
-						}else{
-							$return["error"] = $res1['error'];
-						}
 
-					}else{//resp==1
-						//registrar en pm y routear
-						$res1 = $soap->confirmGuia($id, $resp);
-						if(isset($res1["ok"])){
+							//avisar a alumnos MAIL!!!!!!
+
+						}else{//resp==1
 							$return["ok"]="ok1";
-							$subj = Subject::wherePm_uid($id)->first();
 							$subj->status = "confirmed";
 							$subj->defensa = 1;
 							$subj->save();
-						}else{
-							$return["error"] = $res1['error'];
 						}
+
+
+					}else{
+						$return["error"] = "Tema no existe";
 					}
-				}else{//if soaplogin
-					$return["error"] = $res['error'];
+					
+
 				}
 			}else{//if variables
 				$return["error"] = "faltan variables";
@@ -322,29 +503,50 @@ class PostRoute{
 	public static function ajxasignarguia()
 	{
 		$return = array();
-		if(Auth::check()){
+		if(Rol::hasPermission("guiasAsignar")){
 
 			if(isset($_POST['prof']) && isset($_POST['id'])){
 
-				$soap = new PMsoap;
-				$res = $soap->login();
-				if(isset($res["ok"])){
+				if(false){//con pm
+					$soap = new PMsoap;
+					$res = $soap->login();
+					if(isset($res["ok"])){
+						$prof = $_POST['prof'];
+						$id = $_POST['id'];
+
+							//registrar en pm y routear
+							$res1 = $soap->assignGuia($id, $prof);
+							if(isset($res1["ok"])){
+								$return["ok"]="ok0";
+								$subj = Subject::wherePm_uid($id)->first();
+								$subj->status = "confirm";
+								$subj->save();
+							}else{
+								$return["error"] = $res1['error'];
+							}
+
+					}else{//if soaplogin
+						$return["error"] = $res['error'];
+					}
+
+				}else{//sin pm
+
 					$prof = $_POST['prof'];
 					$id = $_POST['id'];
 
-						//registrar en pm y routear
-						$res1 = $soap->assignGuia($id, $prof);
-						if(isset($res1["ok"])){
-							$return["ok"]="ok0";
-							$subj = Subject::wherePm_uid($id)->first();
-							$subj->status = "confirm";
-							$subj->save();
-						}else{
-							$return["error"] = $res1['error'];
-						}
+					$subjs = Subject::whereId($id)->get();
 
-				}else{//if soaplogin
-					$return["error"] = $res['error'];
+					if(!$subjs->isEmpty()){
+						$subj = $subjs->first();
+
+						$return["ok"]="ok0";
+						$subj->status = "confirm";
+						$subj->save();
+
+					}else{
+						$return["error"] = "Tema no existe";
+					}
+
 				}
 			}else{//if variables
 				$return["error"] = "faltan variables";
@@ -354,14 +556,14 @@ class PostRoute{
 
 
 		}else{
-			return "not logged";
+			return "not permission";
 		}
 
 	}
 
 	public static function newayudante()
 	{
-		if(Auth::check()){
+		if(Rol::hasPermission("crearAyudante")){
 
 			if(isset($_POST['email']) && isset($_POST['name']) && isset($_POST['surname']) && isset($_POST['pass'])){
 
@@ -380,10 +582,10 @@ class PostRoute{
 
 
 			}else{
-				//error faltan variables
+				return "faltan variables";
 			}
 		}else{
-
+			return "not permission";
 		}
 	}
 
@@ -939,60 +1141,66 @@ class PostRoute{
 					$new = $_POST['rol']; // CA SA P
 					//borrar ant
 
-					$pm = new PMsoap;
-					$res1 = $pm->login();
-					if(isset($res1['ok'])){
-						$uid = Staff::find($_POST['id'])->pm_uid;
+					if(false){//con pm
 
-						$groupid = PMG::whereGroup($ant)->first()->uid;
+						$pm = new PMsoap;
+						$res1 = $pm->login();
+						if(isset($res1['ok'])){
+							$uid = Staff::find($_POST['id'])->pm_uid;
 
-						$res2 = $pm->userleftgroup($uid,$groupid);
+							$groupid = PMG::whereGroup($ant)->first()->uid;
 
-						$ok2 = false;
+							$res2 = $pm->userleftgroup($uid,$groupid);
 
-						if(isset($res2['ok'])){
-							$ok2 = true;
-						}elseif (isset($res2['error'])) {
-							if($res2['error']=="8:User not registered in the group"){
+							$ok2 = false;
+
+							if(isset($res2['ok'])){
 								$ok2 = true;
+							}elseif (isset($res2['error'])) {
+								if($res2['error']=="8:User not registered in the group"){
+									$ok2 = true;
+								}
 							}
-						}
 
-						if($ok2==true){
-							$groupid2 = PMG::whereGroup($new)->first()->uid;
+							if($ok2==true){
+								$groupid2 = PMG::whereGroup($new)->first()->uid;
 
-							$res3 = $pm->user2group($uid,$groupid2);
-							if(isset($res3['ok'])){
+								$res3 = $pm->user2group($uid,$groupid2);
+								if(isset($res3['ok'])){
 
-								if($role[$ant]!=$role[$new]){
-									$res4 = $pm->updaterole($uid, $role[$new]);
-									if(isset($res4['ok'])){
+									if($role[$ant]!=$role[$new]){
+										$res4 = $pm->updaterole($uid, $role[$new]);
+										if(isset($res4['ok'])){
+											$per->permission = $_POST['rol']; 
+											$per->save();
+											$return["ok"] = "ok";
+										}else{
+											$return["error"] = $res4['error'];
+										}
+									}else{
 										$per->permission = $_POST['rol']; 
 										$per->save();
 										$return["ok"] = "ok";
-									}else{
-										$return["error"] = $res4['error'];
 									}
 								}else{
-									$per->permission = $_POST['rol']; 
-									$per->save();
-									$return["ok"] = "ok";
+									$return["error"] = $res3['error'];
 								}
 							}else{
-								$return["error"] = $res3['error'];
+								$return["error"] = $res2['error'];
 							}
 						}else{
-							$return["error"] = $res2['error'];
+							$return["error"] = $res1['error'];
 						}
-					}else{
-						$return["error"] = $res1['error'];
+
+					}else{//sin pm
+						$per->permission = $_POST['rol']; 
+						$per->save();
+						$return["ok"] = "ok";
 					}
 
 				}else{
 					$return["error"] = "not exist";
 				}
-
-	        	return json_encode($return);
 
 			}else{
 				$return["error"] = "not permission";
@@ -1099,6 +1307,32 @@ class PostRoute{
             		//ver ayudantes, coordinadora y secretaria ?
 
             		$perms = Permission::wherePermission("AY")->get();
+            		if(!$perms->isEmpty()){
+            			foreach ($perms as $perm) {
+
+	                    	if(!empty($perm->staff->wc_uid)){
+		                        $users[$perm->staff->wc_id] = array("rol"=>"ayudante", "status"=>1, "uid"=>$perm->staff->wc_uid, "grupo"=>array(), "res"=>array());
+		                    }else{
+		                        $users[$perm->staff->wc_id] = array("rol"=>"ayudante", "status"=>0, "grupo"=>array(), "res"=>array());
+		                    }
+
+						}
+            		}
+
+            		$perms = Permission::wherePermission("CA")->get();
+            		if(!$perms->isEmpty()){
+            			foreach ($perms as $perm) {
+
+	                    	if(!empty($perm->staff->wc_uid)){
+		                        $users[$perm->staff->wc_id] = array("rol"=>"ayudante", "status"=>1, "uid"=>$perm->staff->wc_uid, "grupo"=>array(), "res"=>array());
+		                    }else{
+		                        $users[$perm->staff->wc_id] = array("rol"=>"ayudante", "status"=>0, "grupo"=>array(), "res"=>array());
+		                    }
+
+						}
+            		}
+
+            		$perms = Permission::wherePermission("SA")->get();
             		if(!$perms->isEmpty()){
             			foreach ($perms as $perm) {
 
@@ -1798,7 +2032,7 @@ class PostRoute{
 						$st1 = explode("@",$subj->student1);
 	                	$st2 = explode("@",$subj->student2);
 	                	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
-						$return["data"] = array("id"=>$subj->id,"grupo"=>$grupo, "titulo"=>$subj->subject);
+						$return["data"] = array("id"=>$subj->id,"grupo"=>$grupo, "titulo"=>$subj->subject, "guia"=>$subj->adviser);
 
 					}
 
@@ -1849,6 +2083,374 @@ class PostRoute{
 		return json_encode($return);
 	}
 
+	public static function ajxasignar()
+	{
+		$return = array();
+		if(isset($_POST['id']) && isset($_POST['option']) && isset($_POST['wcpass'])){
+
+			if(Rol::setNota($_POST['id'])){//hay que cambiarlo a si es ca o sa??
+
+				//ver si existe o es uno nuevo
+				if($_POST['option']==0){
+					if(isset($_POST['idstaff'])){
+					
+						$staffs = Staff::whereId($_POST['idstaff'])->get();
+						if(!$staffs->isEmpty()){
+							$staff = $staffs->first();
+							//si existe asignar a revisión
+							
+							$ok = true;
+
+							$temas = Subject::whereId($_POST['id'])->get();
+							if($temas->isEmpty()){
+								$ok=false;
+								$return["error"] = "Tema de memoria no existe";
+							}else{
+								$tema = $temas->first();
+
+								$st1 = explode("@",$tema->student1);
+			                	$st2 = explode("@",$tema->student2);
+			                	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
+							}
+
+							if($ok==true){
+								$wc = new WCAPI;
+								$res = $wc->login(Auth::user()->wc_id, $_POST['wcpass']);
+								if(isset($res['error'])){
+									$ok=false;
+									$return["error"] = $res['error'];
+								}
+							}
+
+							if($ok==true){
+								$grupos = $wc->groupList();
+								if(isset($grupos['error'])){
+									$ok=false;
+									$return["error"] = $grupos['error'];
+								}
+							}
+								
+							if($ok==true){
+								$wcusers = $wc->userList();
+								if(isset($wcusers['error'])){
+									$ok=false;
+									$return["error"] = $wcusers['error'];
+								}
+							}
+
+
+							if($ok==true){
+
+								if(isset($wcusers['users'][$staff->wc_id])){
+									//está en queso, está en curso
+									//asignar grupo en wc
+									if(empty($staff->wc_uid)){
+										$staff->wc_uid = $wcusers['users'][$staff->wc_id]['uid'];
+										$staff->save();
+									}
+
+									if(!isset($grupos['groups'][$grupo])){
+										$ok=false;
+										$return["error"] = "Grupo no registrado en Webcursos";
+									}
+
+									//verificar si está en grupo antes de agregalo
+
+									if($ok==true){
+										$res2 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
+										if(isset($res2['error'])){
+											$ok=false;
+											$return["error"] = $res2['error'];
+										}
+									}
+
+									if($ok==true){
+										if(!isset($wcusers['users'][$staff->wc_id]['roles'][4])){
+			                				//asignar rol
+			                				$wcres5 = $wc->role2user($staff->wc_uid, 4);
+			                			}
+		                			}
+
+									$res2 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
+										
+
+									if($ok==true){
+										//asignar grupop en pt
+										$rev = new Revisor;
+										$rev->staff_id = $staff->id;
+										$rev->subject_id = $_POST['id'];
+										$rev->periodo = Periodo::active();
+										$rev->save();
+
+										//enviar mail!!!!!
+
+										$tema->hojaruta = "en-revision";
+										$tema->save();
+										$return["ok"]=1;
+										$return["data"]="está en queso, está en curso";
+									}
+
+								}else{
+									//está en queso, no está en curso
+									//buscar en wc
+									$res1 = $wc->searchUser($staff->wc_id);
+									if(isset($res1['error'])){
+										$ok=false;
+										$return["error"] = $res1['error'];
+									}
+									//registrar en curso
+									if($ok==true){
+										//guardar uid
+										$staff->wc_uid = $res1["ok"]->id;
+
+										$res3 = $wc->enrolUser($staff->wc_uid, 4);//ayudante corrector
+										if(isset($res3['error'])){
+											$ok=false;
+											$return["error"] = $res3['error'];
+										}
+									}
+									
+									//asignar a tema wc
+									if($ok==true){
+										$res4 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
+										if(isset($res4['error'])){
+											$ok=false;
+											$return["error"] = $res4['error'];
+										}
+									}
+
+									if($ok==true){
+										//asignar grupo en pt
+										$rev = new Revisor;
+										$rev->staff_id = $staff->id;
+										$rev->subject_id = $_POST['id'];
+										$rev->periodo = Periodo::active();
+										$rev->save();
+
+										$tema->hojaruta = "en-revision";
+										$tema->save();
+										//enviar mail!!!!!
+
+										$return["ok"]=1;
+										$return["data"]="está en queso, recién registrado en curso";
+									}
+
+								}//else en curso
+							}//if ok
+
+						}else{
+							//no se puede crear...error
+							$return["error"] = "Usuario no existe";
+						}
+					}else{
+						$return["error"] = "faltan variables";
+					}
+				}else{//option agregar
+					if(isset($_POST['name']) && isset($_POST['surname']) && isset($_POST['email'])){
+					//es uno nuevo
+						//verificar que es uno nuevo
+						$ok = true;
+
+						$staffs = Staff::whereWc_id($_POST['email'])->get();
+						if($staffs->isEmpty()){
+							//crear staff
+							$res0 = UserCreation::add($_POST['email'], $_POST['name'], $_POST['surname'], "P");
+							if(isset($res0["error"])){
+								$ok=false;
+								$return["error"] = $res0["error"];
+							}else{
+								$staffs2 = Staff::whereWc_id($_POST['email'])->get();
+								if($staffs2->isEmpty()){
+									$ok=false;
+									$return["error"] = "Registro ha fallado";
+								}else{
+									$staff = $staffs2->first();
+								}
+							}
+						}else{
+							//cargar
+							$staff = $staffs->first();
+						}
+						
+						//buscar en wc
+						if($ok==true){
+							$temas = Subject::whereId($_POST['id'])->get();
+							if($temas->isEmpty()){
+								$ok=false;
+								$return["error"] = "Tema de memoria no existe";
+							}else{
+								$tema = $temas->first();
+
+								$st1 = explode("@",$tema->student1);
+			                	$st2 = explode("@",$tema->student2);
+			                	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
+							}
+						}
+
+						if($ok==true){
+							$wc = new WCAPI;
+							$res = $wc->login(Auth::user()->wc_id, $_POST['wcpass']);
+							if(isset($res['error'])){
+								$ok=false;
+								$return["error"] = $res['error'];
+							}
+						}
+
+						if($ok==true){
+							$grupos = $wc->groupList();
+							if(isset($grupos['error'])){
+								$ok=false;
+								$return["error"] = $grupos['error'];
+							}
+						}
+							
+						if($ok==true){
+							$wcusers = $wc->userList();
+							if(isset($wcusers['error'])){
+								$ok=false;
+								$return["error"] = $wcusers['error'];
+							}
+						}
+						
+						//si no está en curso
+						if($ok==true){
+
+							if(isset($wcusers['users'][$staff->wc_id])){
+								//agregado a queso, está en curso
+								//asignar grupo en wc
+								$staff->wc_uid = $wcusers['users'][$staff->wc_id]['uid'];
+								$staff->save();
+								
+
+								if(!isset($grupos['groups'][$grupo])){
+									$ok=false;
+									$return["error"] = "Grupo no registrado en Webcursos";
+								}
+
+								//verificar si está en grupo antes de agregalo
+								if($ok==true){
+									if(!isset($wcusers['users'][$staff->wc_id]['roles'][4])){
+		                				//asignar rol
+		                				$wcres5 = $wc->role2user($staff->wc_uid, 4);
+		                			}
+	                			}
+
+								if($ok==true){
+									$res2 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
+									if(isset($res2['error'])){
+										$ok=false;
+										$return["error"] = $res2['error'];
+									}
+								}
+
+								if($ok==true){
+									//asignar grupop en pt
+									$rev = new Revisor;
+									$rev->staff_id = $staff->id;
+									$rev->subject_id = $_POST['id'];
+									$rev->periodo = Periodo::active();
+									$rev->save();
+
+									$tema->hojaruta = "en-revision";
+									$tema->save();
+
+									//enviar mail!!!!!
+
+									$return["ok"]=1;
+									$return["data"]="agregado a queso, está en curso";
+								}
+
+							}else{
+								//agregado a queso, no está en curso
+								//buscar en wc
+								$res1 = $wc->searchUser($staff->wc_id);
+								if(isset($res1['error'])){
+									$ok=false;
+									$return["error"] = $res1['error'];
+								}
+								//registrar en curso
+								if($ok==true){
+									//guardar uid
+									$staff->wc_uid = $res1["ok"]->id;
+
+									$res3 = $wc->enrolUser($staff->wc_uid, 4);//ayudante corrector
+									if(isset($res3['error'])){
+										$ok=false;
+										$return["error"] = $res3['error'];
+									}
+								}
+								
+								//asignar a tema wc
+								if($ok==true){
+									$res4 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
+									if(isset($res4['error'])){
+										$ok=false;
+										$return["error"] = $res4['error'];
+									}
+								}
+
+								if($ok==true){
+									//asignar grupo en pt
+									$rev = new Revisor;
+									$rev->staff_id = $staff->id;
+									$rev->subject_id = $_POST['id'];
+									$rev->periodo = Periodo::active();
+									$rev->save();
+
+									$tema->hojaruta = "en-revision";
+									$tema->save();
+
+									//enviar mail!!!!!
+
+									$return["ok"]=1;
+									$return["data"]="agregado a queso, recién registrado en curso";
+								}
+
+							}//else en curso
+						}//if ok
+						
+					}else{
+						$return["error"] = "faltan variables";
+					}
+				}//ifelse option buscado o nuevo        
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function ajxchangepass()
+	{
+		$return = array();
+		if(isset($_POST['pass']) && isset($_POST['passnew'])){
+
+			if(Auth::check()){
+
+				$user = Staff::find(Auth::user()->id);
+				if(Hash::check($_POST['pass'],$user->password)){
+
+					$user->password = Hash::make($_POST['passnew']);
+					$user->save();
+
+					$return["ok"]="Contraseña cambiada con exito.";
+
+				}else{
+					$return["error"] = "Contraseña Incorrecta";
+				}
+		        
+
+			}else{
+				$return["error"] = "not logged";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
 
 }//class
 

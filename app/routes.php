@@ -27,9 +27,7 @@ Route::post('config', function()
 	$ok = true;
 	$message="";
 	//recibir variables
-	if(isset($_POST['upm']) && 
-		isset($_POST['ppm']) && 
-		isset($_POST['nameu']) && 
+	if(	isset($_POST['nameu']) && 
 		isset($_POST['surnameu']) && 
 		isset($_POST['mailu']) && 
 		isset($_POST['passu']) ){
@@ -38,6 +36,18 @@ Route::post('config', function()
 		$ok=false;
 		$message = "Faltan Variables";
 	}
+
+	if(false){//con pm
+		if(isset($_POST['upm']) && 
+		isset($_POST['ppm'])){
+
+		}else{
+			$ok=false;
+			$message = "Faltan Variables";
+		}
+
+
+
 
 	//conectarse a pm
 	$soap = new PMsoap;
@@ -89,7 +99,21 @@ Route::post('config', function()
 
 	return View::make("message", array('ok'=>$ok,'message'=>$message));
 
+	}else{//sin pm
 
+		$res5 = UserCreation::add($_POST['mailu'],
+							$_POST['nameu'],
+							$_POST['surnameu'],
+							"SA",
+							$_POST['passu']	);
+
+		if(isset($res5["error"])){
+			$message = $res5["error"];
+		}
+
+		return View::make("message", array('ok'=>$ok,'message'=>$message));
+
+	}
 
 });
 
@@ -167,8 +191,18 @@ Route::get('/test' ,function()
 
 	print_r(array($res1,$res2));
 */
+	$res = "";
 
-	print_r(CarbonLocale::now()->subDay()->diffForHumans());
+	$perms = Permission::wherePermission("AY")->get();
+	if(!$perms->isEmpty()){
+		foreach ($perms as $perm) {
+			$res .= $perm->staff->wc_id;
+		}
+	}
+
+	print_r($res);
+
+	//print_r(CarbonLocale::now()->subDay()->diffForHumans());
 
 
 	

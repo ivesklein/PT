@@ -43,34 +43,41 @@ class UserCreation {
 		$perm->permission = $rol;
 		$perm->save();
 
-		if($pm==null){
-			$pm = new PMsoap;
-			$res = $pm->login();
-		}else{
-			$res["ok"] = 1;
-		}
-		if(isset($res['ok'])){
-			$res2 = $pm->newUser($email, $name, $surname, $email, $role[$rol], $pass);
-			if(isset($res2["ok"])){
-				$user->pm_uid = $res2["ok"];
-				$user->save();
-				$useruid = $res2["ok"];
-				$groupid = PMG::whereGroup($rol)->first()->uid;
+		if(false){//con pm
 
-				$res3 = $pm->user2group($useruid,$groupid);
-
-				if(isset($res3["ok"])){
-					$return["ok"]=array("wc"=>$email,"pm"=>$useruid);
-				}else{
-					$return["error"]=$res3["error"];
-				}
-
+			if($pm==null){
+				$pm = new PMsoap;
+				$res = $pm->login();
 			}else{
-				$return["error"]=$res2["error"];
+				$res["ok"] = 1;
 			}
-		}else{
-			$return["error"]=$res["error"];
+			if(isset($res['ok'])){
+				$res2 = $pm->newUser($email, $name, $surname, $email, $role[$rol], $pass);
+				if(isset($res2["ok"])){
+					$user->pm_uid = $res2["ok"];
+					$user->save();
+					$useruid = $res2["ok"];
+					$groupid = PMG::whereGroup($rol)->first()->uid;
+
+					$res3 = $pm->user2group($useruid,$groupid);
+
+					if(isset($res3["ok"])){
+						$return["ok"]=array("wc"=>$email,"pm"=>$useruid);
+					}else{
+						$return["error"]=$res3["error"];
+					}
+
+				}else{
+					$return["error"]=$res2["error"];
+				}
+			}else{
+				$return["error"]=$res["error"];
+			}
+
+		}else{//sin pm
+			$return["ok"]=array("wc"=>$email);
 		}
+
 
 		//mail
 		return $return;

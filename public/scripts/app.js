@@ -114,6 +114,7 @@ angular.module("app",
 				.when("/firmarhojaprofesor/:idtema",{templateUrl:"views/firmarhojaprofesor",controller: 'HojaRuta'})
 				.when("/profile/changepass",{templateUrl:"views/changepass"})
 				.when("/definiraleatorio",{templateUrl:"views/definiraleatorio"})
+				.when("/hojaasignar/:idtema",{templateUrl:"views/hojaasignar",controller: 'HojaRuta'})
 
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})

@@ -34,7 +34,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <div class="btn btn-success submit">Enviar</div>
+                                <div class="btn btn-success submit">Evaluar</div>
                             </div>
                         </div>
                     </div>

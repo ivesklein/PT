@@ -1,0 +1,15 @@
+DELETE FROM comisions;
+DELETE FROM consumers;
+DELETE FROM crons;
+DELETE FROM event_staff;
+DELETE FROM events;
+DELETE FROM nonce;
+DELETE FROM notas;
+DELETE FROM periodos;
+DELETE FROM permissions;
+DELETE FROM revisors;
+DELETE FROM staffs;
+DELETE FROM students;
+DELETE FROM subjects;
+DELETE FROM tareas;
+DELETE FROM textos;
