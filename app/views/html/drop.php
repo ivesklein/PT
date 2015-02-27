@@ -1,5 +1,5 @@
 <span class="ui-select">
-<select>
+<select <?php if(isset($id)){echo "id='".$id."'";} ?>>
 <?php
 if(isset($items)){
 

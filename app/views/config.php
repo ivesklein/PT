@@ -16,6 +16,7 @@
         <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Configuración</strong></div>
     	<div class="panel-body">
 	    	<form action="" method="post" class="form-horizontal ng-pristine ng-valid">
+	    		<?php if(false){//con pm?>
 	    		<h2>Administrador ProcessMaker</h2>
 		        <div class="form-group">
 		            <label for="" class="col-sm-4">Usuario</label>
@@ -29,7 +30,7 @@
 		                <input class="form-control" type="text" name="ppm">
 		            </div>
 		        </div>
-		        
+		        <?php } ?>
 		        <h2>Nuevo Usuario Secretario Académico</h2>
 		        <div class="form-group">
 		            <label for="" class="col-sm-4">Nombre</label>

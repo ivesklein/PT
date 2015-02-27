@@ -43,11 +43,11 @@ class Menu {
 			"place"=>"10",
 			"array"=>array("link"=>"#/profesores", "title"=>"Profesores", "n"=>0)
 		),
-		"ayudantes"=>array(
-			"where"=>"usuarios",
-			"place"=>"11",
-			"array"=>array("link"=>"#/ayudantes", "title"=>"Ayudantes", "n"=>0)
-		),
+		//"ayudantes"=>array(
+		//	"where"=>"usuarios",
+		//	"place"=>"11",
+		//	"array"=>array("link"=>"#/ayudantes", "title"=>"Ayudantes", "n"=>0)
+		//),
 		"alumnos"=>array(
 			"where"=>"usuarios",
 			"place"=>"12",
@@ -92,6 +92,11 @@ class Menu {
 			"where"=>"hojaruta",
 			"place"=>"24",
 			"array"=>array("link"=>"#/definiraleatorio", "title"=>"Revisor Aleatorio", "n"=>0)
+		),
+		"otro"=>array(
+			"where"=>"otromenu",
+			"place"=>"22",
+			"array"=>array("link"=>"#/listanotas", "title"=>"Evaluar Entregas", "n"=>0)
 		)
 
 	);
@@ -124,6 +129,10 @@ class Menu {
 		"hojaruta" => array(
 			"place"=>"22",
 			"array"=>array("Hoja de ruta", "#/menu", "calendar", "primary", 0)
+		),
+		"otromenu" => array(
+			"place"=>"24",
+			"array"=>array("Otro menú", "#/menu", "calendar", "primary", 0)
 		)
 	);
 

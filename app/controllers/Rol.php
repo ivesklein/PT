@@ -14,7 +14,8 @@ class Rol {
 				"alumnos",
 				"coordefensa",
 				"viewProfEvents",
-				"editrol"
+				"editrol",
+				"rutaaleatorio"
 			),
 		"SA"=>
 			array(
@@ -25,7 +26,8 @@ class Rol {
 				"profesores",
 				"ayudantes",
 				"alumnos",
-				"editrol"
+				"editrol",
+				"rutaaleatorio"
 			),
 		"P"=>
 			array(
@@ -45,7 +47,8 @@ class Rol {
 				"ayudantes",
 				"alumnos",
 				"webcursos",
-				"tareas"
+				"tareas",
+				"crearAyudante"
 			),
 		"AY"=>
 			array(
@@ -131,11 +134,16 @@ class Rol {
 			//ver si es guia
 			$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->whereId($temaId)->get();
 			if($temas->isEmpty()){
-				return false;
+				//ver si es secre o coord
+				$perm = Staff::find(Auth::user()->id)->rol->permission;
+				if($perm=="CA" || $perm=="SA"){
+					return true;
+				}else{
+					return false;
+				}
 			}else{
 				return true;
 			}
-
 		}else{
 			return false;
 		}
