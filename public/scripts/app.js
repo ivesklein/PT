@@ -115,7 +115,8 @@ angular.module("app",
 				.when("/profile/changepass",{templateUrl:"views/changepass"})
 				.when("/definiraleatorio",{templateUrl:"views/definiraleatorio"})
 				.when("/hojaasignar/:idtema",{templateUrl:"views/hojaasignar",controller: 'HojaRuta'})
-
+				.when("/revisartemas",{templateUrl:"views/revisartemas"})
+				.when("/revisartema/:idtema",{templateUrl:"views/revisartema",controller: 'HojaRuta'})
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})

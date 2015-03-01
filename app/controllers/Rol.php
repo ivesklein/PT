@@ -15,7 +15,8 @@ class Rol {
 				"coordefensa",
 				"viewProfEvents",
 				"editrol",
-				"rutaaleatorio"
+				"rutaaleatorio",
+				"revisartemas"
 			),
 		"SA"=>
 			array(
@@ -27,7 +28,8 @@ class Rol {
 				"ayudantes",
 				"alumnos",
 				"editrol",
-				"rutaaleatorio"
+				"rutaaleatorio",
+				"revisartemas"
 			),
 		"P"=>
 			array(
@@ -38,7 +40,8 @@ class Rol {
 				"listanotas",
 				"evaluartarea",
 				"hojaderutaĺista",
-				"firmarhojaprofesor"
+				"firmarhojaprofesor",
+				"revisartemas"
 			),
 		"PT"=>
 			array(
@@ -48,7 +51,8 @@ class Rol {
 				"alumnos",
 				"webcursos",
 				"tareas",
-				"crearAyudante"
+				"crearAyudante",
+				"revisartemas"
 			),
 		"AY"=>
 			array(
@@ -182,6 +186,20 @@ class Rol {
 
 		return $res;
 
+	}
+
+	public static function revisar($idtema)
+	{
+		if(Auth::check()) {
+			$temas = Staff::find(Auth::user()->id)->revisor()->wherePeriodo(Periodo::active())->where('subjects.id',$idtema)->get();
+			if($temas->isEmpty()){
+				return false;
+			}else{
+				return true;
+			}
+		}else{
+			return false;
+		}
 	}
 
 
