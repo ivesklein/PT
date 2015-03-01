@@ -24,6 +24,11 @@ Class Staff extends Eloquent{
 		return $this->hasOne('Permission');
 	}
 
+	public function revisor()
+	{
+		return $this->belongsToMany("Subject", "revisors", "staff_id", "subject_id");
+	}
+
 
 
 }

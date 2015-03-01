@@ -93,10 +93,10 @@ class Menu {
 			"place"=>"24",
 			"array"=>array("link"=>"#/definiraleatorio", "title"=>"Revisor Aleatorio", "n"=>0)
 		),
-		"otro"=>array(
-			"where"=>"otromenu",
-			"place"=>"22",
-			"array"=>array("link"=>"#/listanotas", "title"=>"Evaluar Entregas", "n"=>0)
+		"revisartemas"=>array(
+			"where"=>"hojaruta",
+			"place"=>"30",
+			"array"=>array("link"=>"#/revisartemas", "title"=>"Temas a Revisar", "n"=>0)
 		)
 
 	);

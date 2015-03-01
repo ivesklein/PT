@@ -2034,6 +2034,13 @@ class PostRoute{
 	                	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
 						$return["data"] = array("id"=>$subj->id,"grupo"=>$grupo, "titulo"=>$subj->subject, "guia"=>$subj->adviser);
 
+
+						$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->get();
+						if(!$tareas->isEmpty()){
+							$tarea = $tareas->first();
+							$return["data"]["url"] = $tarea->wc_uid;
+						}
+
 					}
 
 
@@ -2179,7 +2186,7 @@ class PostRoute{
 										$rev = new Revisor;
 										$rev->staff_id = $staff->id;
 										$rev->subject_id = $_POST['id'];
-										$rev->periodo = Periodo::active();
+										
 										$rev->save();
 
 										//enviar mail!!!!!
@@ -2224,7 +2231,7 @@ class PostRoute{
 										$rev = new Revisor;
 										$rev->staff_id = $staff->id;
 										$rev->subject_id = $_POST['id'];
-										$rev->periodo = Periodo::active();
+										
 										$rev->save();
 
 										$tema->hojaruta = "en-revision";
@@ -2348,7 +2355,7 @@ class PostRoute{
 									$rev = new Revisor;
 									$rev->staff_id = $staff->id;
 									$rev->subject_id = $_POST['id'];
-									$rev->periodo = Periodo::active();
+									
 									$rev->save();
 
 									$tema->hojaruta = "en-revision";
@@ -2394,7 +2401,7 @@ class PostRoute{
 									$rev = new Revisor;
 									$rev->staff_id = $staff->id;
 									$rev->subject_id = $_POST['id'];
-									$rev->periodo = Periodo::active();
+									
 									$rev->save();
 
 									$tema->hojaruta = "en-revision";
@@ -2445,6 +2452,43 @@ class PostRoute{
 
 			}else{
 				$return["error"] = "not logged";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function ajxrevisar()
+	{
+		$return = array();
+		if(isset($_POST['id']) && isset($_POST['decision'])){
+
+			if(Rol::revisar($_POST['id'])){
+
+				$tema = Subject::find($_POST['id']);
+
+				if($_POST['decision']==1){
+
+					//guardar decision
+					$tema->hojaruta = "revisada";
+					$tema->save();
+
+
+				}elseif($_POST['decision']==0){
+
+					$tema->hojaruta = "rechazada-revisor";
+					$tema->save();
+
+					//aleeeeeeeeeerttttttttttttttttt!!!!!!!!!!!!!!!!!!!!
+
+				}else{
+					$return["error"] = "Respuesta desconocida";
+				}
+		        
+
+			}else{
+				$return["error"] = "not permission";
 			}
 		}else{
 			$return["error"] = "faltan variables";
