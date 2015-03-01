@@ -35,5 +35,10 @@ Class Subject extends Eloquent{
 		return array($s1,$s2);
 	}*/
 
+	public function revisor()
+	{
+		return $this->belongsToMany("Staff", "revisors", "subject_id", "staff_id");
+	}
+
 
 }

@@ -898,6 +898,80 @@ class First extends BaseController
 		return View::make('views.hojaruta.revisar');
 	}
 
+	public function getReasignartemas()
+	{
+		$ahead = array("Grupo","Tema","Revisor","Reasignar");
+		$head = "";
+		foreach ($ahead as $value) {
+			$head .= View::make('table.head',array('title'=>$value));
+		}
+
+		$body="";
+
+		//$soap = new PMsoap;	
+		//$soap->login();
+		//$res = $soap->caseList();
+		
+		//los mios???
+		$subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("en-revision")->get();
+
+
+		//$subjs = Subject::whereStatus("confirm")->get();
+
+		if(!$subjs->isEmpty()){
+
+			foreach ($subjs as $subj) {
+
+				$st1 = explode("@",$subj->student1);
+		    	$st2 = explode("@",$subj->student2);
+		    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+
+				$tema = $subj->subject;
+				$id = $subj->id;
+
+				$profs = $subj->revisor()->get();
+				if(!$profs->isEmpty()){
+					$prof = $profs->first();
+					$profe = $prof->wc_id;
+				}else{
+					$profe = "";
+				}
+
+
+				$evallink = url("#/reasignartema/".$subj->id);
+			    $buttons = View::make("html.buttonlink",array("title"=>"Reasignar","color"=>"cyan","url"=>$evallink));
+
+				$content = View::make("table.cell",array("content"=>$grupo));
+				$content .= View::make("table.cell",array("content"=>$tema));
+				$content .= View::make("table.cell",array("content"=>$profe));
+				$content .= View::make("table.cell",array("content"=>$buttons));
+				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+				/*else{
+
+					$content = View::make("table.cell",array("content"=>$case->delIndex));
+					$content .= View::make("table.cell",array("content"=>$case->guid));
+					$body .= View::make("table.row",array("content"=>$content));
+				}*/
+			}
+
+		}else{
+			$message = "No hay temas asignados.";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
+
+		}
+		//print_r($res);
+		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
+		//return View::make('views.guias.confirmarguias-ay', array("table"=>$table));
+
+		return View::make('views.hojaruta.listareasignar', array("table"=>$table));
+	}
+
+	public function getReasignartema()
+	{
+		
+		return View::make('views.hojaruta.reasignar');
+	}
 
 	// HOJA DE RUTA //
 

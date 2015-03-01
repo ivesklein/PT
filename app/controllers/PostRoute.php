@@ -2041,6 +2041,15 @@ class PostRoute{
 							$return["data"]["url"] = $tarea->wc_uid;
 						}
 
+
+						$revs = $subj->revisor()->get();
+						if(!$revs->isEmpty()){
+							$rev = $revs->first();
+
+							$return["data"]["revisor"] = $rev->wc_id;
+						}
+
+
 					}
 
 
@@ -2095,7 +2104,9 @@ class PostRoute{
 		$return = array();
 		if(isset($_POST['id']) && isset($_POST['option']) && isset($_POST['wcpass'])){
 
-			if(Rol::setNota($_POST['id'])){//hay que cambiarlo a si es ca o sa??
+			$role = Staff::find(Auth::user()->id)->rol->permission;
+
+			if($role=="CA" || $role=="SA"){//hay que cambiarlo a si es ca o sa??
 
 				//ver si existe o es uno nuevo
 				if($_POST['option']==0){
@@ -2183,10 +2194,20 @@ class PostRoute{
 
 									if($ok==true){
 										//asignar grupop en pt
-										$rev = new Revisor;
+
+										if(isset($_POST["reasignar"])){
+											$revs = Revisor::whereSubject_id($_POST['id'])->get();
+											if(!$revs->isEmpty()){
+												$rev = $revs->first();
+											}else{
+												$rev = new Revisor;
+												$rev->subject_id = $_POST['id'];
+											}
+										}else{
+											$rev = new Revisor;
+											$rev->subject_id = $_POST['id'];
+										}
 										$rev->staff_id = $staff->id;
-										$rev->subject_id = $_POST['id'];
-										
 										$rev->save();
 
 										//enviar mail!!!!!
@@ -2228,10 +2249,19 @@ class PostRoute{
 
 									if($ok==true){
 										//asignar grupo en pt
-										$rev = new Revisor;
+										if(isset($_POST["reasignar"])){
+											$revs = Revisor::whereSubject_id($_POST['id'])->get();
+											if(!$revs->isEmpty()){
+												$rev = $revs->first();
+											}else{
+												$rev = new Revisor;
+												$rev->subject_id = $_POST['id'];
+											}
+										}else{
+											$rev = new Revisor;
+											$rev->subject_id = $_POST['id'];
+										}
 										$rev->staff_id = $staff->id;
-										$rev->subject_id = $_POST['id'];
-										
 										$rev->save();
 
 										$tema->hojaruta = "en-revision";
@@ -2352,10 +2382,19 @@ class PostRoute{
 
 								if($ok==true){
 									//asignar grupop en pt
-									$rev = new Revisor;
+									if(isset($_POST["reasignar"])){
+										$revs = Revisor::whereSubject_id($_POST['id'])->get();
+										if(!$revs->isEmpty()){
+											$rev = $revs->first();
+										}else{
+											$rev = new Revisor;
+											$rev->subject_id = $_POST['id'];
+										}
+									}else{
+										$rev = new Revisor;
+										$rev->subject_id = $_POST['id'];
+									}
 									$rev->staff_id = $staff->id;
-									$rev->subject_id = $_POST['id'];
-									
 									$rev->save();
 
 									$tema->hojaruta = "en-revision";
@@ -2398,10 +2437,19 @@ class PostRoute{
 
 								if($ok==true){
 									//asignar grupo en pt
-									$rev = new Revisor;
+									if(isset($_POST["reasignar"])){
+										$revs = Revisor::whereSubject_id($_POST['id'])->get();
+										if(!$revs->isEmpty()){
+											$rev = $revs->first();
+										}else{
+											$rev = new Revisor;
+											$rev->subject_id = $_POST['id'];
+										}
+									}else{
+										$rev = new Revisor;
+										$rev->subject_id = $_POST['id'];
+									}
 									$rev->staff_id = $staff->id;
-									$rev->subject_id = $_POST['id'];
-									
 									$rev->save();
 
 									$tema->hojaruta = "en-revision";

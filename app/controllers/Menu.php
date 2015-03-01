@@ -97,6 +97,11 @@ class Menu {
 			"where"=>"hojaruta",
 			"place"=>"30",
 			"array"=>array("link"=>"#/revisartemas", "title"=>"Temas a Revisar", "n"=>0)
+		),
+		"listaReasignar"=>array(
+			"where"=>"hojaruta",
+			"place"=>"25",
+			"array"=>array("link"=>"#/reasignartemas", "title"=>"Reasignar Revisor", "n"=>0)
 		)
 
 	);
