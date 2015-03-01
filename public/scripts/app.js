@@ -117,6 +117,10 @@ angular.module("app",
 				.when("/hojaasignar/:idtema",{templateUrl:"views/hojaasignar",controller: 'HojaRuta'})
 				.when("/revisartemas",{templateUrl:"views/revisartemas"})
 				.when("/revisartema/:idtema",{templateUrl:"views/revisartema",controller: 'HojaRuta'})
+				.when("/reasignartemas",{templateUrl:"views/reasignartemas"})
+				.when("/reasignartema/:idtema",{templateUrl:"views/reasignartema",controller: 'HojaRuta'})
+
+
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})

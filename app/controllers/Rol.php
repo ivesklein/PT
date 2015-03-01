@@ -16,7 +16,8 @@ class Rol {
 				"viewProfEvents",
 				"editrol",
 				"rutaaleatorio",
-				"revisartemas"
+				"revisartemas",
+				"listaReasignar"
 			),
 		"SA"=>
 			array(
@@ -29,7 +30,8 @@ class Rol {
 				"alumnos",
 				"editrol",
 				"rutaaleatorio",
-				"revisartemas"
+				"revisartemas",
+				"listaReasignar"
 			),
 		"P"=>
 			array(
