@@ -17,7 +17,8 @@ class Rol {
 				"editrol",
 				"rutaaleatorio",
 				"revisartemas",
-				"listaReasignar"
+				"listaReasignar",
+				"listaAprobar"
 			),
 		"SA"=>
 			array(
@@ -31,7 +32,8 @@ class Rol {
 				"editrol",
 				"rutaaleatorio",
 				"revisartemas",
-				"listaReasignar"
+				"listaReasignar",
+				"listaAprobar"
 			),
 		"P"=>
 			array(

@@ -102,7 +102,13 @@ class Menu {
 			"where"=>"hojaruta",
 			"place"=>"25",
 			"array"=>array("link"=>"#/reasignartemas", "title"=>"Reasignar Revisor", "n"=>0)
+		),
+		"listaAprobar"=>array(
+			"where"=>"hojaruta",
+			"place"=>"26",
+			"array"=>array("link"=>"#/aprobartemas", "title"=>"Aprobación Final", "n"=>0)
 		)
+
 
 	);
 
