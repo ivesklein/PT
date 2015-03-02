@@ -2,7 +2,7 @@
 <div class="page page-table">
 
     <div class="panel panel-default periodos">
-        <div class="panel-heading"><strong><span class="glyphicon glyphicon-page"></span> Elegir Revisor de Memoria</strong></div>
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-page"></span> Temas listos para Aprobar</strong></div>
         <?=$table?>
     </div>
 

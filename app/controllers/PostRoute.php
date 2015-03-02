@@ -2309,7 +2309,7 @@ class PostRoute{
 							$staff = $staffs->first();
 						}
 						
-						//buscar en wc
+						
 						if($ok==true){
 							$temas = Subject::whereId($_POST['id'])->get();
 							if($temas->isEmpty()){
@@ -2322,6 +2322,16 @@ class PostRoute{
 			                	$st2 = explode("@",$tema->student2);
 			                	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
 							}
+						}
+
+						if($ok==true){
+							if($tema->hojaruta == "asignar-revisor" || ($tema->hojaruta == "en-revision" && isset($_POST["reasignar"]))){
+
+							}else{
+								$ok=false;
+								$return["error"] = "Hoja de ruta en otro paso.";
+							}
+
 						}
 
 						if($ok==true){
@@ -2516,24 +2526,27 @@ class PostRoute{
 
 				$tema = Subject::find($_POST['id']);
 
-				if($_POST['decision']==1){
+				if($tema->hojaruta == "en-revision"){
+					if($_POST['decision']==1){
 
-					//guardar decision
-					$tema->hojaruta = "revisada";
-					$tema->save();
+						//guardar decision
+						$tema->hojaruta = "revisada";
+						$tema->save();
 
 
-				}elseif($_POST['decision']==0){
+					}elseif($_POST['decision']==0){
 
-					$tema->hojaruta = "rechazada-revisor";
-					$tema->save();
+						$tema->hojaruta = "rechazada-revisor";
+						$tema->save();
 
-					//aleeeeeeeeeerttttttttttttttttt!!!!!!!!!!!!!!!!!!!!
+						//aleeeeeeeeeerttttttttttttttttt!!!!!!!!!!!!!!!!!!!!
 
-				}else{
-					$return["error"] = "Respuesta desconocida";
+					}else{
+						$return["error"] = "Respuesta desconocida";
+					}
+		        }else{
+					$return["error"] = "Hoja de ruta en otro paso.";
 				}
-		        
 
 			}else{
 				$return["error"] = "not permission";
@@ -2543,6 +2556,48 @@ class PostRoute{
 		}
 		return json_encode($return);
 	}
+
+	public static function ajxaprobar()
+	{
+		$return = array();
+		if(isset($_POST['id']) && isset($_POST['decision'])){
+
+			$role = Staff::find(Auth::user()->id)->rol->permission;
+
+			if($role=="CA" || $role=="SA"){//hay que cambiarlo a si es ca o sa??
+
+				$tema = Subject::find($_POST['id']);
+
+				if($tema->hojaruta == "revisada"){
+					if($_POST['decision']==1){
+
+						//guardar decision
+						$tema->hojaruta = "aprobada";
+						$tema->save();
+
+					}elseif($_POST['decision']==0){
+
+						$tema->hojaruta = "rechazada-secretaria";
+						$tema->save();
+
+						//aleeeeeeeeeerttttttttttttttttt!!!!!!!!!!!!!!!!!!!!
+
+					}else{
+						$return["error"] = "Respuesta desconocida";
+					}
+
+				}else{
+					$return["error"] = "Hoja de ruta en otro paso";
+				}
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+	
 
 }//class
 

@@ -119,7 +119,8 @@ angular.module("app",
 				.when("/revisartema/:idtema",{templateUrl:"views/revisartema",controller: 'HojaRuta'})
 				.when("/reasignartemas",{templateUrl:"views/reasignartemas"})
 				.when("/reasignartema/:idtema",{templateUrl:"views/reasignartema",controller: 'HojaRuta'})
-
+				.when("/aprobartemas",{templateUrl:"views/aprobartemas"})
+				.when("/aprobartema/:idtema",{templateUrl:"views/aprobartema",controller: 'HojaRuta'})
 
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
