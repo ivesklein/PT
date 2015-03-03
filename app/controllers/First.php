@@ -477,10 +477,19 @@ class First extends BaseController
 	}
 
 	//  USUARIOS  //
-	public function getProfesores()
+	public function getFuncionarios()
 	{
 
-		$ahead = array("Nombre","Apellido","Mail","Rol");
+		$ahead = array(
+			"Nombre",
+			"Apellido",
+			"Mail", 
+			"Cordinador Académico", 
+			"Secretario Académico", 
+			"Profesor Guía o Comisión", 
+			"Profesor Taller", 
+			"Ayudante Taller"
+		);
 		$head = "";
 		foreach ($ahead as $value) {
 			$head .= View::make('table.head',array('title'=>$value));
@@ -500,23 +509,31 @@ class First extends BaseController
 					$id = $staff->id;
 
 					$array = array("items"=>array(
-						"CA"=>array("title"=>"Cordinador Académico", "value"=>"CA"),
-						"SA"=>array("title"=>"Secretario Académico", "value"=>"SA"),
-						"P"=>array("title"=>"Profesor", "value"=>"P"),
-						"PT"=>array("title"=>"Profesor Taller", "value"=>"PT"),
-						"AY"=>array("title"=>"Auyudante Taller", "value"=>"AY")
+						"CA"=>array("title"=>"Cordinador Académico", "value"=>"CA","n"=>$id),
+						"SA"=>array("title"=>"Secretario Académico", "value"=>"SA","n"=>$id),
+						"P"=>array("title"=>"Profesor", "value"=>"P","n"=>$id),
+						"PT"=>array("title"=>"Profesor Taller", "value"=>"PT","n"=>$id),
+						"AY"=>array("title"=>"Ayudante Taller", "value"=>"AY","n"=>$id)
 					));
 
-					$role = Permission::whereStaff_id($id)->first();
 
-					$array['items'][$role->permission]["sel"]=1;
 
-					$buttons = View::make("html.drop", $array);
+					$roles = Permission::whereStaff_id($id)->get();
+					if(!$roles->isEmpty()){
+						foreach ($roles as $role) {
+							$array['items'][$role->permission]["sel"]=1;
+						}
+					}
 
 					$content = View::make("table.cell",array("content"=>$name));
 					$content .= View::make("table.cell",array("content"=>$surname));
 					$content .= View::make("table.cell",array("content"=>$mail));
-					$content .= View::make("table.cell",array("content"=>$buttons));
+					
+					foreach ($array['items'] as $rol => $vals) {
+						$check = View::make("html.check",$vals);
+						$content .= View::make("table.cell",array("content"=>$check));
+					}
+
 					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
 				
 			}
@@ -529,11 +546,8 @@ class First extends BaseController
 		}
 		//print_r($res);
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
-		return View::make('views.users.profesores', array("table"=>$table));
+		return View::make('views.users.funcionarios', array("table"=>$table));
 
-
-
-		return View::make('views.users.profesores');
 	}
 
 	public function getAlumnos()
@@ -764,8 +778,11 @@ class First extends BaseController
 
 	public function getFirmarhojaprofesor()
 	{
-		
-		return View::make('views.hojaruta.firmaprofesor');
+
+		$declaracion = Texto::texto("declaracion-profesor","Declaro ante mi que el trabajo es digno de llamar memoria de Ingeniería.");
+		$dec = array("declaracion"=>$declaracion);
+
+		return View::make('views.hojaruta.firmaprofesor', $dec);
 	}
 
 	public function getDefiniraleatorio()
@@ -894,8 +911,10 @@ class First extends BaseController
 
 	public function getRevisartema()
 	{
-		
-		return View::make('views.hojaruta.revisar');
+		$declaracion = Texto::texto("declaracion-revisor","Declaro ante mi que el trabajo tiene un formato acorde a los estandares de la UAI.");
+		$dec = array("declaracion"=>$declaracion);
+
+		return View::make('views.hojaruta.revisar', $dec);
 	}
 
 	public function getReasignartemas()
@@ -1043,8 +1062,9 @@ class First extends BaseController
 
 	public function getAprobartema()
 	{
-		
-		return View::make('views.hojaruta.aprobar');
+		$declaracion = Texto::texto("declaracion-secretaria","Declaro ante mi que el trabajo cumple con todos los requisitos para presentarse a defensa.");
+		$dec = array("declaracion"=>$declaracion);
+		return View::make('views.hojaruta.aprobar', $dec);
 	}
 
 

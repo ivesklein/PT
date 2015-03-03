@@ -98,7 +98,7 @@ angular.module("app",
 				.when("/vista8",{templateUrl:"views/vista8"})
 				.when("/vista9",{templateUrl:"views/vista9"})
 				.when("/vista10",{templateUrl:"views/vista10"})
-				.when("/profesores",{templateUrl:"views/profesores"})
+				.when("/funcionarios",{templateUrl:"views/funcionarios"})
 				.when("/ayudantes",{templateUrl:"views/ayudantes"})
 				.when("/alumnos",{templateUrl:"views/alumnos"})
 				.when("/asignarguia",{templateUrl:"views/asignarguia"})

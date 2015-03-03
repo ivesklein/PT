@@ -5,7 +5,7 @@ class Correo {
 	{
 		# code...
 
-		$res = View::make("emails.".$view, $parameters);
+		//$res = View::make("emails.".$view, $parameters);
 
 	}
 

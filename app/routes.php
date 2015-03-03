@@ -129,6 +129,45 @@ Route::get('login', function()
 
 Route::post('login', 'UserLogin@user');
 
+
+Route::get('rol', array( "before"=>'auth' ,function()
+{
+	//for roles agregar a vista
+
+	$name = array(
+		"SA"=>"Secretaría Académica",
+		"CA"=>"Coordinación Académica",
+		"P"=>"Profesor Guía o Comisión",
+		"PT"=>"Profesor de Taller",
+		"AY"=>"Ayudante de Taller"
+	);
+	$array = array();
+	$id = Auth::user()->id; //id user
+	$perms = Permission::whereStaff_id($id)->get(); //roles user
+	foreach ($perms as $row) {
+		$array[$row->permission] = $name[$row->permission];
+	}
+
+	return View::make('rol', array("roles"=>$array));
+}));
+
+Route::post('rol', array( "before"=>'auth' ,function()
+{
+	if(isset($_POST['rol'])){
+		$id = Auth::user()->id; //id user
+		$perms = Permission::whereStaff_id($id)->wherePermission($_POST['rol'])->count(); //roles user
+		if($perms>0){
+			Session::put('rol', $_POST['rol']);
+			return Redirect::to('/');
+		}else{
+			return Redirect::to('/rol');
+		}
+	}else{
+		return Redirect::to('/rol');
+	}
+}));
+
+
 Route::get('logout', function()
 {
 	Auth::logout();
@@ -178,6 +217,14 @@ Route::get('/test' ,function()
 {
 
 
+	Mail::send('emails.welcome', array(), function($message)
+	{
+	    $message->to('joreamuno@alumnos.uai.cl', 'Joaquín Oreamuno')->subject('pruebaaa!');
+	});
+
+
+
+
 	/*$pm = new PMsoap;
 	
 	$res1 = $pm->login();
@@ -191,6 +238,8 @@ Route::get('/test' ,function()
 
 	print_r(array($res1,$res2));
 */
+
+	/*
 	$res = "";
 
 	$perms = Permission::wherePermission("AY")->get();
@@ -201,7 +250,7 @@ Route::get('/test' ,function()
 	}
 
 	print_r($res);
-
+*/
 	//print_r(CarbonLocale::now()->subDay()->diffForHumans());
 
 

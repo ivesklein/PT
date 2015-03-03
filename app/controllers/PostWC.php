@@ -87,12 +87,15 @@ class PostWC {
 								//nadie ha firmado		o	//alguien firmó					y  que ese alguin no sea yo
 						if( empty($tema->hojaruta)|| (strpos($tema->hojaruta, "@")!==false && $tema->hojaruta!=$user ) ){//no he firmado
 							if(empty($tema->hojaruta)) {//soy el primero
-								$tema->hojaruta = $user;
+								$tema->hojaruta = $user;	
+								$a = DID::action($user, "firmar hoja", $tema->id, "memoria", "aceptar");
+
 							}else{//solo falto yo
 								$tema->hojaruta = "falta-guia";
+								$a = DID::action($user, "firmar hoja", $tema->id, "memoria", "aceptar");
 
 								//avisar!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-								//$rmail = Correo::send( $tema->adviser, "firmarprofesor", $tema->id);
+								$rmail = Correo::send( $tema->adviser, "firmarprofesor", $tema->id);
 
 							}
 							$tema->save();

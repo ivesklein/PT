@@ -12,6 +12,8 @@ class PostRoute{
 				$per->status = "draft";
 				$per->save();
 
+				$a = DID::action(Auth::user()->wc_id, "crear periodo", $_POST['name'], "periodo");
+
 				return Redirect::to("#/periodos");
 
 			}else{
@@ -224,6 +226,8 @@ class PostRoute{
 					}
 				}
 
+				$a = DID::action(Auth::user()->wc_id, "agregar temas", $periodo, "periodo", $n);
+
 				return Redirect::to("#/listatemas");
 
 			}else{
@@ -245,7 +249,7 @@ class PostRoute{
 
 			if(isset($_POST['name']) && isset($_POST['surname']) && isset($_POST['email']) && isset($_POST['rol'])){
 
-				$role = Staff::find(Auth::user()->id)->rol->permission;
+				$role = Session::get('rol' ,"0");
 
 			    if($role == "CA" || $role == "SA"){
 			        $array = array(
@@ -285,6 +289,8 @@ class PostRoute{
 			    			$return["error"] = $res["error"];
 			    		}else{
 			    			$return["ok"] = 1;
+
+			    			$a = DID::action(Auth::user()->wc_id, "agregar usuario", $_POST["email"], "usuario", $_POST['rol']);
 			    		}
 
 			    	}else{
@@ -372,7 +378,7 @@ class PostRoute{
 								$return["ok"]="ok0";
 								$subj->status = "not-confirmed";
 								$subj->save();
-
+								$a = DID::action(Auth::user()->wc_id, "confirmar guía", $id, "memoria", "rechazar");
 								//avisar a alumnos MAIL!!!!!!
 
 							}else{//resp==1
@@ -380,6 +386,7 @@ class PostRoute{
 								$subj->status = "confirmed";
 								$subj->defensa = 1;
 								$subj->save();
+								$a = DID::action(Auth::user()->wc_id, "confirmar guía", $id, "memoria", "rechazar");
 							}
 
 						}else{
@@ -470,7 +477,7 @@ class PostRoute{
 							$return["ok"]="ok0";
 							$subj->status = "not-confirmed";
 							$subj->save();
-
+							$a = DID::action(Auth::user()->wc_id, "confirmarle guía", $id, "memoria", "rechazar");
 							//avisar a alumnos MAIL!!!!!!
 
 						}else{//resp==1
@@ -478,6 +485,7 @@ class PostRoute{
 							$subj->status = "confirmed";
 							$subj->defensa = 1;
 							$subj->save();
+							$a = DID::action(Auth::user()->wc_id, "confirmarle guía", $id, "memoria", "aceptar");
 						}
 
 
@@ -542,6 +550,8 @@ class PostRoute{
 						$return["ok"]="ok0";
 						$subj->status = "confirm";
 						$subj->save();
+
+						$a = DID::action(Auth::user()->wc_id, "asignar guía", $id, "memoria", $prof);
 
 					}else{
 						$return["error"] = "Tema no existe";
@@ -788,7 +798,7 @@ class PostRoute{
 		        $event->status = 'active';
 		        $event->save();
 		        $return["ok"] = $event->id;
-	        	return json_encode($return);
+	        	$a = DID::action(Auth::user()->wc_id, "activar periodo", $_POST["id"], "periodo");
 
 			}else{
 				$return["error"] = "not permission";
@@ -810,7 +820,7 @@ class PostRoute{
 		        $event->status = 'closed';
 		        $event->save();
 		        $return["ok"] = $event->id;
-	        	return json_encode($return);
+	        	$a = DID::action(Auth::user()->wc_id, "cerrar periodo", $_POST["id"], "periodo");
 
 			}else{
 				$return["error"] = "not permission";
@@ -989,6 +999,7 @@ class PostRoute{
 					//AVISAR POR MAIL
 
 				}
+				$a = DID::action(Auth::user()->wc_id, "modificar comision", $subject_id, "memoria", "+".$_POST['news']."-".$_POST['dels']);
 
 				$return['ok'] = 1;
 
@@ -1021,6 +1032,8 @@ class PostRoute{
 				$com = Comision::whereStaff_id($staff_id)->whereSubject_id($subject_id)->first();
 				$com->status = $status;
 				$com->save();
+
+				$a = DID::action(Auth::user()->wc_id, "confirmar comision", $subject_id, "memoria", $status);
 
 		        $return["ok"] = "ok";
 	        	return json_encode($return);
@@ -1080,6 +1093,11 @@ class PostRoute{
 				}
 
 				$return['ok'] = 1;
+				if($tipo=="Defensa"){
+					$a = DID::action(Auth::user()->wc_id, "crear fecha defensa", $subj->guia, "memoria", $_POST['start']);
+				}else{
+					$a = DID::action(Auth::user()->wc_id, "crear fecha predefensa", $subj->guia, "memoria", $_POST['start']);
+				}
 
 
 			}else{
@@ -1121,86 +1139,43 @@ class PostRoute{
 	public static function ajxeditrol()
 	{
 		$return = array();
-		if(isset($_POST['id']) && isset($_POST['rol'])){
+		if(isset($_POST['id']) && isset($_POST['rol']) && isset($_POST['action'])){
 
 			if(Rol::hasPermission("editrol")){
 
-				$role = array(
-					"P"=>2,
-					"PT"=>2,
-					"SA"=>1,
-					"CA"=>1,
-					"AY"=>2
-				);
-				//editar en PM
-				$perm = Permission::whereStaff_id($_POST['id'])->get();
-				if(!$perm->isEmpty()){
-					$per = $perm->first();
+				$perm = Permission::whereStaff_id($_POST['id'])->wherePermission($_POST['rol']);
+				$count = $perm->count();
 
-					$ant = $per->permission; //CA SA P
-					$new = $_POST['rol']; // CA SA P
-					//borrar ant
-
-					if(false){//con pm
-
-						$pm = new PMsoap;
-						$res1 = $pm->login();
-						if(isset($res1['ok'])){
-							$uid = Staff::find($_POST['id'])->pm_uid;
-
-							$groupid = PMG::whereGroup($ant)->first()->uid;
-
-							$res2 = $pm->userleftgroup($uid,$groupid);
-
-							$ok2 = false;
-
-							if(isset($res2['ok'])){
-								$ok2 = true;
-							}elseif (isset($res2['error'])) {
-								if($res2['error']=="8:User not registered in the group"){
-									$ok2 = true;
-								}
-							}
-
-							if($ok2==true){
-								$groupid2 = PMG::whereGroup($new)->first()->uid;
-
-								$res3 = $pm->user2group($uid,$groupid2);
-								if(isset($res3['ok'])){
-
-									if($role[$ant]!=$role[$new]){
-										$res4 = $pm->updaterole($uid, $role[$new]);
-										if(isset($res4['ok'])){
-											$per->permission = $_POST['rol']; 
-											$per->save();
-											$return["ok"] = "ok";
-										}else{
-											$return["error"] = $res4['error'];
-										}
-									}else{
-										$per->permission = $_POST['rol']; 
-										$per->save();
-										$return["ok"] = "ok";
-									}
-								}else{
-									$return["error"] = $res3['error'];
-								}
-							}else{
-								$return["error"] = $res2['error'];
-							}
-						}else{
-							$return["error"] = $res1['error'];
-						}
-
-					}else{//sin pm
-						$per->permission = $_POST['rol']; 
-						$per->save();
-						$return["ok"] = "ok";
+				if($_POST['action']=="add"){//agregar
+					//ver sino existe
+					echo"a1";
+					if($count==0){
+						//crearlo
+						$nperm = new Permission;
+						$nperm->staff_id = $_POST['id'];
+						$nperm->permission = $_POST['rol'];
+						$nperm->save();
+						echo"a1saved";
 					}
-
-				}else{
-					$return["error"] = "not exist";
+				}else{//quitar
+					//ver si existe
+					echo"a0";
+					if($count!=0){
+						//quitarlo
+						$del = $perm->first();
+						$del->delete();
+						echo"a0deleted";
+					}
 				}
+
+				$return["ok"] = "ok";
+
+				if($_POST['action']==true){
+					$a = DID::action(Auth::user()->wc_id, "asignar rol", $_POST['id'], "usuario", $_POST['rol']);
+				}else{
+					$a = DID::action(Auth::user()->wc_id, "quitar rol", $_POST['id'], "usuario", $_POST['rol']);
+				}
+
 
 			}else{
 				$return["error"] = "not permission";
@@ -1255,6 +1230,7 @@ class PostRoute{
 				if($per!="false"){
 					$per->wc_course = $_POST['id'];
 					$per->save();
+					$a = DID::action(Auth::user()->wc_id, "elegir Curso", $per->id, "periodo");
 				}else{
 					$return["error"] = "error";
 				}
@@ -1656,6 +1632,8 @@ class PostRoute{
 	                	$return['wcgroups'] = $wcgroups;
 	                }
 
+	                $a = DID::action(Auth::user()->wc_id, "registrar usuarios en webcursos", $per->id, "periodo");
+
 	            }else{
 	                $return['warning'] = "no hay temas";
 	            }
@@ -1758,6 +1736,8 @@ class PostRoute{
 
 
 					}
+					$a = DID::action(Auth::user()->wc_id, "crear tareas", $per->id, "periodo");
+
 					$return["ok"] = 1;
 
 				}else{
@@ -1853,7 +1833,7 @@ class PostRoute{
 
 							}
 							
-
+							$a = DID::action(Auth::user()->wc_id, "crear recursos", $per->id, "periodo");
 
 						}else{
 							$return["error"] = "bad wc login";
@@ -1990,6 +1970,7 @@ class PostRoute{
 									$notita->feedback=$_POST['feedback'];
 								}
 								$notita->save();
+								$a = DID::action(Auth::user()->wc_id, "reevaluar tarea", $subj->id, "tarea-".$_POST['tarea'], $_POST['nota']);
 							}else{
 								$return["error"] = "evaluación no existe";
 							}
@@ -2000,6 +1981,8 @@ class PostRoute{
 							$notita->nota=$_POST['nota'];
 							$notita->feedback=$_POST['feedback'];
 							$notita->save();
+
+							$a = DID::action(Auth::user()->wc_id, "evaluar tarea", $subj->id, "tarea-".$_POST['tarea'], $_POST['nota']);
 						}
 					}else{
 						$return["error"] = "evaluación fuera de plazo";
@@ -2078,6 +2061,7 @@ class PostRoute{
 					if($subj->hojaruta=="falta-guia"){
 						$subj->hojaruta = "asignar-revisor";
 						$subj->save();
+						$a = DID::action(Auth::user()->wc_id, "firmar hoja profesor", $subj->id, "memoria");
 						$return["ok"] = "ok";	
 					}else{
 						$return["error"] = "Hoja de ruta en otro en estado: ".$subj->hojaruta;
@@ -2104,7 +2088,7 @@ class PostRoute{
 		$return = array();
 		if(isset($_POST['id']) && isset($_POST['option']) && isset($_POST['wcpass'])){
 
-			$role = Staff::find(Auth::user()->id)->rol->permission;
+			$role = Session::get('rol' ,"0");;
 
 			if($role=="CA" || $role=="SA"){//hay que cambiarlo a si es ca o sa??
 
@@ -2210,10 +2194,14 @@ class PostRoute{
 										$rev->staff_id = $staff->id;
 										$rev->save();
 
+
 										//enviar mail!!!!!
 
 										$tema->hojaruta = "en-revision";
 										$tema->save();
+
+										$a = DID::action(Auth::user()->wc_id, "asignar revisor", $staff->id, "revisor", "");
+
 										$return["ok"]=1;
 										$return["data"]="está en queso, está en curso";
 									}
@@ -2266,6 +2254,8 @@ class PostRoute{
 
 										$tema->hojaruta = "en-revision";
 										$tema->save();
+
+										$a = DID::action(Auth::user()->wc_id, "asignar revisor", $staff->id, "revisor", "también se registra en webcursos");
 										//enviar mail!!!!!
 
 										$return["ok"]=1;
@@ -2410,6 +2400,7 @@ class PostRoute{
 									$tema->hojaruta = "en-revision";
 									$tema->save();
 
+									$a = DID::action(Auth::user()->wc_id, "asignar revisor", $staff->id, "revisor", "registrado en plataforma");
 									//enviar mail!!!!!
 
 									$return["ok"]=1;
@@ -2465,6 +2456,7 @@ class PostRoute{
 									$tema->hojaruta = "en-revision";
 									$tema->save();
 
+									$a = DID::action(Auth::user()->wc_id, "asignar revisor", $staff->id, "revisor", "también se registra en webcursos y plataforma");
 									//enviar mail!!!!!
 
 									$return["ok"]=1;
@@ -2500,7 +2492,7 @@ class PostRoute{
 
 					$user->password = Hash::make($_POST['passnew']);
 					$user->save();
-
+					$a = DID::action(Auth::user()->wc_id, "cambiar contraseña", $user, "usuario");
 					$return["ok"]="Contraseña cambiada con exito.";
 
 				}else{
@@ -2532,13 +2524,13 @@ class PostRoute{
 						//guardar decision
 						$tema->hojaruta = "revisada";
 						$tema->save();
-
+						$a = DID::action(Auth::user()->wc_id, "firmar hoja revisor", $tema->id, "memoria", "aceptar");
 
 					}elseif($_POST['decision']==0){
 
 						$tema->hojaruta = "rechazada-revisor";
 						$tema->save();
-
+						$a = DID::action(Auth::user()->wc_id, "firmar hoja revisor", $tema->id, "memoria", "rechazar");
 						//aleeeeeeeeeerttttttttttttttttt!!!!!!!!!!!!!!!!!!!!
 
 					}else{
@@ -2562,7 +2554,7 @@ class PostRoute{
 		$return = array();
 		if(isset($_POST['id']) && isset($_POST['decision'])){
 
-			$role = Staff::find(Auth::user()->id)->rol->permission;
+			$role = Session::get('rol' ,"0");
 
 			if($role=="CA" || $role=="SA"){//hay que cambiarlo a si es ca o sa??
 
@@ -2574,12 +2566,13 @@ class PostRoute{
 						//guardar decision
 						$tema->hojaruta = "aprobada";
 						$tema->save();
+						$a = DID::action(Auth::user()->wc_id, "firmar hoja secretaria", $tema->id, "memoria", "aceptar");
 
 					}elseif($_POST['decision']==0){
 
 						$tema->hojaruta = "rechazada-secretaria";
 						$tema->save();
-
+						$a = DID::action(Auth::user()->wc_id, "firmar hoja secretaria", $tema->id, "memoria", "rechazar");
 						//aleeeeeeeeeerttttttttttttttttt!!!!!!!!!!!!!!!!!!!!
 
 					}else{
