@@ -281,9 +281,87 @@ class WC extends BaseController
 
 							}else{//ya firmé
 
-								return View::make("lti.resumenruta", array(
-																	)
+								$estado = array(
+									"alumno1"=>array("status"=>0)
+									,"alumno2"=>array("status"=>0)
+									,"profesor"=>array("status"=>0)
+									,"aleatorio"=>array("status"=>0)
+									,"secretaria"=>array("status"=>0)
 								);
+
+								$a1 = Student::whereWc_id($tema->student1)->first();
+								$a2 = Student::whereWc_id($tema->student2)->first();
+								$prof = Staff::whereWc_id($tema->adviser)->first();
+
+								$estado["profesor"]["name"]=$prof->name." ".$prof->surname;
+								$estado["alumno1"]["name"]=$a1->name." ".$a1->surname;
+								$estado["alumno2"]["name"]=$a2->name." ".$a2->surname;
+
+
+								$estado["alumno1"]["declaracion"] = Texto::texto("declaracion-alumno","Declaro ante mi que el trabajo \"".$tema->subject."\" es obra mía.");
+								$estado["alumno2"]["declaracion"] = $estado["alumno1"]["declaracion"];
+								$estado["profesor"]["declaracion"] = Texto::texto("declaracion-profesor","Declaro ante mi que el trabajo es digno de llamar memoria de Ingeniería.");
+								$estado["aleatorio"]["declaracion"] = Texto::texto("declaracion-revisor","Declaro ante mi que el trabajo tiene un formato acorde a los estandares de la UAI.");
+								$estado["secretaria"]["declaracion"] = Texto::texto("declaracion-secretaria","Declaro ante mi que el trabajo cumple con todos los requisitos para presentarse a defensa.");
+						
+								
+								if(strpos($tema->hojaruta, "@")!==false){
+									if($tema->alumno1==$lti['email']){//soy el primero
+										$estado["alumno1"]["status"]=2;
+										$estado["alumno2"]["status"]=1;
+									}else{//soy el segundo
+										$estado["alumno2"]["status"]=2;
+										$estado["alumno1"]["status"]=1;
+									}
+								}elseif ($tema->hojaruta=="falta-guia") {
+									$estado["alumno1"]["status"]=2;
+									$estado["alumno2"]["status"]=2;
+									$estado["profesor"]["status"]=1;
+								}elseif ($tema->hojaruta=="asignar-revisor") {
+									$estado["alumno1"]["status"]=2;
+									$estado["alumno2"]["status"]=2;
+									$estado["profesor"]["status"]=2;
+									$estado["aleatorio"]["status"]=1;
+								}elseif ($tema->hojaruta=="en-revision") {
+									$estado["alumno1"]["status"]=2;
+									$estado["alumno2"]["status"]=2;
+									$estado["profesor"]["status"]=2;
+									$estado["aleatorio"]["status"]=1;
+								}elseif ($tema->hojaruta=="revisada") {
+									$estado["alumno1"]["status"]=2;
+									$estado["alumno2"]["status"]=2;
+									$estado["profesor"]["status"]=2;
+									$estado["aleatorio"]["status"]=2;
+									$estado["secretaria"]["status"]=1;
+								}elseif ($tema->hojaruta=="aprobada") {
+									$estado["alumno1"]["status"]=2;
+									$estado["alumno2"]["status"]=2;
+									$estado["profesor"]["status"]=2;
+									$estado["aleatorio"]["status"]=2;
+									$estado["secretaria"]["status"]=2;
+								}elseif ($tema->hojaruta=="rechazada-alumno") {
+									$estado["alumno1"]["status"]=-1;
+									$estado["alumno2"]["status"]=-1;
+								}elseif ($tema->hojaruta=="rechazada-profesor") {
+									$estado["alumno1"]["status"]=2;
+									$estado["alumno2"]["status"]=2;
+									$estado["profesor"]["status"]=-1;
+								}elseif ($tema->hojaruta=="rechazada-revisor") {
+									$estado["alumno1"]["status"]=2;
+									$estado["alumno2"]["status"]=2;
+									$estado["profesor"]["status"]=2;
+									$estado["aleatorio"]["status"]=-1;
+								}elseif ($tema->hojaruta=="rechazada-secretaria") {
+									$estado["alumno1"]["status"]=2;
+									$estado["alumno2"]["status"]=2;
+									$estado["profesor"]["status"]=2;
+									$estado["aleatorio"]["status"]=2;
+									$estado["secretaria"]["status"]=-1;
+								}
+									
+								
+
+								return View::make("lti.resumenruta", $estado);
 
 							}
 

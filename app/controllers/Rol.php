@@ -77,26 +77,20 @@ class Rol {
 	{
 		if(Auth::check()) {
 
-			$id = Auth::user()->id; //id user
-			$perms = Permission::whereStaff_id($id)->get(); //roles user
-
 			$ok=false;
-			foreach ($perms as $row) {
-				
-				$item = $row->permission;
-				//print_r($item);
-				if(isset(self::$roles[$item])){ //if existe rol
-					//print_r($roles[$item]);
 
-					if(in_array($permission, self::$roles[$item])){
-						$ok=true;
-						break;
-					}
-
-				}else{//if rol
-					//$res['warning']="rol no existe:".$item;
+			$item = Session::get('rol' ,"0");
+			
+			//print_r($item);
+			if(isset(self::$roles[$item])){ //if existe rol
+				//print_r($roles[$item]);
+				if(in_array($permission, self::$roles[$item])){
+					$ok=true;
 				}
+			}else{//if rol
+				//$res['warning']="rol no existe:".$item;
 			}
+			
 
 			if($ok==true)
 				return true;
@@ -143,7 +137,7 @@ class Rol {
 			$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->whereId($temaId)->get();
 			if($temas->isEmpty()){
 				//ver si es secre o coord
-				$perm = Staff::find(Auth::user()->id)->rol->permission;
+				$perm = Session::get('rol' ,"0");
 				if($perm=="CA" || $perm=="SA"){
 					return true;
 				}else{
@@ -161,14 +155,18 @@ class Rol {
 		$res = array("permissions"=>array());
 		if(Auth::check()) {
 
-			$id = Auth::user()->id; //id user
-			$perms = Permission::whereStaff_id($id)->get(); //roles user
+			//$id = Auth::user()->id; //id user
+			//$perms = Permission::whereStaff_id($id)->get(); //roles user
 
-			foreach ($perms as $row) {
+			//foreach ($perms as $row) {
 				
-				$item = $row->permission;
+				$item = Session::get('rol' ,"0");
 				//print_r($item);
-				if(isset(self::$roles[$item])){ //if existe rol
+				if($item=="0"){
+					$res['error']="login";
+					//return Redirect::to('/rol');
+
+				}elseif(isset(self::$roles[$item])){ //if existe rol
 					//print_r($roles[$item]);
 					foreach (self::$roles[$item] as $accion) {
 						//verifica si no existe para crearlo
@@ -182,7 +180,7 @@ class Rol {
 				}else{//if rol
 					$res['warning']="rol no existe:".$item;
 				}
-			}
+			//}
 
 		}else{
 			$res['error']="login";

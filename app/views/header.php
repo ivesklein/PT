@@ -209,6 +209,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="rol">
+                            <i class="fa fa-exchange"></i>
+                            <span>Ingresar con otro Rol</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="#/profile/changepass">
                             <i class="fa fa-lock"></i>
                             <span>Cambiar Contraseña</span>

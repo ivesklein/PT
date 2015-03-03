@@ -41,7 +41,7 @@ class Menu {
 		"profesores"=>array(
 			"where"=>"usuarios",
 			"place"=>"10",
-			"array"=>array("link"=>"#/profesores", "title"=>"Profesores", "n"=>0)
+			"array"=>array("link"=>"#/funcionarios", "title"=>"Funcionarios", "n"=>0)
 		),
 		//"ayudantes"=>array(
 		//	"where"=>"usuarios",

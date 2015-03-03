@@ -10,7 +10,23 @@ class UserLogin extends BaseController {
 		);
 
 		if(Auth::attempt($userdata)){
-			return Redirect::to('/');
+
+			//obtener roles
+			$roles = Permission::whereStaff_id(Auth::user()->id);
+			$n = $roles->count(); 
+			if($n>1){
+				return Redirect::to('/rol');		
+			}elseif($n==1){
+				$rol = $roles->first();
+				Session::put('rol', $rol->permission);
+				return Redirect::to('/');
+			}else{
+				//sin rol ?
+			}
+			//si tiene más de uno elegir
+			
+
+
 		}else{
 			return Redirect::to('login')->with('login_errors', true);
 		}
