@@ -216,14 +216,27 @@ Route::get('/a/view' ,function()
 Route::get('/test' ,function()
 {
 
+	//$array = array("hola"=>"Variablee!!!");
+	//$a = Correo::enviar('ioryan@alumnos.uai.cl', "Prueba mail", 'emails.welcome', $array);
 
-	Mail::send('emails.welcome', array(), function($message)
-	{
-	    $message->to('joreamuno@alumnos.uai.cl', 'Joaquín Oreamuno')->subject('pruebaaa!');
-	});
+	//echo "hola";
+	//print_r($a);
+
+
+	for ($i=0; $i < 100; $i += 10) { 
+		$array = array(
+			"to"=>"dklein@alumnos.uai.cl",
+			"title"=>"Prueba Cron3",
+			"view"=>"emails.welcome",
+			"parameters"=>array("hola"=>"en ".$i." minutos"),
+		);
+		$id = Cron::add("mail", $array, Carbon::now()->addMinutes($i));
+		echo($id);
+	}
 
 
 
+	
 
 	/*$pm = new PMsoap;
 	

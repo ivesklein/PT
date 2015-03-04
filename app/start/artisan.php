@@ -12,4 +12,4 @@
 */
 
 Artisan::add(new CronTodo);
-
+Artisan::add(new CronDo);

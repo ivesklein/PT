@@ -94,8 +94,23 @@ class PostWC {
 								$tema->hojaruta = "falta-guia";
 								$a = DID::action($user, "firmar hoja", $tema->id, "memoria", "aceptar");
 
+
+								$st1 = explode("@",$tema->student1);
+			                	$st2 = explode("@",$tema->student2);
+			                	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
+			                	$prof = Staff::whereWc_id($tema->adviser)->first();
+			                	$nombre = $prof->name;
+			                	$apellido = $prof->surname;
 								//avisar!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-								$rmail = Correo::send( $tema->adviser, "firmarprofesor", $tema->id);
+								$rmail = Correo::send( $tema->adviser, "hojaprofesor", 
+									array(
+										"id"=>$tema->id,
+										"tema"=>$tema->subject,
+										"grupo"=>$grupo,
+										"nombre"=>$nombre,
+										"apellido"=>$apellido
+									)
+								);
 
 							}
 							$tema->save();

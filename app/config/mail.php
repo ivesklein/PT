@@ -54,7 +54,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => 'dklein@alumnos.uai.cl', 'name' => 'David Klein'),
+	'from' => array('address' => 'dklein@alumnos.uai.cl', 'name' => 'Titulación FIC UAI'),
 
 	/*
 	|--------------------------------------------------------------------------

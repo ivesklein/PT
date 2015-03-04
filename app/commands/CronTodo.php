@@ -35,15 +35,38 @@ class CronTodo extends Command {
 	 *
 	 * @return mixed
 	 */
+
+
+
+
+	/**
+	 * Asynchronously execute/include a PHP file. Does not record the output of the file anywhere. 
+	 *
+	 * @param string $filename              file to execute, relative to calling script
+	 * @param string $options               (optional) arguments to pass to file via the command line
+	*
+	*  
+	*public function asyncInclude($filename, $options = '') {
+	*    exec("/home/pt/GIT/ -f {$filename} {$options} >> /dev/null &");
+	*}
+	*/
+
 	public function fire()
 	{
 		//get the list from db
-		//$res = Cron::whereFired()
+		$res = Cron::todo()->get();
 			//filter by date
 
-			//execute the list items
+		$i=0;
 
-		$this->info("all ok");
+		if(!$res->isEmpty()){
+			foreach ($res as $cron) {
+				exec("php /home/pm/GIT/artisan cron_do ".$cron->id." >> /dev/null &");
+				$i++;
+			}
+		}
+		Log::info($i." task executed.");
+		$this->info($i." task executed.");
 	}
 
 	/**
