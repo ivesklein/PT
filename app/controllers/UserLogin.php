@@ -15,7 +15,7 @@ class UserLogin extends BaseController {
 			$roles = Permission::whereStaff_id(Auth::user()->id);
 			$n = $roles->count(); 
 			if($n>1){
-				return Redirect::to('/rol');		
+				return Redirect::to('/rol');
 			}elseif($n==1){
 				$rol = $roles->first();
 				Session::put('rol', $rol->permission);

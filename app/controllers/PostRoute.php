@@ -1896,10 +1896,10 @@ class PostRoute{
 								$nota="";
 								$feedback="";
 								//get notas de tarea para el grupo
-								$nota = Nota::whereSubject_id($_POST['id'])->whereTarea_id($tarea->id)->get();
-								if(!$nota->isEmpty()){
-									$notita = $nota->first();
-									$nota = $notita->nota;
+								$notadb = Nota::whereSubject_id($_POST['id'])->whereTarea_id($tarea->id)->get();
+								if(!$notadb->isEmpty()){
+									$notita = $notadb->first();
+									$nota = empty($notita->nota)?"":$notita->nota;
 									$feedback = $notita->feedback;
 								}
 								
@@ -1909,10 +1909,10 @@ class PostRoute{
 								$nota="";
 								$feedback="";
 								//get notas de tarea para el grupo
-								$nota = Nota::whereSubject_id($_POST['id'])->whereTarea_id($tarea->id)->get();
-								if(!$nota->isEmpty()){
-									$notita = $nota->first();
-									$nota = $notita->nota;
+								$notadb = Nota::whereSubject_id($_POST['id'])->whereTarea_id($tarea->id)->get();
+								if(!$notadb->isEmpty()){
+									$notita = $notadb->first();
+									$nota = empty($notita->nota)?"":$notita->nota;
 									$feedback = $notita->feedback;
 								}
 							}
@@ -1970,7 +1970,8 @@ class PostRoute{
 									$notita->feedback=$_POST['feedback'];
 								}
 								$notita->save();
-								$a = DID::action(Auth::user()->wc_id, "reevaluar tarea", $subj->id, "tarea-".$_POST['tarea'], $_POST['nota']);
+								$return["ok"] = 1;
+								$a = DID::action(Auth::user()->wc_id, "reevaluar tarea", $_POST['tarea'], "tarea", $_POST['nota']);
 							}else{
 								$return["error"] = "evaluación no existe";
 							}
@@ -1982,13 +1983,14 @@ class PostRoute{
 							$notita->feedback=$_POST['feedback'];
 							$notita->save();
 
-							$a = DID::action(Auth::user()->wc_id, "evaluar tarea", $subj->id, "tarea-".$_POST['tarea'], $_POST['nota']);
+							$a = DID::action(Auth::user()->wc_id, "evaluar tarea", $_POST['tarea'], "tarea", $_POST['nota']);
+							$return["ok"] = 1;
 						}
 					}else{
 						$return["error"] = "evaluación fuera de plazo";
 					}
 				} catch (Exception $e) {
-					$return["error"] = "tarea no existe";
+					$return["error"] = "tarea no existe".$e->getMessage();
 				}
 			}else{
 				$return["error"] = "not permission";
