@@ -9,16 +9,12 @@
                 	<form class="form-horizontal" method="POST" action="#/vista2" enctype="multipart/form-data">
                          <input type="hidden" name="f" value="temas"></input>
                         <div class="form-group">
-                            <label for="" class="col-sm-2">Seleccionar Periodo</label>
-                            <div class="col-sm-6">
-                                <span class="ui-select">
-                                    <select name="periodo">
-                                        <?=$drop?>
-                                    </select>
-                                </span>
-                            </div>
+                            <label for="" class="col-sm-2">Semestre</label>
+                                <div class="col-sm-6">
+                                            <?=$periodo?>
+                                </div>
                             <div class="col-sm-4">
-                                <a href="#/vista3" class="btn btn-warning">Agregar Periodo</a>
+                                <a href="#/vista3" id="addper" class="btn btn-warning">Agregar Periodo</a>
                             </div>
                         </div>
 	                	<div class="form-group">
@@ -50,6 +46,13 @@
 
     <script type="text/javascript">
     	//$('#subir').bootstrapFileInput();
+        $(function(){
+            if($('input[name="periodo"]').val()!=0){
+                $("#addper").hide();
+            }
+
+
+        });
     </script>
 
 </div>

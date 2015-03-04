@@ -591,7 +591,14 @@ class WCAPI {
 				"conditionfieldgroup[0][conditionfield]"=>"0",
 				"conditionfieldgroup[0][conditionfieldoperator]"=>"contains",
 				"conditionfieldgroup[0][conditionfieldvalue]"=>"",
-				"showavailability"=>"1",
+				"showavailability"=>"0",
+				"availablefrom[day]"=>$startday,
+				"availablefrom[month]"=>$startmonth,
+				"availablefrom[year]"=>$startyear,
+				"availablefrom[hour]"=>"0",
+				"availablefrom[minute]"=>"0",
+				"availablefrom[enabled]"=>"1",
+
 				"submitbutton"=>"Guardar cambios y mostrar"
 			);
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";

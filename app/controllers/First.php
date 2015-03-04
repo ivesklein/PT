@@ -73,12 +73,12 @@ class First extends BaseController
 		$per = Periodo::whereStatus("active")->get();
 		if(!$per->isEmpty()){
 			$item = $per->first();
-			$drop = View::make('html.dropitem',array("value"=>$item->name,"title"=>$item->name));
+			$periodo = $item->name."<input type='hidden' value='".$item->name."' name='periodo'>";
 		}else{
-			$drop = View::make('html.dropitem',array("value"=>"0","title"=>"No hay periodo Activo"));
+			$periodo = "No hay periodo Activo<input type='hidden' value='0' name='periodo'>";
 		}
 
-		return View::make('views.periodos.view1',array("drop"=>$drop));
+		return View::make('views.periodos.view1',array("periodo"=>$periodo));
 	}
 
 	public function getVista2()

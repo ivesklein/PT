@@ -1,6 +1,18 @@
 <?php //Ingreso Temas Memoria ?>
 <div class="page page-table" data-ng-controller="TareaController">
 
+    <style type="text/css">
+
+        .wait-icon{
+            display: none;
+        }
+
+        .waiting .wait-icon{
+            display: block;
+        }
+
+    </style>
+
     <link rel="stylesheet" href="bootstrap-datepicker/css/datepicker.css" />
     <script src="bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
 
@@ -34,7 +46,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <div class="btn btn-success submit">Evaluar</div>
+                                <div class="btn btn-success submit"><font class="savelabel">Evaluar</font><font class="wait-icon"> <i class="fa fa-refresh fa-spin"></i></font></div>
                             </div>
                         </div>
                     </div>
@@ -52,6 +64,7 @@
                 var id = $(this).attr("n");
                 var nota = $(this).parent().parent().parent().find(".nota").val();
                 var feed = $(this).parent().parent().parent().find(".feedback").val();
+                $(this).addClass("waiting");
 
                 var datos = {
                     f:"ajxsetnota",
@@ -64,19 +77,19 @@
                     data:datos,
                     ok:function(data) {
                         console.log(data);
-
+                        location.reload();
                     }//ok
                 });//ajx
             }
 
             function modify() {
 
-                if($(this).html()=="Modificar"){
+                if($(this).find(".savelabel").html()=="Modificar"){
                     $(this).parent().parent().parent().find(".nota").attr("disabled",false);
                     $(this).parent().parent().parent().find(".feedback").attr("disabled",false);
-                    $(this).addClass("btn-success").removeClass("btn-warning").html("Guardar");
-                }else if($(this).html()=="Guardar"){
-
+                    $(this).addClass("btn-success").removeClass("btn-warning").find(".savelabel").html("Guardar");
+                }else if($(this).find(".savelabel").html()=="Guardar"){
+                    $(this).addClass("waiting");
                     var id = $(this).attr("n");
                     var nota = $(this).parent().parent().parent().find(".nota").val();
                     var feed = $(this).parent().parent().parent().find(".feedback").val();
@@ -132,10 +145,18 @@
                                 $("#t"+n+" .feedback").val(tarea.feedback);
                                 $("#t"+n+" .submit").attr("n",tarea.id).on("click",enviar);
                                 $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
+                                if(tarea.nota!=""){
+                                    $("#t"+n+" .nota").attr("disabled",1).val(tarea.nota);
+                                    $("#t"+n+" .feedback").attr("disabled",1).val(tarea.feedback);
+                                    $("#t"+n+" .submit").attr("n",tarea.id).addClass("btn-warning").removeClass("btn-success").html("Modificar").on("click",modify);
+                                    $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
+                                    $("#t"+n+" .panel-body").css("background","#f6f6f6");
+                                }
+
                             }if(tarea.active==2){//disable all if nota mostrar
                                 $("#t"+n+" .nota").attr("disabled",1).val(tarea.nota);
                                 $("#t"+n+" .feedback").attr("disabled",1).val(tarea.feedback);
-                                $("#t"+n+" .submit").attr("n",tarea.id).addClass("btn-warning").removeClass("btn-success").html("Modificar").on("click",modify);
+                                $("#t"+n+" .submit").attr("n",tarea.id).hide();
                                 $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
                                 $("#t"+n+" .panel-body").css("background","#f6f6f6");
                             }

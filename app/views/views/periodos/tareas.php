@@ -1,6 +1,18 @@
 <?php //Ingreso Temas Memoria ?>
 <div class="page page-table">
 
+    <style type="text/css">
+
+        .wait-icon{
+            display: none;
+        }
+
+        .waiting .wait-icon{
+            display: block;
+        }
+
+    </style>
+
     <link rel="stylesheet" href="bootstrap-datepicker/css/datepicker2.css" />
     <script src="bootstrap-datepicker/js/bootstrap-datepicker2.js"></script>
 
@@ -10,7 +22,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading"><strong><span class="glyphicon glyphicon-th-list"></span> Configurar Tareas</strong></div>
-                <div class="panel-body">
+                <div class="panel-body" id="tareasbox">
                 	<div class="form-horizontal" >
                          <input type="hidden" name="f" value="temas"></input>
                         <div class="form-group">
@@ -34,7 +46,7 @@
 
 	                	<div class="form-group submit">
                             <div class="col-sm-offset-3 col-sm-9">
-	                		    <button id="guardar" class="btn btn-success">Guardar</button>
+	                		    <button id="guardar" class="btn btn-success disabled"><font id="savelabel">Guardado</font><font class="wait-icon"> <i class="fa fa-refresh fa-spin"></i></font></button>
                 		    </div>
                         </div>
                 	</div>
@@ -50,6 +62,13 @@
 
         var setted = <?php echo json_encode($data) ?>;
         
+        function modified () {
+            var el = $("#guardar")
+            if(!el.hasClass("waiting")){
+                $("#savelabel").html("Guardar");
+                el.removeClass("disabled");
+            }
+        }
 
         function tareaview (i, titulo, fecha, tipo) {
 
@@ -144,13 +163,15 @@
 
         $("#spinnercont").spinner(
             {
-            delay: 1,
-            changed:function(e, newVal, oldVal){
-                update();
-            }
+                delay: 1,
+                changed:function(e, newVal, oldVal){
+                    update();
+                    modified();       
+                }
             }
         );
 
+        $("#tareasbox").on("change", "input", modified);
 
 
         $(function(){
@@ -173,6 +194,8 @@
 
         $('#guardar').on("click",function() {
             
+
+
             var n = +$("#ntareas").val();
             console.log(n);
 
@@ -203,6 +226,9 @@
 
             if(ok){
 
+                $("#guardar").addClass("disabled").addClass("waiting");
+                $("#savelabel").html("Guardando");
+
                 $('.mensaje').hide();
                 var datos = {
                     "f":"ajxtareas",
@@ -215,8 +241,13 @@
                     ok:function(data) {
                         
                         console.log(data);   
-
-
+                        $("#guardar").removeClass("waiting").addClass("disabled");
+                        $("#savelabel").html("Guardado");
+                    },
+                    error:function(data) {
+                        $('.bloque.e1').append("<div class='mensaje alert alert-danger'>"+data+"</div>");
+                        $("#guardar").removeClass("waiting").removeClass("disabled");
+                        $("#savelabel").html("Guardar");
                     }
                 });
             }else{
