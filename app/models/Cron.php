@@ -22,4 +22,38 @@ Class Cron extends Eloquent{
 		
 	}
 
+	public function scopeAdddilued($query, $function, $vars, $triggertime){
+
+		$cronew = new Cron;
+		$cronew->function = $function ;
+		$cronew->vars = json_encode($vars);
+
+		$rand = (rand(1,7)-4)*15;
+		
+		$cronew->triggertime = $triggertime->addMinutes($rand);
+		
+		$cronew->fired = false ;
+		$cronew->attempts = "0";
+		$cronew->save();
+		return $cronew->id;
+		
+	}
+
+	public function scopeAddafter($query, $function, $vars, $triggertime){
+
+		$cronew = new Cron;
+		$cronew->function = $function ;
+		$cronew->vars = json_encode($vars);
+
+		$rand = rand(1,4)*15;
+		
+		$cronew->triggertime = $triggertime->addMinutes($rand);
+		
+		$cronew->fired = false ;
+		$cronew->attempts = "0";
+		$cronew->save();
+		return $cronew->id;
+		
+	}
+
 }

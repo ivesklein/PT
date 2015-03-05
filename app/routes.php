@@ -224,7 +224,7 @@ Route::get('/test' ,function()
 	//print_r($a);
 
 
-	for ($i=0; $i < 100; $i += 10) { 
+	/*for ($i=0; $i < 100; $i += 10) { 
 		$array = array(
 			"to"=>"dklein@alumnos.uai.cl",
 			"title"=>"Prueba Cron3",
@@ -233,7 +233,10 @@ Route::get('/test' ,function()
 		);
 		$id = Cron::add("mail", $array, Carbon::now()->addMinutes($i));
 		echo($id);
-	}
+	}*/
+
+
+	//$lot = 
 
 
 

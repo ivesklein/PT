@@ -40,5 +40,10 @@ Class Subject extends Eloquent{
 		return $this->belongsToMany("Staff", "revisors", "subject_id", "staff_id");
 	}
 
+	public function scopeActive($query)
+	{
+		$return $query->wherePeriodo(Periodo::active());
+	}
+
 
 }

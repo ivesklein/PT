@@ -1733,6 +1733,8 @@ class PostRoute{
 							$evento->detail = $tarea->id;
 							$evento->save();
 
+							CronHelper::tarea($tarea->id, Carbon::createFromFormat('m/d/Y', $value->date));
+
 
 						}else{
 							$tarea = $tarea->first();
@@ -1756,6 +1758,9 @@ class PostRoute{
 								$evento->detail = $tarea->id;
 								$evento->save();
 							}
+
+							CronHelper::tarea($tarea->id, Carbon::createFromFormat('m/d/Y', $value->date));
+
 						}
 
 

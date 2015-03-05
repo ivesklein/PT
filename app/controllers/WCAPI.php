@@ -506,7 +506,7 @@ class WCAPI {
 		return $return;
 	}
 
-	public function createTarea($title,$date)
+	public function createTarea($title,$date, $idupdate == 0)
 	{
 		$return = array();
 		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
@@ -601,6 +601,12 @@ class WCAPI {
 
 				"submitbutton"=>"Guardar cambios y mostrar"
 			);
+			
+			if($idupdate!=0){
+				$data["coursemodule"] = $idupdate;
+				$data["update"]  = $idupdate;
+			}
+
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
 			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
 			
