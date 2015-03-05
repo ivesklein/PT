@@ -6,7 +6,7 @@ Class Cron extends Eloquent{
 
 	public function scopeTodo($query){
 
-		return $query->whereFired(false)->where("triggertime","<", Carbon::now());
+		return $query->whereFired(false)->where("triggertime","<", Carbon::now())->where("attempts","<", 3);
 	}
 
 	public function scopeAdd($query, $function, $vars, $triggertime){
@@ -16,6 +16,7 @@ Class Cron extends Eloquent{
 		$cronew->vars = json_encode($vars);
 		$cronew->triggertime = $triggertime ;
 		$cronew->fired = false ;
+		$cronew->attempts = "0";
 		$cronew->save();
 		return $cronew->id;
 		

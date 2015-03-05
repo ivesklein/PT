@@ -379,7 +379,16 @@ class PostRoute{
 								$subj->status = "not-confirmed";
 								$subj->save();
 								$a = DID::action(Auth::user()->wc_id, "confirmar guía", $id, "memoria", "rechazar");
+								
+
 								//avisar a alumnos MAIL!!!!!!
+								$title="Rechazo Profesor Guía";
+								$view="emails.rechazo-pguia";
+								$guia = $subj->adviser;
+								$name = $guia->name." "$guia->surname;
+								$parameters = array("guianame"=>$name, "tema"=>$subj->subject);
+								Correo::correo($subj->student1, $title, $view, $parameters);
+								Correo::correo($subj->student2, $title, $view, $parameters);
 
 							}else{//resp==1
 								$return["ok"]="ok1";
@@ -952,6 +961,8 @@ class PostRoute{
 				$pre = CEvent::whereColor('darkcyan')->whereDetail($_POST['id'])->get();
 				$def = CEvent::whereColor('blue')->whereDetail($_POST['id'])->get();
 
+				$subj = Subject::find($_POST['id']);
+
 				for ($i=0; $i < sizeof($news)-1 ; $i++) { 
 					$newprof = $news[$i];
 					//agregar profesor a comision
@@ -978,6 +989,13 @@ class PostRoute{
 					}
 
 					//AVISAR POR MAIL
+					$title="Confirmar ingreso a comisión";
+					$view="emails.confirmar-comision";
+					$prof = Staff::find($newprof)->wc_id;
+
+					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
+					Correo::correo($prof, $title, $view, $parameters);
+
 
 				}
 
@@ -997,6 +1015,12 @@ class PostRoute{
 					}
 
 					//AVISAR POR MAIL
+					$title="Exención de Comisión";
+					$view="emails.delete-from-comision";
+					$prof = Staff::find($delprof)->wc_id;
+
+					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
+					Correo::correo($prof, $title, $view, $parameters);
 
 				}
 				$a = DID::action(Auth::user()->wc_id, "modificar comision", $subject_id, "memoria", "+".$_POST['news']."-".$_POST['dels']);
@@ -1920,7 +1944,7 @@ class PostRoute{
 							$return['data'][] = array(
 								"id"=>$tarea->id,
 								"title"=>$title,
-								"date"=>$date->diffForHumans(),
+								"date"=>$date->diffParaHumanos(),
 								"active"=>$active,
 								"url"=>$url,
 								"nota"=>$nota,

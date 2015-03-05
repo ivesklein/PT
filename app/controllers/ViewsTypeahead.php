@@ -2,7 +2,7 @@
 
 //
 
-class Typeahead extends BaseController
+class ViewsTypeahead extends BaseController
 {
 	
 	public function __construct()

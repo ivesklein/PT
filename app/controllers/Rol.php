@@ -68,6 +68,11 @@ class Rol {
 				"viewProfEvents",
 				"tareas"
 			),
+		"MA"=>
+			array(
+				"cronlist",
+				"mailconfig"
+			)
 
 		);
 

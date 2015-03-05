@@ -197,12 +197,13 @@ Route::post('/', array( "before"=>'auth' ,function()
 ///////
 
 //dir views
-Route::controller('views','First');
+Route::controller('views','ViewsFirst');
 //dir lti for wc
-Route::controller('lti','WC');
+Route::controller('lti','ViewsWC');
 
-Route::controller('th','Typeahead');
+Route::controller('th','ViewsTypeahead');
 
+Route::controller('crons','ViewsCron');
 
 
 

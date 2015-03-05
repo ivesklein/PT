@@ -38,7 +38,7 @@
         <div class="container">
             <div class="form-container">
 
-                <form class="form-horizontal ng-pristine ng-valid" action="login" method="post">
+                <form class="form-horizontal ng-pristine ng-valid" action="" method="post">
                     <fieldset>
                         <div class="form-group">
                             <div class="input-group input-group-lg">

@@ -107,6 +107,16 @@ class Menu {
 			"where"=>"hojaruta",
 			"place"=>"26",
 			"array"=>array("link"=>"#/aprobartemas", "title"=>"Aprobación Final", "n"=>0)
+		),
+		"cronlist"=>array(
+			"where"=>"cron",
+			"place"=>"10",
+			"array"=>array("link"=>"#/cronlist", "title"=>"Crons", "n"=>0)
+		),
+		"cronerror"=>array(
+			"where"=>"cron",
+			"place"=>"11",
+			"array"=>array("link"=>"#/cronerror", "title"=>"Crons Failed", "n"=>0)
 		)
 
 
@@ -140,6 +150,10 @@ class Menu {
 		"hojaruta" => array(
 			"place"=>"22",
 			"array"=>array("Hoja de ruta", "#/menu", "calendar", "primary", 0)
+		),
+		"cron" => array(
+			"place"=>"25",
+			"array"=>array("CronJobs", "#/menu", "calendar", "primary", 0)
 		),
 		"otromenu" => array(
 			"place"=>"24",

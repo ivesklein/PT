@@ -45,10 +45,12 @@ class CronDo extends Command {
 		if(method_exists("CronRoute", $function)){
 
 			$cron->fired = true;
+			$cron->attempts = $cron->attempts + 1;
 			$cron->save();
 			try {
 				CronRoute::$function($vars);
 			} catch (Exception $e) {
+				Log::info("error ".$e->getMessage());
 				$cron->fired = false;
 				$cron->save();
 			}

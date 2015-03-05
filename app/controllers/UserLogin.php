@@ -9,11 +9,13 @@ class UserLogin extends BaseController {
 			'password' => Input::get('password')
 		);
 
+		//Session::put('intended', );
+
 		if(Auth::attempt($userdata)){
 
 			//obtener roles
 			$roles = Permission::whereStaff_id(Auth::user()->id);
-			$n = $roles->count(); 
+			$n = $roles->count();
 			if($n>1){
 				return Redirect::to('/rol');
 			}elseif($n==1){

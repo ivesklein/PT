@@ -2,7 +2,7 @@
 
 //
 
-class WC extends BaseController
+class ViewsWC extends BaseController
 {
 
 	public function postIndex()
@@ -208,7 +208,7 @@ class WC extends BaseController
 
 							$array["content"] = View::make("table.cell",array("content"=>$tipo));
 							$array["content"] .= View::make("table.cell",array("content"=>$date->format("d/m/Y h:i")));
-							$array["content"] .= View::make("table.cell",array("content"=>$date->diffForHumans()));
+							$array["content"] .= View::make("table.cell",array("content"=>$date->diffParaHumanos()));
 							$body .= View::make("table.row",$array);
 
 						}

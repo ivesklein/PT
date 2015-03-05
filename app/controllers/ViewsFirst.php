@@ -2,7 +2,7 @@
 
 //
 
-class First extends BaseController
+class ViewsFirst extends BaseController
 {
 	
 	public function __construct()

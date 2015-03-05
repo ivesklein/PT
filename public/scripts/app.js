@@ -122,6 +122,8 @@ angular.module("app",
 				.when("/aprobartemas",{templateUrl:"views/aprobartemas"})
 				.when("/aprobartema/:idtema",{templateUrl:"views/aprobartema",controller: 'HojaRuta'})
 
+				.when("/cronlist",{templateUrl:"crons/cronlist"})
+				.when("/cronerror",{templateUrl:"crons/cronerror"})
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})

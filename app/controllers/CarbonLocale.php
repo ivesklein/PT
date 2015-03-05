@@ -1,18 +1,18 @@
 <?php
 
 /**
-- * Carbon diffForHumans multi-language.
-- * Inspired in a code made by Meroje (https://gist.github.com/Meroje/7783731)
-- * This code has been improved as in that original version was only showing
-- * past date differences. Not it's able to show differences in past and future.
-- * 
-- * Use it this way:
-- * 
-- * $dt = CarbonLocale::now();
-- * echo $dt->diffForHumans($dt->copy()->subMinutes(15));
-- * 
-- * It'll print: 'en 15 minutos' (for Spanish, feel free to translate your own).
-- */
+ * Carbon diffForHumans multi-language.
+ * Inspired in a code made by Meroje (https://gist.github.com/Meroje/7783731)
+ * This code has been improved as in that original version was only showing
+ * past date differences. Not it's able to show differences in past and future.
+ * 
+ * Use it this way:
+ * 
+ * $dt = CarbonLocale::now();
+ * echo $dt->diffForHumans($dt->copy()->subMinutes(15));
+ * 
+ * It'll print: 'en 15 minutos' (for Spanish, feel free to translate your own).
+ */
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Lang;
@@ -42,7 +42,7 @@ class CarbonLocale extends Carbon {
      *
      * @return string
      */
-    public function diffForHumans(Carbon $other = null)
+    public function diffParaHumanos(Carbon $other = null)
     {
         $isNow = $other === null;
 
