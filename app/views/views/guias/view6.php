@@ -8,7 +8,7 @@
         $(".confirmar").on("click", ".yes",function() {
             var id = $(this).parent().parent().attr("n");
             var datos = {
-                "f":"ajxconfirmarguia",
+                "f":"Memorias_confirmarguia",
                 "res":1,
                 "id":id,
                 "mes":""
@@ -24,7 +24,7 @@
             var id = $(this).parent().parent().attr("n");
             var mes = prompt("Causa del Rechazo (se enviará a los alumnos)");
             var datos = {
-                "f":"ajxconfirmarguia",
+                "f":"Memorias_confirmarguia",
                 "res":0,
                 "id":id,
                 "mes":mes

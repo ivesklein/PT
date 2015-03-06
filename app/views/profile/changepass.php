@@ -70,7 +70,7 @@
                 $(this).addClass("disabled").addClass("waiting");
 
                 datos = {
-                    f:"ajxchangepass",
+                    f:"Usuarios_changepass",
                     pass:$("#antpass").val(),
                     passnew:$("#newpass").val()
                 }

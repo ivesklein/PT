@@ -232,7 +232,7 @@
 
                 ajx({
                     data:{
-                        f:'ajxdefensas'
+                        f:'Memorias_grupos'
                     },
                     ok:function(data){
                         
@@ -322,7 +322,7 @@
                     if(id!="sel"){
                         ajx({
                             data:{
-                                f:'ajxcomision',
+                                f:'Comision_data',
                                 id: id
                             },
                             ok:function(data1){
@@ -333,7 +333,7 @@
 
                                     ajx({
                                         data:{
-                                            f:'ajxprofevents',
+                                            f:'Eventos_profe',
                                             prof: prof
                                         },
                                         ok:function(data){
@@ -352,7 +352,7 @@
 
                                     ajx({
                                         data:{
-                                            f:'ajxprofevents',
+                                            f:'Eventos_profe',
                                             prof: prof1
                                         },
                                         ok:function(data){
@@ -368,7 +368,7 @@
                                 
                                     ajx({
                                         data:{
-                                            f:'ajxprofevents',
+                                            f:'Eventos_profe',
                                             prof: prof2
                                         },
                                         ok:function(data){
@@ -385,7 +385,7 @@
                                     var prof3 = data1.data[3].id;
                                     ajx({
                                         data:{
-                                            f:'ajxprofevents',
+                                            f:'Eventos_profe',
                                             prof: prof3
                                         },
                                         ok:function(data){
@@ -432,7 +432,7 @@
 
                     ajx({
                         data:{
-                            f:'ajxprofevents',
+                            f:'Eventos_profe',
                             prof: prof
                         },
                         ok:function(data){
@@ -478,7 +478,7 @@
 
                     ajx({
                         data:{
-                            f:'ajxsavecomision',
+                            f:'Comision_guardar',
                             id: id,
                             news: snews,
                             dels: sdels
@@ -522,7 +522,7 @@
                     var eventData;
                     ajx({
                         data:{
-                            f:'ajxnewcomisiondate',
+                            f:'Comision_newdate',
                             id: id,
                             start: start.format(),
                             end: end.format(),
@@ -569,7 +569,7 @@
                         
                         ajx({
                             data:{
-                                f:'ajxeditevent',
+                                f:'Eventos_editar',
                                 id: id,
                                 start: start.format(),
                                 end: end.format()

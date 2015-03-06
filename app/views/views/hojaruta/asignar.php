@@ -159,7 +159,7 @@
                     $(this).addClass("disabled").addClass("waiting");
                     if(option==0){
                         datos = {
-                            f:"ajxasignar",
+                            f:"HojaRuta_asignar",
                             id:angular.element($('.page')).scope().idtema,
                             wcpass:$("#wcpass").val(),
                             option:option,
@@ -167,7 +167,7 @@
                         }
                     }else{
                         datos = {
-                            f:"ajxasignar",
+                            f:"HojaRuta_asignar",
                             id:angular.element($('.page')).scope().idtema,
                             wcpass:$("#wcpass").val(),
                             option:option,
@@ -200,7 +200,7 @@
 
             window.setTimeout(function(){
                 var datos = {
-                    f:"ajxgettema",
+                    f:"Memorias_memoria",
                     id:angular.element($('.page')).scope().idtema
                 }
                 ajx({

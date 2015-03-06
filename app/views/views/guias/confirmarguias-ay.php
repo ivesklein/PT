@@ -9,7 +9,7 @@
             var id = $(this).parent().parent().attr("n");
             var prof = $(this).parent().prev().html();
             var datos = {
-                "f":"ajxconfirmarguias",
+                "f":"Memorias_confirmarguias",
                 "res":1,
                 "id":id,
                 "prof":prof,
@@ -27,7 +27,7 @@
             var prof = $(this).parent().prev().html();
             var mes = prompt("Causa del Rechazo (se enviará a los alumnos)");
             var datos = {
-                "f":"ajxconfirmarguias",
+                "f":"Memorias_confirmarguias",
                 "res":0,
                 "id":id,
                 "prof":prof,

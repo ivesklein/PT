@@ -95,7 +95,7 @@
                     var feed = $(this).parent().parent().parent().find(".feedback").val();
 
                     var datos = {
-                        f:"ajxsetnota",
+                        f:"Tareas_setnota",
                         id:angular.element($('.page')).scope().tema,
                         tarea:id,
                         nota:nota,
@@ -114,7 +114,7 @@
 
             window.setTimeout(function(){
                 var datos = {
-                    f:"ajxgettareas",
+                    f:"Tareas_gettareas",
                     id:angular.element($('.page')).scope().tema
                 }
                 ajx({

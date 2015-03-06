@@ -206,7 +206,7 @@
 
             window.setTimeout(function(){
                 var datos = {
-                    f:"ajxgettema",
+                    f:"Memorias_memoria",
                     id:angular.element($('.page')).scope().idtema
                 }
                 ajx({

@@ -107,9 +107,11 @@ angular.module("app",
 				.when("/periodos",{templateUrl:"views/periodos"})
 				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision"})
 				.when("/webcursos",{templateUrl:"views/webcursos"})
-				.when("/tareas",{templateUrl:"views/tareas"})
-				.when("/listanotas",{templateUrl:"views/listanotas"})
-				.when("/evaluartarea/:idtarea",{templateUrl:"views/evaluartarea",controller: 'TareaController'})
+
+				.when("/tareas",{templateUrl:"entregas/tareas"})
+				.when("/listanotas",{templateUrl:"entregas/listanotas"})
+				.when("/evaluartarea/:idtarea",{templateUrl:"entregas/evaluartarea",controller: 'TareaController'})
+				
 				.when("/listahojasruta",{templateUrl:"views/listahojasruta"})
 				.when("/firmarhojaprofesor/:idtema",{templateUrl:"views/firmarhojaprofesor",controller: 'HojaRuta'})
 				.when("/profile/changepass",{templateUrl:"views/changepass"})

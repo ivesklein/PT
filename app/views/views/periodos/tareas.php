@@ -231,7 +231,7 @@
 
                 $('.mensaje').hide();
                 var datos = {
-                    "f":"ajxtareas",
+                    "f":"Tareas_guardar",
                     "n":n,
                     "data":JSON.stringify(data)
                 };

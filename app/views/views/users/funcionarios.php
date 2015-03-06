@@ -97,7 +97,7 @@
             if(res==true){
                 ajx({
                     data:{
-                        f:'ajxeditrol',
+                        f:'Usuarios_editrol',
                         id: id,
                         rol: val,
                         action:act
@@ -143,7 +143,7 @@
                 $(this).addClass("disabled").addClass("waiting");
 
                 datos = {
-                    f:"ajxagregarusuario",
+                    f:"Usuarios_agregar",
                     name:$("#nombre").val(),
                     surname:$("#apellido").val(),
                     email:$("#email").val(),

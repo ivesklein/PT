@@ -185,11 +185,7 @@ Route::post('/', array( "before"=>'auth' ,function()
 {
 	//redirect to controller
 	if(isset($_POST['f'])){
-		if(method_exists("PostRoute", $_POST['f'])){
-			return PostRoute::$_POST['f']();
-		}else{
-			return "metodo no existe";
-		}
+		return PostRoute::$_POST['f']();
 	}else{
 		return "no post, maybe size error";
 	}
@@ -198,8 +194,13 @@ Route::post('/', array( "before"=>'auth' ,function()
 
 //dir views
 Route::controller('views','ViewsFirst');
+
+Route::controller('entregas','ViewsEntregas');
+
 //dir lti for wc
 Route::controller('lti','ViewsWC');
+
+
 
 Route::controller('th','ViewsTypeahead');
 

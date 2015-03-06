@@ -12,7 +12,7 @@
             var id = $(this).parent().parent().attr("n");
             
             var datos = {
-                "f":"ajxactivateperiod",
+                "f":"Periodos_activar",
                 "id":id
             };
             ajx({
@@ -28,7 +28,7 @@
             var id = $(this).parent().parent().attr("n");
             
             var datos = {
-                "f":"ajxcloseperiod",
+                "f":"Periodos_cerrar",
                 "id":id
             };
             ajx({

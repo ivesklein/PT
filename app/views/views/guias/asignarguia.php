@@ -14,7 +14,7 @@
                 alert("Seleccione Profesor");
             }else{
                 var datos = {
-                    "f":"ajxasignarguia",
+                    "f":"Memorias_asignarguia",
                     "prof":prof,
                     "id":id
                 };

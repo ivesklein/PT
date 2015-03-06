@@ -24,7 +24,7 @@
                 if(title){
                     ajx({
                         data:{
-                            f:'ajxnewevent',
+                            f:'Eventos_nuevo',
                             title: eventdes,
                             detail: title,
                             start: start.format(),
@@ -59,7 +59,7 @@
 
                 ajx({
                     data:{
-                        f:'ajxeditevent',
+                        f:'Eventos_editar',
                         id: id,
                         start: start.format(),
                         end: end.format()
@@ -75,7 +75,7 @@
                 if(del==true){
                     ajx({
                         data:{
-                            f:'ajxdelevent',
+                            f:'Eventos_borrar',
                             id: event.id
                         },
                         ok:function(data){
@@ -89,7 +89,7 @@
             var load = function() {
                 ajx({
                     data:{
-                        f:'ajxmyevents'
+                        f:'Eventos_myevents'
                     },
                     ok:function(data) {
                         for(n in data.data){

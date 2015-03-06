@@ -28,7 +28,7 @@
             $("#aceptardec").on("click", function() {
 
                 var datos = {
-                    f:"ajxfirmaprofesor",
+                    f:"HojaRuta_firmaprofesor",
                     id:angular.element($('.page')).scope().idtema,
                 }
                 ajx({
@@ -42,7 +42,7 @@
 
             window.setTimeout(function(){
                 var datos = {
-                    f:"ajxgettema",
+                    f:"Memorias_memoria",
                     id:angular.element($('.page')).scope().idtema
                 }
                 ajx({

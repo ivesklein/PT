@@ -187,7 +187,7 @@ foreach($ltis as $lti){
 		if(res!=null && res!=""){
              $('#mensaje').hide();
             var datos = {
-                "f":"ajxcursos",
+                "f":"Webcursos_cursos",
                 "p":res
             };
             ajx({
@@ -211,7 +211,7 @@ foreach($ltis as $lti){
 	$("#btnselectcourse").on("click", ".sel", function() {
 		var id = $('#selectcourse select').val();
 	    var datos = {
-            "f":"ajxsetcurso",
+            "f":"Webcursos_setcurso",
             "id":id
         };
         ajx({
@@ -227,7 +227,7 @@ foreach($ltis as $lti){
         
 
             var datos = {
-                "f":"ajxregistrarwc",
+                "f":"Webcursos_registrar",
                 "p":pass,
                 "n":limit
             };
@@ -288,7 +288,7 @@ foreach($ltis as $lti){
             $('#recursos').addClass("disabled");
 
             var datos = {
-                "f":"ajxcrearrecursos",
+                "f":"Webcursos_crearrecursos",
                 "p":res
             };
             ajx({

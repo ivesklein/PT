@@ -8,7 +8,7 @@
         $(".confirmar").on("click", ".yes",function() {
             var id = $(this).parent().parent().attr("n");
             var datos = {
-                "f":"ajxconfirmarcomision",
+                "f":"Comision_confirmar",
                 "res":1,
                 "id":id
             };
@@ -22,7 +22,7 @@
         $(".confirmar").on("click", ".no",function() {
             var id = $(this).parent().parent().attr("n");
             var datos = {
-                "f":"ajxconfirmarcomision",
+                "f":"Comision_confirmar",
                 "res":0,
                 "id":id
             };
