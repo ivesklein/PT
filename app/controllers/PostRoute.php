@@ -3,8 +3,6 @@
 class PostRoute{
 
 
-
-
 	public static function __callStatic($name, $arguments)
     {
         
@@ -14,11 +12,7 @@ class PostRoute{
 
         if(class_exists($class)) {
     		if(method_exists($class, $method)){
-    			if($class=="PostRoute"){
-    				return self::$method();
-    			}else{
-					return $class::$method();
-				}
+				return $class::$method();
 			}else{
 				return "metodo no existe";
 			}
@@ -64,8 +58,10 @@ class PostRoute{
     //Tareas_gettareas
     //Tareas_setnota
 
-
-
+    //HojaRuta_
+    //HojaRuta_
+    //HojaRuta_
+    //HojaRuta_
 
 
 	public static function ltinew()

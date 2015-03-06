@@ -98,7 +98,7 @@ class PostTareas{
 					$return['grupo'] = $grupo." ".$tema->subject;
 
 					//verificar que hayan tareas
-					$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->get();
+					$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->where("tipo","<",3)->get();
 
 					//$entregas = Tarea::where('date', '<', Carbon::now())->where('date', '>', Carbon::now()->subDays(14))->get();
 

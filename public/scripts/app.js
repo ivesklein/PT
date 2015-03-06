@@ -46,7 +46,9 @@ angular.module("app.ui.ctrls",[])
 				//console.log($routeParams);
 			}
 		//]
-	)
+	).controller('Cleancache', function ($scope, $templateCache) {
+	    $templateCache.removeAll();
+	})
 	
 
 	.controller("AccordionDemoCtrl",["$scope",function($scope){$scope.oneAtATime=!0,$scope.groups=[{title:"Dynamic Group Header - 1",content:"Dynamic Group Body - 1"},{title:"Dynamic Group Header - 2",content:"Dynamic Group Body - 2"},{title:"Dynamic Group Header - 3",content:"Dynamic Group Body - 3"}],$scope.items=["Item 1","Item 2","Item 3"],$scope.addItem=function(){var newItemNo;newItemNo=$scope.items.length+1,$scope.items.push("Item "+newItemNo)}}])
@@ -81,51 +83,54 @@ angular.module("app",
 		"app.localization",
 		"app.chart.ctrls",
 		"app.chart.directives"]
-).config(
+)
+
+.config(
 	["$routeProvider",
 		function($routeProvider){
+			
 			return $routeProvider
 				.when("/",{redirectTo:"/dashboard"})
-				.when("/dashboard",{templateUrl:"views/dashboard.html"})
-				.when("/pages/signin",{templateUrl:"views/login"})
-				.when("/itemas",{templateUrl:"views/itemas"})
-				.when("/vista2",{templateUrl:"views/vista2"})
-				.when("/vista3",{templateUrl:"views/vista3"})
-				.when("/vista4",{templateUrl:"views/vista4"})
-				.when("/listatemas",{templateUrl:"views/listatemas"})
-				.when("/confirmarguia",{templateUrl:"views/confirmarguia"})
-				.when("/vista7",{templateUrl:"views/vista7"})
-				.when("/vista8",{templateUrl:"views/vista8"})
-				.when("/vista9",{templateUrl:"views/vista9"})
-				.when("/vista10",{templateUrl:"views/vista10"})
-				.when("/funcionarios",{templateUrl:"views/funcionarios"})
-				.when("/ayudantes",{templateUrl:"views/ayudantes"})
-				.when("/alumnos",{templateUrl:"views/alumnos"})
-				.when("/asignarguia",{templateUrl:"views/asignarguia"})
-				.when("/calendario",{templateUrl:"views/calendario"})
-				.when("/coordefensa",{templateUrl:"views/coordefensa"})
-				.when("/periodos",{templateUrl:"views/periodos"})
-				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision"})
-				.when("/webcursos",{templateUrl:"views/webcursos"})
+				.when("/dashboard",		{templateUrl:"views/dashboard.html",controller: 'Cleancache'})
+				.when("/pages/signin",	{templateUrl:"views/login",controller: 'Cleancache'})
+				.when("/itemas",		{templateUrl:"views/itemas",controller: 'Cleancache'})
+				.when("/vista2",		{templateUrl:"views/vista2",controller: 'Cleancache'})
+				.when("/vista3",		{templateUrl:"views/vista3",controller: 'Cleancache'})
+				.when("/vista4",		{templateUrl:"views/vista4",controller: 'Cleancache'})
+				.when("/listatemas",	{templateUrl:"views/listatemas",controller: 'Cleancache'})
+				.when("/confirmarguia",	{templateUrl:"views/confirmarguia",controller: 'Cleancache'})
+				.when("/vista7",		{templateUrl:"views/vista7",controller: 'Cleancache'})
+				.when("/vista8",		{templateUrl:"views/vista8",controller: 'Cleancache'})
+				.when("/vista9",		{templateUrl:"views/vista9",controller: 'Cleancache'})
+				.when("/vista10",		{templateUrl:"views/vista10",controller: 'Cleancache'})
+				.when("/funcionarios",	{templateUrl:"views/funcionarios",controller: 'Cleancache'})
+				.when("/ayudantes",		{templateUrl:"views/ayudantes",controller: 'Cleancache'})
+				.when("/alumnos",		{templateUrl:"views/alumnos",controller: 'Cleancache'})
+				.when("/asignarguia",	{templateUrl:"views/asignarguia",controller: 'Cleancache'})
+				.when("/calendario",	{templateUrl:"views/calendario",controller: 'Cleancache'})
+				.when("/coordefensa",	{templateUrl:"views/coordefensa",controller: 'Cleancache'})
+				.when("/periodos",		{templateUrl:"views/periodos",controller: 'Cleancache'})
+				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision",controller: 'Cleancache'})
+				.when("/webcursos",		{templateUrl:"views/webcursos",controller: 'Cleancache'})
 
-				.when("/tareas",{templateUrl:"entregas/tareas"})
-				.when("/listanotas",{templateUrl:"entregas/listanotas"})
+				.when("/tareas",		{templateUrl:"entregas/tareas",controller: 'Cleancache'})
+				.when("/listanotas",	{templateUrl:"entregas/listanotas",controller: 'Cleancache'})
 				.when("/evaluartarea/:idtarea",{templateUrl:"entregas/evaluartarea",controller: 'TareaController'})
 				
-				.when("/listahojasruta",{templateUrl:"views/listahojasruta"})
+				.when("/listahojasruta",{templateUrl:"views/listahojasruta",controller: 'Cleancache'})
 				.when("/firmarhojaprofesor/:idtema",{templateUrl:"views/firmarhojaprofesor",controller: 'HojaRuta'})
-				.when("/profile/changepass",{templateUrl:"views/changepass"})
-				.when("/definiraleatorio",{templateUrl:"views/definiraleatorio"})
+				.when("/profile/changepass",{templateUrl:"views/changepass",controller: 'Cleancache'})
+				.when("/definiraleatorio",{templateUrl:"views/definiraleatorio",controller: 'Cleancache'})
 				.when("/hojaasignar/:idtema",{templateUrl:"views/hojaasignar",controller: 'HojaRuta'})
-				.when("/revisartemas",{templateUrl:"views/revisartemas"})
+				.when("/revisartemas",{templateUrl:"views/revisartemas",controller: 'Cleancache'})
 				.when("/revisartema/:idtema",{templateUrl:"views/revisartema",controller: 'HojaRuta'})
-				.when("/reasignartemas",{templateUrl:"views/reasignartemas"})
+				.when("/reasignartemas",{templateUrl:"views/reasignartemas",controller: 'Cleancache'})
 				.when("/reasignartema/:idtema",{templateUrl:"views/reasignartema",controller: 'HojaRuta'})
-				.when("/aprobartemas",{templateUrl:"views/aprobartemas"})
+				.when("/aprobartemas",{templateUrl:"views/aprobartemas",controller: 'Cleancache'})
 				.when("/aprobartema/:idtema",{templateUrl:"views/aprobartema",controller: 'HojaRuta'})
 
-				.when("/cronlist",{templateUrl:"crons/cronlist"})
-				.when("/cronerror",{templateUrl:"crons/cronerror"})
+				.when("/cronlist",{templateUrl:"crons/cronlist",controller: 'Cleancache'})
+				.when("/cronerror",{templateUrl:"crons/cronerror",controller: 'Cleancache'})
 
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})
@@ -158,8 +163,14 @@ angular.module("app",
 				.when("/pages/blank",{templateUrl:"views/pages/blank.html"})
 				.when("/pages/invoice",{templateUrl:"views/pages/invoice.html"})
 				.when("/tasks",{templateUrl:"views/tasks/tasks.html"})
-				.otherwise({redirectTo:"/404"})}])}.call(this),function(){angular.module("app.directives",[]).directive("imgHolder",[function(){return{restrict:"A",link:function(scope,ele){return Holder.run({images:ele[0]})}}}]).directive("customBackground",function(){return{restrict:"A",controller:["$scope","$element","$location",function($scope,$element,$location){var addBg,path;return path=function(){return $location.path()},addBg=function(path){switch($element.removeClass("body-home body-special body-tasks body-lock"),path){case"/":return $element.addClass("body-home");case"/404":case"/pages/500":case"/pages/signin":case"/pages/signup":return $element.addClass("body-special");case"/pages/lock-screen":return $element.addClass("body-special body-lock");case"/tasks":return $element.addClass("body-tasks")}},addBg($location.path()),$scope.$watch(path,function(newVal,oldVal){return newVal!==oldVal?addBg($location.path()):void 0})}]}}).directive("uiColorSwitch",[function(){return{restrict:"A",link:function(scope,ele){return ele.find(".color-option").on("click",function(event){var $this,hrefUrl,style;if($this=$(this),hrefUrl=void 0,style=$this.data("style"),"loulou"===style)hrefUrl="styles/main.css",$('link[href^="styles/main"]').attr("href",hrefUrl);else{if(!style)return!1;style="-"+style,hrefUrl="styles/main"+style+".css",$('link[href^="styles/main"]').attr("href",hrefUrl)}return event.preventDefault()})}}}]).directive("toggleMinNav",["$rootScope",function($rootScope){return{restrict:"A",link:function(scope,ele){var $window,Timer,app,updateClass;return app=$("#app"),$window=$(window),ele.on("click",function(e){return app.hasClass("nav-min")?app.removeClass("nav-min"):(app.addClass("nav-min"),$rootScope.$broadcast("minNav:enabled")),e.preventDefault()}),Timer=void 0,updateClass=function(){var width;return width=$window.width(),768>width?app.removeClass("nav-min"):void 0},$window.resize(function(){var t;return clearTimeout(t),t=setTimeout(updateClass,300)})}}}]).directive("collapseNav",[function(){return{restrict:"A",link:function(scope,ele){var $a,$aRest,$lists,$listsRest,app;return $lists=ele.find("ul").parent("li"),$lists.append('<i class="fa fa-caret-right icon-has-ul"></i>'),$a=$lists.children("a"),$listsRest=ele.children("li").not($lists),$aRest=$listsRest.children("a"),app=$("#app"),$a.on("click",function(event){var $parent,$this;return app.hasClass("nav-min")?!1:($this=$(this),$parent=$this.parent("li"),$lists.not($parent).removeClass("open").find("ul").slideUp(),$parent.toggleClass("open").find("ul").slideToggle(),event.preventDefault())
-}),$aRest.on("click",function(){return $lists.removeClass("open").find("ul").slideUp()}),scope.$on("minNav:enabled",function(){return $lists.removeClass("open").find("ul").slideUp()})}}}]).directive("highlightActive",[function(){return{restrict:"A",controller:["$scope","$element","$attrs","$location",function($scope,$element,$attrs,$location){var highlightActive,links,path;return links=$element.find("a"),path=function(){return $location.path()},highlightActive=function(links,path){return path="#"+path,angular.forEach(links,function(link){var $li,$link,href;return $link=angular.element(link),$li=$link.parent("li"),href=$link.attr("href"),$li.hasClass("active")&&$li.removeClass("active"),0===path.indexOf(href)?$li.addClass("active"):void 0})},highlightActive(links,$location.path()),$scope.$watch(path,function(newVal,oldVal){return newVal!==oldVal?highlightActive(links,$location.path()):void 0})}]}}]).directive("toggleOffCanvas",[function(){return{restrict:"A",link:function(scope,ele){return ele.on("click",function(){return $("#app").toggleClass("on-canvas")})}}}]).directive("slimScroll",[function(){return{restrict:"A",link:function(scope,ele){return ele.slimScroll({height:"100%"})}}}]).directive("goBack",[function(){return{restrict:"A",controller:["$scope","$element","$window",function($scope,$element,$window){return $element.on("click",function(){return $window.history.back()})}]}}])}.call(this),function(){"use strict";angular.module("app.localization",[]).factory("localize",["$http","$rootScope","$window",function($http,$rootScope,$window){var localize;return localize={language:"",url:void 0,resourceFileLoaded:!1,successCallback:function(data){return localize.dictionary=data,localize.resourceFileLoaded=!0,$rootScope.$broadcast("localizeResourcesUpdated")},setLanguage:function(value){return localize.language=value.toLowerCase().split("-")[0],localize.initLocalizedResources()},setUrl:function(value){return localize.url=value,localize.initLocalizedResources()},buildUrl:function(){return localize.language||(localize.language=($window.navigator.userLanguage||$window.navigator.language).toLowerCase(),localize.language=localize.language.split("-")[0]),"i18n/resources-locale_"+localize.language+".js"},initLocalizedResources:function(){var url;return url=localize.url||localize.buildUrl(),$http({method:"GET",url:url,cache:!1}).success(localize.successCallback).error(function(){return $rootScope.$broadcast("localizeResourcesUpdated")})},getLocalizedString:function(value){var result,valueLowerCase;return result=void 0,localize.dictionary&&value?(valueLowerCase=value.toLowerCase(),result=""===localize.dictionary[valueLowerCase]?value:localize.dictionary[valueLowerCase]):result=value,result}}}]).directive("i18n",["localize",function(localize){var i18nDirective;return i18nDirective={restrict:"EA",updateText:function(ele,input,placeholder){var result;return result=void 0,"i18n-placeholder"===input?(result=localize.getLocalizedString(placeholder),ele.attr("placeholder",result)):input.length>=1?(result=localize.getLocalizedString(input),ele.text(result)):void 0},link:function(scope,ele,attrs){return scope.$on("localizeResourcesUpdated",function(){return i18nDirective.updateText(ele,attrs.i18n,attrs.placeholder)}),attrs.$observe("i18n",function(value){return i18nDirective.updateText(ele,value,attrs.placeholder)})}}}]).controller("LangCtrl",["$scope","localize",function($scope,localize){return $scope.lang="English",$scope.setLang=function(lang){switch(lang){case"English":localize.setLanguage("EN-US");break;case"Español":localize.setLanguage("ES-ES");break;case"日本語":localize.setLanguage("JA-JP");break;case"中文":localize.setLanguage("ZH-TW");break;case"Deutsch":localize.setLanguage("DE-DE");break;case"français":localize.setLanguage("FR-FR");break;case"Italiano":localize.setLanguage("IT-IT");break;case"Portugal":localize.setLanguage("PT-BR");break;case"Русский язык":localize.setLanguage("RU-RU");break;case"한국어":localize.setLanguage("KO-KR")}return $scope.lang=lang}}])}.call(this),function(){"use strict";
+				.otherwise({redirectTo:"/404"})
+			}
+		]
+	)
+
+}.call(this),function(){angular.module("app.directives",[]).directive("imgHolder",[function(){return{restrict:"A",link:function(scope,ele){return Holder.run({images:ele[0]})}}}]).directive("customBackground",function(){return{restrict:"A",controller:["$scope","$element","$location",function($scope,$element,$location){var addBg,path;return path=function(){return $location.path()},addBg=function(path){switch($element.removeClass("body-home body-special body-tasks body-lock"),path){case"/":return $element.addClass("body-home");case"/404":case"/pages/500":case"/pages/signin":case"/pages/signup":return $element.addClass("body-special");case"/pages/lock-screen":return $element.addClass("body-special body-lock");case"/tasks":return $element.addClass("body-tasks")}},addBg($location.path()),$scope.$watch(path,function(newVal,oldVal){return newVal!==oldVal?addBg($location.path()):void 0})}]}}).directive("uiColorSwitch",[function(){return{restrict:"A",link:function(scope,ele){return ele.find(".color-option").on("click",function(event){var $this,hrefUrl,style;if($this=$(this),hrefUrl=void 0,style=$this.data("style"),"loulou"===style)hrefUrl="styles/main.css",$('link[href^="styles/main"]').attr("href",hrefUrl);else{if(!style)return!1;style="-"+style,hrefUrl="styles/main"+style+".css",$('link[href^="styles/main"]').attr("href",hrefUrl)}return event.preventDefault()})}}}]).directive("toggleMinNav",["$rootScope",function($rootScope){return{restrict:"A",link:function(scope,ele){var $window,Timer,app,updateClass;return app=$("#app"),$window=$(window),ele.on("click",function(e){return app.hasClass("nav-min")?app.removeClass("nav-min"):(app.addClass("nav-min"),$rootScope.$broadcast("minNav:enabled")),e.preventDefault()}),Timer=void 0,updateClass=function(){var width;return width=$window.width(),768>width?app.removeClass("nav-min"):void 0},$window.resize(function(){var t;return clearTimeout(t),t=setTimeout(updateClass,300)})}}}]).directive("collapseNav",[function(){return{restrict:"A",link:function(scope,ele){var $a,$aRest,$lists,$listsRest,app;return $lists=ele.find("ul").parent("li"),$lists.append('<i class="fa fa-caret-right icon-has-ul"></i>'),$a=$lists.children("a"),$listsRest=ele.children("li").not($lists),$aRest=$listsRest.children("a"),app=$("#app"),$a.on("click",function(event){var $parent,$this;return app.hasClass("nav-min")?!1:($this=$(this),$parent=$this.parent("li"),$lists.not($parent).removeClass("open").find("ul").slideUp(),$parent.toggleClass("open").find("ul").slideToggle(),event.preventDefault())
+}),$aRest.on("click",function(){return $lists.removeClass("open").find("ul").slideUp()}),scope.$on("minNav:enabled",function(){return $lists.removeClass("open").find("ul").slideUp()})}}}]).directive("highlightActive",[function(){return{restrict:"A",controller:["$scope","$element","$attrs","$location",function($scope,$element,$attrs,$location){var highlightActive,links,path;return links=$element.find("a"),path=function(){return $location.path()},highlightActive=function(links,path){return path="#"+path,angular.forEach(links,function(link){var $li,$link,href;return $link=angular.element(link),$li=$link.parent("li"),href=$link.attr("href"),$li.hasClass("active")&&$li.removeClass("active"),0===path.indexOf(href)?$li.addClass("active"):void 0})},highlightActive(links,$location.path()),$scope.$watch(path,function(newVal,oldVal){return newVal!==oldVal?highlightActive(links,$location.path()):void 0})}]}}]).directive("toggleOffCanvas",[function(){return{restrict:"A",link:function(scope,ele){return ele.on("click",function(){return $("#app").toggleClass("on-canvas")})}}}]).directive("slimScroll",[function(){return{restrict:"A",link:function(scope,ele){return ele.slimScroll({height:"100%"})}}}]).directive("goBack",[function(){return{restrict:"A",controller:["$scope","$element","$window",function($scope,$element,$window){return $element.on("click",function(){return $window.history.back()})}]}}])}.call(this),function(){"use strict";angular.module("app.localization",[]).factory("localize",["$http","$rootScope","$window",function($http,$rootScope,$window){var localize;return localize={language:"",url:void 0,resourceFileLoaded:!1,successCallback:function(data){return localize.dictionary=data,localize.resourceFileLoaded=1,$rootScope.$broadcast("localizeResourcesUpdated")},setLanguage:function(value){return localize.language=value.toLowerCase().split("-")[0],localize.initLocalizedResources()},setUrl:function(value){return localize.url=value,localize.initLocalizedResources()},buildUrl:function(){return localize.language||(localize.language=($window.navigator.userLanguage||$window.navigator.language).toLowerCase(),localize.language=localize.language.split("-")[0]),"i18n/resources-locale_"+localize.language+".js"},initLocalizedResources:function(){var url;return url=localize.url||localize.buildUrl(),$http({method:"GET",url:url,cache:!1}).success(localize.successCallback).error(function(){return $rootScope.$broadcast("localizeResourcesUpdated")})},getLocalizedString:function(value){var result,valueLowerCase;return result=void 0,localize.dictionary&&value?(valueLowerCase=value.toLowerCase(),result=""===localize.dictionary[valueLowerCase]?value:localize.dictionary[valueLowerCase]):result=value,result}}}]).directive("i18n",["localize",function(localize){var i18nDirective;return i18nDirective={restrict:"EA",updateText:function(ele,input,placeholder){var result;return result=void 0,"i18n-placeholder"===input?(result=localize.getLocalizedString(placeholder),ele.attr("placeholder",result)):input.length>=1?(result=localize.getLocalizedString(input),ele.text(result)):void 0},link:function(scope,ele,attrs){return scope.$on("localizeResourcesUpdated",function(){return i18nDirective.updateText(ele,attrs.i18n,attrs.placeholder)}),attrs.$observe("i18n",function(value){return i18nDirective.updateText(ele,value,attrs.placeholder)})}}}]).controller("LangCtrl",["$scope","localize",function($scope,localize){return $scope.lang="English",$scope.setLang=function(lang){switch(lang){case"English":localize.setLanguage("EN-US");break;case"Español":localize.setLanguage("ES-ES");break;case"日本語":localize.setLanguage("JA-JP");break;case"中文":localize.setLanguage("ZH-TW");break;case"Deutsch":localize.setLanguage("DE-DE");break;case"français":localize.setLanguage("FR-FR");break;case"Italiano":localize.setLanguage("IT-IT");break;case"Portugal":localize.setLanguage("PT-BR");break;case"Русский язык":localize.setLanguage("RU-RU");break;case"한국어":localize.setLanguage("KO-KR")}return $scope.lang=lang}}])}.call(this),function(){"use strict";
+
 
 angular.module("app.controllers",[])
 	.controller("AppCtrl",

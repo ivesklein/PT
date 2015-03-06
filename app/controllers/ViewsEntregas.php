@@ -33,7 +33,7 @@ class ViewsEntregas extends BaseController
 		}
 
 		$data = array();
-		$tareas = Tarea::wherePeriodo_name($res->name)->orderBy('n', 'ASC')->get();
+		$tareas = Tarea::wherePeriodo_name($res->name)->orderBy('n', 'ASC')->where("tipo","<",3)->get();
 
 		if(!$tareas->isEmpty()){
 			foreach ($tareas as $tarea) {

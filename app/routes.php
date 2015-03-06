@@ -139,7 +139,9 @@ Route::get('rol', array( "before"=>'auth' ,function()
 		"CA"=>"Coordinación Académica",
 		"P"=>"Profesor Guía o Comisión",
 		"PT"=>"Profesor de Taller",
-		"AY"=>"Ayudante de Taller"
+		"AY"=>"Ayudante de Taller",
+		"MA"=>"CronJobs Supervisor",
+		"DA"=>"Analista de datos"
 	);
 	$array = array();
 	$id = Auth::user()->id; //id user
@@ -196,11 +198,8 @@ Route::post('/', array( "before"=>'auth' ,function()
 Route::controller('views','ViewsFirst');
 
 Route::controller('entregas','ViewsEntregas');
-
 //dir lti for wc
 Route::controller('lti','ViewsWC');
-
-
 
 Route::controller('th','ViewsTypeahead');
 
