@@ -90,8 +90,8 @@ angular.module("app",
 		function($routeProvider){
 			
 			return $routeProvider
-				.when("/",{redirectTo:"/dashboard"})
-				.when("/dashboard",		{templateUrl:"views/dashboard.html",controller: 'Cleancache'})
+				.when("/",{redirectTo:"/listatemas"})
+				//.when("/dashboard",		{templateUrl:"views/dashboard.html",controller: 'Cleancache'})
 				.when("/pages/signin",	{templateUrl:"views/login",controller: 'Cleancache'})
 				.when("/itemas",		{templateUrl:"views/itemas",controller: 'Cleancache'})
 				.when("/vista2",		{templateUrl:"views/vista2",controller: 'Cleancache'})
