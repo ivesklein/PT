@@ -88,5 +88,5 @@ App::missing(function($exception)
 {
     // return Response::view('errors.missing', array(), 404);
     Log::info("404:".Request::path());
-    return Redirect::to('login');
+    return Redirect::to('v404');
 });
