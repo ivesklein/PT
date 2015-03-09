@@ -523,15 +523,18 @@ class WCAPI {
 			$endmonth = $date->month;
 			$endyear = $date->year;
 
+			$startstamp = ""; /////////////////////////////////
+
 
 			$data = array(	
+
 				"mform_isexpanded_id_availability"=>"1",
 				"assignsubmission_comments_enabled"=>"1",
 				"assignfeedback_editpdf_enabled"=>"1",
 				"mform_isexpanded_id_submissiontypes"=>"1",
-				"conditiongraderepeats"=>"1",
-				"conditionfieldrepeats"=>"1",
-				"course"=>$this->course,				//course id
+
+
+				"course"=>$this->course,
 				"coursemodule"=>"",
 				"section"=>"2", 					//ubicación
 				"module"=>"31",
@@ -555,6 +558,7 @@ class WCAPI {
 				"introeditor[text]"=>"<p>Entregar antes de ".$date->format('m/d/Y')." a las 23:55</p>",				//descipcion en html
 				"introeditor[format]"=>"1",
 				"introeditor[itemid]"=>"966059896",
+
 				"allowsubmissionsfromdate[day]"=>$startday, 					//fecha inicio
 				"allowsubmissionsfromdate[month]"=>$startmonth, 					//fecha inicio
 				"allowsubmissionsfromdate[year]"=>$startyear,  				//fecha inicio
@@ -577,7 +581,7 @@ class WCAPI {
 				"attemptreopenmethod"=>"none",
 				"teamsubmission"=>"1",
 				"teamsubmissiongroupingid"=>"0",
-				"sendnotifications"=>"1",
+				"sendnotifications"=>"1", //notificacion a ayudante
 				"grade"=>"0",
 				"advancedgradingmethod_submissions"=>"",
 				"gradecat"=>"20828",
@@ -586,22 +590,10 @@ class WCAPI {
 				"visible"=>"1",
 				"cmidnumber"=>"",
 				"groupmode"=>"1",
-				"groupingid"=>"0",
-				"conditiongradegroup[0][conditiongradeitemid]"=>"0",
-				"conditiongradegroup[0][conditiongrademin]"=>"",
-				"conditiongradegroup[0][conditiongrademax]"=>"",
-				"conditionfieldgroup[0][conditionfield]"=>"0",
-				"conditionfieldgroup[0][conditionfieldoperator]"=>"contains",
-				"conditionfieldgroup[0][conditionfieldvalue]"=>"",
-				"showavailability"=>"0",
-				"availablefrom[day]"=>$startday,
-				"availablefrom[month]"=>$startmonth,
-				"availablefrom[year]"=>$startyear,
-				"availablefrom[hour]"=>"0",
-				"availablefrom[minute]"=>"0",
-				"availablefrom[enabled]"=>"1",
+				"availabilityconditionsjson"=>'{"op":"&","c":[],"showc":[]}',
+				//"availabilityconditionsjson"=>'{"op":"&","c":[{"type":"date","d":">=","t":'.$startstamp.'}],"showc":[false]}',
+				"submitbutton"=>"Guardar cambios y mostrar",
 
-				"submitbutton"=>"Guardar cambios y mostrar"
 			);
 			
 			if($idupdate!=0){
@@ -620,7 +612,7 @@ class WCAPI {
 					if(isset($matches[0][0])){
 						$return["ok"] = $matches[1][0];
 					}else{
-						$return["error"] = "Error:".$contenido["ok"];
+						$return["error"] = array("no Matches"=>$data);
 					}
 
 				} catch (Exception $e) {
@@ -691,13 +683,14 @@ class WCAPI {
 				"instructorchoiceacceptgrades"=>"0",
 				"visible"=>"1",
 				"cmidnumber"=>"",
-				"conditiongradegroup[0][conditiongradeitemid]"=>"0",
+				/*"conditiongradegroup[0][conditiongradeitemid]"=>"0",
 				"conditiongradegroup[0][conditiongrademin]"=>"",
 				"conditiongradegroup[0][conditiongrademax]"=>"",
 				"conditionfieldgroup[0][conditionfield]"=>"0",
 				"conditionfieldgroup[0][conditionfieldoperator]"=>"contains",
 				"conditionfieldgroup[0][conditionfieldvalue]"=>"",
-				"showavailability"=>"1",
+				*/"showavailability"=>"1",
+				"availabilityconditionsjson"=>'{"op":"&","c":[],"showc":[]}',
 				"submitbutton"=>"Guardar cambios y mostrar"
 			);
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
@@ -711,7 +704,7 @@ class WCAPI {
 					if(isset($matches[0][0])){
 						$return["ok"] = $matches[1][0];
 					}else{
-						$return["error"] = "no Matches:".$contenido["ok"];
+						$return["error"] = array("no Matches"=>$data);
 					}
 
 				} catch (Exception $e) {

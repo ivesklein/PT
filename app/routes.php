@@ -226,6 +226,8 @@ Route::get('/test' ,function()
 	//echo "hola";
 	//print_r($a);
 
+	$a = Carbon::parse("03-07-2015");
+	echo $a->timestamp;
 
 	/*for ($i=0; $i < 100; $i += 10) { 
 		$array = array(
