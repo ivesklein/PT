@@ -117,7 +117,10 @@ Route::post('config', function()
 
 });
 
-
+Route::get('v404', function()
+{
+	return "404";
+});
 
 
 

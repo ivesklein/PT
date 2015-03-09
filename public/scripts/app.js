@@ -136,7 +136,7 @@ angular.module("app",
 				.when("/revisarnota/:idtema",{templateUrl:"entregas/revisarnota",controller: 'HojaRuta'})
 				
 
-				.when("/dashboard",{templateUrl:"views/dashboard.html"})
+				/*.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})
 				.when("/ui/buttons",{templateUrl:"views/ui/buttons.html"})
 				.when("/ui/icons",{templateUrl:"views/ui/icons.html"})
@@ -162,12 +162,13 @@ angular.module("app",
 				.when("/pages/signup",{templateUrl:"views/pages/signup.html"})
 				.when("/pages/lock-screen",{templateUrl:"views/pages/lock-screen.html"})
 				.when("/pages/profile",{templateUrl:"views/pages/profile.html"})
-				.when("/404",{templateUrl:"views/pages/404.html"})
+				
 				.when("/pages/500",{templateUrl:"views/pages/500.html"})
 				.when("/pages/blank",{templateUrl:"views/pages/blank.html"})
 				.when("/pages/invoice",{templateUrl:"views/pages/invoice.html"})
-				.when("/tasks",{templateUrl:"views/tasks/tasks.html"})
-				.otherwise({redirectTo:"/404"})
+				.when("/tasks",{templateUrl:"views/tasks/tasks.html"})*/
+				.when("/404",{templateUrl:"404"})
+				.otherwise({redirectTo:"/v404"})
 			}
 		]
 	)
