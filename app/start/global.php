@@ -82,3 +82,11 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+
+App::missing(function($exception)
+{
+    // return Response::view('errors.missing', array(), 404);
+    Log::info("404:".Request::path());
+    return Redirect::to('login');
+});
