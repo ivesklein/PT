@@ -49,7 +49,7 @@ class CronRoute {
 		$view = $array->view;
 		$parameters = self::objectToArray($array->parameters);
 		
-		for($tos as $to){
+		foreach($tos as $to){
 			
 			$v=array();
 			$v["to"] = $to;

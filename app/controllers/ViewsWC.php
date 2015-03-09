@@ -346,17 +346,55 @@ class ViewsWC extends BaseController
 									$estado["alumno1"]["status"]=2;
 									$estado["alumno2"]["status"]=2;
 									$estado["profesor"]["status"]=-1;
+
+									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->get();
+									if(!$tareas->isEmpty()){
+										$notas = $tareas->first()->notas()->get();
+										if(!$notas->isEmpty()){
+											$estado["profesor"]["feedback"] = $notas->first()->feedback;
+										}else{
+											$estado["profesor"]["feedback"] = "1";
+										}
+									}else{
+										$estado["profesor"]["feedback"] = "2";
+									}								
+
 								}elseif ($tema->hojaruta=="rechazada-revisor") {
 									$estado["alumno1"]["status"]=2;
 									$estado["alumno2"]["status"]=2;
 									$estado["profesor"]["status"]=2;
 									$estado["aleatorio"]["status"]=-1;
+
+									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->get();
+									if(!$tareas->isEmpty()){
+										$notas = $tareas->first()->notas()->get();
+										if(!$notas->isEmpty()){
+											$estado["aleatorio"]["feedback"] = $notas->first()->feedback;
+										}else{
+											$estado["aleatorio"]["feedback"] = "3";
+										}
+									}else{
+										$estado["aleatorio"]["feedback"] = "4";
+									}
+
 								}elseif ($tema->hojaruta=="rechazada-secretaria") {
 									$estado["alumno1"]["status"]=2;
 									$estado["alumno2"]["status"]=2;
 									$estado["profesor"]["status"]=2;
 									$estado["aleatorio"]["status"]=2;
 									$estado["secretaria"]["status"]=-1;
+
+									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->get();
+									if(!$tareas->isEmpty()){
+										$notas = $tareas->first()->notas()->get();
+										if(!$notas->isEmpty()){
+											$estado["secretaria"]["feedback"] = $notas->first()->feedback;
+										}else{
+											$estado["secretaria"]["feedback"] = "5";
+										}
+									}else{
+										$estado["secretaria"]["feedback"] = "6";
+									}
 								}
 									
 								

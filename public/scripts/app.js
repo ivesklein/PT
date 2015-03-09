@@ -132,6 +132,10 @@ angular.module("app",
 				.when("/cronlist",{templateUrl:"crons/cronlist",controller: 'Cleancache'})
 				.when("/cronerror",{templateUrl:"crons/cronerror",controller: 'Cleancache'})
 
+				.when("/revisardefensas",{templateUrl:"entregas/revisarnotas",controller: 'Cleancache'})
+				.when("/revisarnota/:idtema",{templateUrl:"entregas/revisarnota",controller: 'HojaRuta'})
+				
+
 				.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})
 				.when("/ui/buttons",{templateUrl:"views/ui/buttons.html"})

@@ -127,7 +127,7 @@ class WCAPI {
 						"id"=>$matches[1][0],
 						"name"=>$matches[2][0],
 						"sesskey"=>$matches[3][0],
-						"course"=>$this->course			
+						"course"=>$this->course		
 					);
 				} catch (Exception $e) {
 					$return["error"]=$e->getMessage();
@@ -197,7 +197,7 @@ class WCAPI {
 			if(isset($contenido["ok"])){
 				try {
 
-					preg_match_all('|<tr class="userinforow.+id="user_([0-9]+)">.+class="subfield subfield.email">(.+)<.div><.td.+<div class="roles">(.*)<.div><.td>.+<div class="groups">(.*)<.div><div class="addgroup">|Uus', $contenido["ok"], $matches);
+					preg_match_all('|<tr class="userinforow.+id="user_([0-9]+)">.+class="subfield subfield.email">(.+)<.div><.td.+<div class="roles">(.*)<.div><.td>.+<div class="groups">(.*)<.div>.+<.td>|Uus', $contenido["ok"], $matches);
 					//.+<div class="subfield subfield_email">(.+)<.div></td.+<div class="roles">(.+<.div>)<.div>.+<div class="groups">(.+<.div>)<.div><div class="addgroup">
 					//preg_match_all('|<tr class="userinforow.+" id="user_([0-9]+)">.+<div class="subfield subfield_email">(.+)<.div></td.+<div class="roles">(.+<.div>)<.div>.+<div class="groups">(.+<.div>)<.div><div class="addgroup">|U', $contenido["ok"], $matches);
 					foreach ($matches[2] as $key => $user) {
@@ -217,7 +217,7 @@ class WCAPI {
 						$return["users"][$user] = array("uid"=>$matches[1][$key], "roles"=>$roles, "grupos"=>$grupos);
 					}
 
-
+					//print_r($matches);
 					//$return["url"] = $url;
 					//$return["ok"] = $matches;
 
@@ -260,10 +260,12 @@ class WCAPI {
 					//preg_match_all('|<tr class="userinforow.+" id="user_([0-9]+)">.+<div class="subfield subfield_email">(.+)<.div></td.+<div class="roles">(.+<.div>)<.div>.+<div class="groups">(.+<.div>)<.div><div class="addgroup">|U', $contenido["ok"], $matches);
 
 					$grupos = array();
-					preg_match_all('|<option value="([0-9]+)">(.+)<.option>|Uus', $matches[1][0], $groupsmatch);
-					foreach ($groupsmatch[2] as $key3 => $idgroup) {
-						if($groupsmatch[1][$key3]!=0){//sd & ger = 1234
-							$return["groups"][html_entity_decode($idgroup)] = $groupsmatch[1][$key3];
+					if(isset($matches[1][0])){
+						preg_match_all('|<option value="([0-9]+)">(.+)<.option>|Uus', $matches[1][0], $groupsmatch);
+						foreach ($groupsmatch[2] as $key3 => $idgroup) {
+							if($groupsmatch[1][$key3]!=0){//sd & ger = 1234
+								$return["groups"][html_entity_decode($idgroup)] = $groupsmatch[1][$key3];
+							}
 						}
 					}
 
@@ -506,7 +508,7 @@ class WCAPI {
 		return $return;
 	}
 
-	public function createTarea($title,$date, $idupdate == 0)
+	public function createTarea($title,$date, $idupdate = 0)
 	{
 		$return = array();
 		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
@@ -618,7 +620,7 @@ class WCAPI {
 					if(isset($matches[0][0])){
 						$return["ok"] = $matches[1][0];
 					}else{
-						$return["error"] = "Error";
+						$return["error"] = "Error:".$contenido["ok"];
 					}
 
 				} catch (Exception $e) {
@@ -709,7 +711,7 @@ class WCAPI {
 					if(isset($matches[0][0])){
 						$return["ok"] = $matches[1][0];
 					}else{
-						$return["error"] = "no Matches";
+						$return["error"] = "no Matches:".$contenido["ok"];
 					}
 
 				} catch (Exception $e) {

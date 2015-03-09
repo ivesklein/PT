@@ -13,7 +13,7 @@ class PostTareas{
 					$data = json_decode($_POST['data']);
 					foreach ($data as $key => $value) {
 
-						$tarea = Tarea::wherePeriodo_name($per->name)->whereN($key)->get();
+						$tarea = Tarea::wherePeriodo_name($per->name)->whereN($key)->where("tipo", "<" , 3)->get(); //falta borrar lo que no van
 
 						if($tarea->isEmpty()){
 							$tarea = new Tarea;
@@ -23,6 +23,24 @@ class PostTareas{
 							$tarea->periodo_name = $per->name;
 							$tarea->n = $key;
 							$tarea->save();
+
+							if($tarea->tipo==1){
+								$tarea2 = new Tarea;
+								$tarea2->title = "Predefensa";
+								$tarea2->date = "";
+								$tarea2->tipo = 3;
+								$tarea2->periodo_name = $per->name;
+								$tarea2->n = $key;
+								$tarea2->save();								
+							}elseif($tarea->tipo==2){
+								$tarea2 = new Tarea;
+								$tarea2->title = "Defensa";
+								$tarea2->date = "";
+								$tarea2->tipo = 4;
+								$tarea2->periodo_name = $per->name;
+								$tarea2->n = $key;
+								$tarea2->save();								
+							}
 
 							//set event
 							$evento = new CEvent;
@@ -177,14 +195,15 @@ class PostTareas{
 	{
 		$return = array();
 		if(isset($_POST['id']) && isset($_POST['nota']) && isset($_POST['tarea'])){
-			if(Rol::setNota($_POST['id'])){
+			if(Rol::setNota($_POST['id']) || Rol::hasPermission("revisartareas")){
 				
 				try {
-					$date = Carbon::parse( Tarea::find($_POST['tarea'])->date );
+					$tarea = Tarea::find($_POST['tarea']);
+					$date = Carbon::parse( $tarea->date );
 					
 					$modify=isset($_POST['modify']);
 					
-					if($modify||($date<Carbon::now() && $date>Carbon::now()->subDays(14))){
+					if( ($date<Carbon::now() || $tarea->tipo>=3) && ($date>Carbon::now()->subDays(14) || Rol::hasPermission("revisartareas") ) ){
 
 						$feedback = isset($_POST['feedback'])? $_POST['feedback']:"";
 						

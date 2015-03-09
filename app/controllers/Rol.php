@@ -56,7 +56,8 @@ class Rol {
 				"webcursos",
 				"tareas",
 				"crearAyudante",
-				"revisartemas"
+				"revisartemas",
+				"revisartareas"
 			),
 		"AY"=>
 			array(
@@ -66,12 +67,17 @@ class Rol {
 				"alumnos",
 				"coordefensa",
 				"viewProfEvents",
-				"tareas"
+				"tareas",
+				"revisartareas"
 			),
 		"MA"=>
 			array(
 				"cronlist",
 				"mailconfig"
+			),
+		"DA"=>
+			array(
+				"actions"
 			)
 
 		);

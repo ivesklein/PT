@@ -117,8 +117,12 @@ class Menu {
 			"where"=>"cron",
 			"place"=>"11",
 			"array"=>array("link"=>"#/cronerror", "title"=>"Crons Failed", "n"=>0)
+		),
+		"revisartareas"=>array(
+			"where"=>"temas",
+			"place"=>"24",
+			"array"=>array("link"=>"#/revisardefensas", "title"=>"Modificar Notas", "n"=>0)
 		)
-
 
 	);
 

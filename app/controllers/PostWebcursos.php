@@ -66,7 +66,7 @@ class PostWebcursos{
 
 		if(isset($_POST['p'])){
 			if(Rol::hasPermission("webcursos")){
-				$temas = Subject::wherePeriodo(Periodo::active())->get();
+				$temas = Subject::active()->get();
 	            $reg = 0;
 	            $notreg = 0;
 	            $users = array();
@@ -76,7 +76,10 @@ class PostWebcursos{
 
             	    //obtener lista de usuarios de wc
             		$wc = new WCAPI;
-            		$wc->login(Auth::user()->wc_id,$_POST['p']);
+            		$res0 = $wc->login(Auth::user()->wc_id,$_POST['p']);
+            		if(isset($res0["error"])){
+            			return json_encode($res0);
+            		}
 
             		$wcres1 = $wc->userList();
             		if(!isset($wcres1["error"])){
@@ -89,8 +92,9 @@ class PostWebcursos{
             		$wcres2 = $wc->groupList();
             		if(!isset($wcres2["error"])){
             			$wcgroups = $wcres2["groups"];
+            			//return json_encode($wcgroups);
             		}else{
-            			return json_encode(array("error"=>$wcres2["error"]));
+            			return json_encode(array("error"=>"grouplist:".$wcres2["error"]));
             		}
 
             		//$fortime0 = array();
@@ -448,7 +452,7 @@ class PostWebcursos{
 	                	$return['wcgroups'] = $wcgroups;
 	                }
 
-	                $a = DID::action(Auth::user()->wc_id, "registrar usuarios en webcursos", $per->id, "periodo");
+	                $a = DID::action(Auth::user()->wc_id, "registrar usuarios en webcursos", Periodo::active(), "periodo");
 
 	            }else{
 	                $return['warning'] = "no hay temas";
@@ -521,7 +525,7 @@ class PostWebcursos{
 						$res1 = $wc->login(Auth::user()->wc_id,$_POST['p']);
 						if(!isset($res1["error"])){
 
-							
+							$return["warning"] = array();
 							//create tareas
 							
 							foreach ($tareas as $tarea) {
@@ -537,7 +541,7 @@ class PostWebcursos{
 									$tarea->wc_uid = $res2["ok"];
 									$tarea->save();
 								}else{
-
+									$return["warning"][] = array("tarea: ".$title=>$res2);
 								}
 							}
 
@@ -549,7 +553,7 @@ class PostWebcursos{
 							if(isset($res2["ok"])){
 								//$tarea->wc_uid = $res2["ok"];
 							}else{
-
+								$return["warning"][] = array("lti notas"=>$res2);
 							}
 
 
@@ -558,21 +562,21 @@ class PostWebcursos{
 							if(isset($res2["ok"])){
 								//$tarea->wc_uid = $res2["ok"];
 							}else{
-
+								$return["warning"][] = array("lti defensas"=>$res2);
 							}
 
 							$res2 = $wc->createLTI("Evaluación Docente",url("lti/evaluacion"),url("icon/evaluacion.png"));
 							if(isset($res2["ok"])){
 								//$tarea->wc_uid = $res2["ok"];
 							}else{
-
+								$return["warning"][] = array("lti docente"=>$res2);
 							}
-
+ 
 							$res2 = $wc->createLTI("Hoja de Ruta",url("lti/hojaruta"),url("icon/hojaruta.png"));
 							if(isset($res2["ok"])){
 								//$tarea->wc_uid = $res2["ok"];
 							}else{
-
+								$return["warning"][] = array("lti ruta"=>$res2);
 							}
 							
 							$a = DID::action(Auth::user()->wc_id, "crear recursos", $per->id, "periodo");

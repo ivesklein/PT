@@ -42,7 +42,7 @@ Class Subject extends Eloquent{
 
 	public function scopeActive($query)
 	{
-		$return $query->wherePeriodo(Periodo::active());
+		return $query->wherePeriodo(Periodo::active());	
 	}
 
 

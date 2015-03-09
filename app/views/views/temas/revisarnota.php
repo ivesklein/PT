@@ -68,7 +68,7 @@
 
                 var datos = {
                     f:"Tareas_setnota",
-                    id:angular.element($('.page')).scope().tema,
+                    id:angular.element($('.page')).scope().idtema,
                     tarea:id,
                     nota:nota,
                     feedback:feed
@@ -96,7 +96,7 @@
 
                     var datos = {
                         f:"Tareas_setnota",
-                        id:angular.element($('.page')).scope().tema,
+                        id:angular.element($('.page')).scope().idtema,
                         tarea:id,
                         nota:nota,
                         feedback:feed,
@@ -114,8 +114,8 @@
 
             window.setTimeout(function(){
                 var datos = {
-                    f:"Tareas_gettareas",
-                    id:angular.element($('.page')).scope().tema
+                    f:"Memorias_getnotas",
+                    id:angular.element($('.page')).scope().idtema
                 }
                 ajx({
                     data:datos,
@@ -134,7 +134,7 @@
                             if(tarea.active==0){//disable all
                                 $("#t"+n+" .nota").attr("disabled",1);
                                 $("#t"+n+" .feedback").attr("disabled",1);
-                                $("#t"+n+" .submit").addClass("disabled");
+                                $("#t"+n+" .submit").addClass("disabled").removeClass("btn-success").addClass("btn-default").html("Aun no");
                                 $("#t"+n+" .verentrega").hide();
                                 $("#t"+n+" .panel-body").css("background","#f6f6f6");
                                 $("#t"+n+" .panel-heading").append('<font style="color:red;" class="pull-right">'+tarea.date+'</font>');
@@ -145,20 +145,32 @@
                                 $("#t"+n+" .feedback").val(tarea.feedback);
                                 $("#t"+n+" .submit").attr("n",tarea.id).on("click",enviar);
                                 $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
-                                if(tarea.nota!=""){
+                                if(tarea.nota!="" || tarea.tipo<3){
                                     $("#t"+n+" .nota").attr("disabled",1).val(tarea.nota);
                                     $("#t"+n+" .feedback").attr("disabled",1).val(tarea.feedback);
                                     $("#t"+n+" .submit").attr("n",tarea.id).addClass("btn-warning").removeClass("btn-success").html("Modificar").on("click",modify);
-                                    $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
                                     $("#t"+n+" .panel-body").css("background","#f6f6f6");
+                                }
+                                if(tarea.url!=""){
+                                    $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
+                                }else{
+                                    $("#t"+n+" .verentrega").hide();
                                 }
 
                             }if(tarea.active==2){//disable all if nota mostrar
                                 $("#t"+n+" .nota").attr("disabled",1).val(tarea.nota);
                                 $("#t"+n+" .feedback").attr("disabled",1).val(tarea.feedback);
                                 $("#t"+n+" .submit").attr("n",tarea.id).hide();
-                                $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
+                                if(tarea.url!=""){
+                                    $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
+                                }else{
+                                    $("#t"+n+" .verentrega").hide();
+                                }
                                 $("#t"+n+" .panel-body").css("background","#f6f6f6");
+                            }
+
+                            if(tarea.tipo>=3){
+                                $("#t"+n+" .glyphicon").removeClass("glyphicon-check").addClass("glyphicon-user");
                             }
 
                         }//for

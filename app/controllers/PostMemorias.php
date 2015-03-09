@@ -289,8 +289,8 @@ class PostMemorias{
 								//avisar a alumnos MAIL!!!!!!
 								$title="Rechazo Profesor Guía";
 								$view="emails.rechazo-pguia";
-								$guia = $subj->adviser;
-								$name = $guia->name." "$guia->surname;
+								$guia = $subj->guia;
+								$name = $guia->name." ".$guia->surname;
 								$parameters = array("guianame"=>$name, "tema"=>$subj->subject);
 								Correo::correo($subj->student1, $title, $view, $parameters);
 								Correo::correo($subj->student2, $title, $view, $parameters);
@@ -524,6 +524,161 @@ class PostMemorias{
 		//}else{
 		//	$return["error"] = "faltan variables";
 		//}
+		return json_encode($return);
+	}
+
+	public static function memoria()
+	{
+		$return = array();
+		if(isset($_POST['id'])){
+
+			if(Rol::setNota($_POST['id'])){
+
+				$return["data"]=array();
+				//if($_POST['type']==1){
+					$subjs = Subject::wherePeriodo(Periodo::active())->whereId($_POST['id'])->get();
+					if(!$subjs->isEmpty()){
+						$subj = $subjs->first();
+
+						$st1 = explode("@",$subj->student1);
+	                	$st2 = explode("@",$subj->student2);
+	                	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+						$return["data"] = array("id"=>$subj->id,"grupo"=>$grupo, "titulo"=>$subj->subject, "guia"=>$subj->adviser);
+
+
+						$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->get();
+						if(!$tareas->isEmpty()){
+							$tarea = $tareas->first();
+							$return["data"]["url"] = $tarea->wc_uid;
+						}
+
+
+						$revs = $subj->revisor()->get();
+						if(!$revs->isEmpty()){
+							$rev = $revs->first();
+
+							$return["data"]["revisor"] = $rev->wc_id;
+						}
+
+
+					}
+
+
+		        $return["ok"] = "ok";
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function getnotas()
+	{
+		$return = array();
+		if(isset($_POST['id'])){
+			if(Rol::hasPermission("revisartareas")){
+				$per = Periodo::active_obj();
+				if($per!="false"){
+					
+					$tema = Subject::find($_POST['id']);					
+
+					if(!empty($tema)){
+						$st1 = explode("@",$tema->student1);
+				    	$st2 = explode("@",$tema->student2);
+				    	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
+						$return['grupo'] = $grupo." ".$tema->subject;
+
+						//verificar que hayan tareas
+						$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->where("tipo","<",5)->get();
+
+						//$entregas = Tarea::where('date', '<', Carbon::now())->where('date', '>', Carbon::now()->subDays(14))->get();
+
+						if(!$tareas->isEmpty()){
+							
+							$return["data"]= array();
+
+							foreach ($tareas as $tarea) {
+								$title = $tarea->title;
+
+								if($tarea->tipo<3){
+
+									$date = CarbonLocale::parse($tarea->date);
+									$wc = $tarea->wc_uid;
+
+									
+									$active = 0; //0 es futura, 1 es activa, 2 es pasado con eval.
+									$now = Carbon::now();
+									if($date>$now){//futura
+										$active = 0;
+										$url="";
+										$nota="";
+										$feedback="";
+										$fecha = $date->diffParaHumanos();
+										
+									}else{
+										$active = 1;
+										$url=$wc;
+										$nota="";
+										$feedback="";
+										//get notas de tarea para el grupo
+										$notadb = Nota::whereSubject_id($_POST['id'])->whereTarea_id($tarea->id)->get();
+										if(!$notadb->isEmpty()){
+											$notita = $notadb->first();
+											$nota = empty($notita->nota)?"":$notita->nota;
+											$feedback = $notita->feedback;
+										}
+										$fecha = $date->diffParaHumanos();
+									}
+								}else{
+										$title = "Evento ".$tarea->title;
+										$active = 1;
+										$url="";
+										$nota="";
+										$feedback="";
+										//get notas de tarea para el grupo
+										$notadb = Nota::whereSubject_id($_POST['id'])->whereTarea_id($tarea->id)->get();
+										if(!$notadb->isEmpty()){
+											$notita = $notadb->first();
+											$nota = empty($notita->nota)?"":$notita->nota;
+											$feedback = $notita->feedback;
+										}
+										$fecha = "";
+
+										//obtener fecha de eventos defensa
+								}
+
+								$return['data'][] = array(
+									"id"=>$tarea->id,
+									"title"=>$title,
+									"date"=>$fecha,
+									"active"=>$active,
+									"url"=>$url,
+									"nota"=>$nota,
+									"feedback"=>$feedback,
+									"tipo"=>$tarea->tipo
+								);
+
+							}
+
+						}else{
+							$return["error"] = "no tareas";
+						}
+
+					}else{
+						$return["error"] = "tema no existe";
+					}
+				}else{
+					$return["error"] = "no hay semestre activo";
+				}
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
 		return json_encode($return);
 	}
 

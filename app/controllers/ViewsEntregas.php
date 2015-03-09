@@ -136,6 +136,62 @@ class ViewsEntregas extends BaseController
 		return View::make('views.temas.evaluartarea');
 	}
 
+	public function getRevisarnotas()
+	{
+		$ahead = array("Grupo","Tema","Alerta","Ver");
+		$head = "";
+		foreach ($ahead as $value) {
+			$head .= View::make('table.head',array('title'=>$value));
+		}
+
+		$body="";
+
+				$temas = Subject::active()->get();
+
+				if(!$temas->isEmpty()){
+
+					foreach ($temas as $tema) {
+
+							$st1 = explode("@",$tema->student1);
+					    	$st2 = explode("@",$tema->student2);
+					    	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
+
+					    	$evallink = url("#/revisarnota/".$tema->id);
+
+
+					    	$buttons = View::make("html.buttonlink",array("title"=>"Ingresar","color"=>"cyan","url"=>$evallink));
+
+							$id = $tema->id;
+
+							$content = View::make("table.cell",array("content"=>$grupo));
+							$content .= View::make("table.cell",array("content"=>$tema->subject));
+							$content .= View::make("table.cell",array("content"=>""));
+							$content .= View::make("table.cell",array("content"=>$buttons));
+							$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+					}
+
+				}else{
+					$content = View::make("table.cell",array("content"=>$message));
+					$body .= View::make("table.row",array("content"=>$content));
+
+				}
+
+		/*	}
+		}else{
+			$message = "No hay entregas a evaluar";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
+
+		}*/
+		//print_r($res);
+		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
+		return View::make('views.temas.listanotas', array("table"=>$table));
+	}
+
+	public function getRevisarnota()
+	{
+		return View::make('views.temas.revisarnota');
+	}
 
 
 }

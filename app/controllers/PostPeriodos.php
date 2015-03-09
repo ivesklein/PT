@@ -12,6 +12,14 @@ class PostPeriodos{
 				$per->status = "draft";
 				$per->save();
 
+				$hojaruta = new Tarea;
+				$hojaruta->title = "Hoja de ruta";
+				$hojaruta->date = "";
+				$hojaruta->tipo = 5;
+				$hojaruta->periodo_name = $per->name;
+				$hojaruta->n = 0;
+				$hojaruta->save();
+
 				$a = DID::action(Auth::user()->wc_id, "crear periodo", $_POST['name'], "periodo");
 
 				return Redirect::to("#/periodos");

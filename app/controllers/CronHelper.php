@@ -68,46 +68,46 @@ class CronHelper {
 				$osub7->type="sub7";
 				$osub7->other="tarea";
 				$osub7->other_id=$id;
-				$vars = array("id"=>$id, "type"="sub7");
+				$vars = array("id"=>$id, "type"=>"sub7");
 				$cron = Cron::add("tarea", $vars, $sub7);
 				$osub7->cron_id = $cron;
-				$osub7->save;
+				$osub7->save();
 
 				$osub1 = new O2C;
 				$osub1->type="sub1";
 				$osub1->other="tarea";
 				$osub1->other_id=$id;
-				$vars = array("id"=>$id, "type"="sub1");
+				$vars = array("id"=>$id, "type"=>"sub1");
 				$cron = Cron::add("tarea", $vars, $sub1);
 				$osub1->cron_id = $cron;
-				$osub1->save;
+				$osub1->save();
 
 				$ofecha = new O2C;
 				$ofecha->type="fecha";
 				$ofecha->other="tarea";
 				$ofecha->other_id=$id;
-				$vars = array("id"=>$id, "type"="fecha");
+				$vars = array("id"=>$id, "type"=>"fecha");
 				$cron = Cron::add("tarea", $vars, $fecha);
 				$ofecha->cron_id = $cron;
-				$ofecha->save;
+				$ofecha->save();
 
 				$oadd7 = new O2C;
 				$oadd7->type="add7";
 				$oadd7->other="tarea";
 				$oadd7->other_id=$id;
-				$vars = array("id"=>$id, "type"="add7");
+				$vars = array("id"=>$id, "type"=>"add7");
 				$cron = Cron::add("tarea", $vars, $add7);
 				$oadd7->cron_id = $cron;
-				$oadd7->save;
+				$oadd7->save();
 
 				$oadd12 = new O2C;
 				$oadd12->type="add12";
 				$oadd12->other="tarea";
 				$oadd12->other_id=$id;
-				$vars = array("id"=>$id, "type"="add12");
+				$vars = array("id"=>$id, "type"=>"add12");
 				$cron = Cron::add("tarea", $vars, $add12);
 				$oadd12->cron_id = $cron;
-				$oadd12->save;
+				$oadd12->save();
 
 			}
 			

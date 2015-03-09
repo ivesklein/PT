@@ -457,7 +457,37 @@ class PostHojaRuta{
 						$tema->hojaruta = "rechazada-revisor";
 						$tema->save();
 						$a = DID::action(Auth::user()->wc_id, "firmar hoja revisor", $tema->id, "memoria", "rechazar");
+						
+						//guardar en tarea nueva
+						$hojatareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->get();
+						if(!$hojatareas->isEmpty()){
+							$tarea = $hojatareas->first(); 	
+							$idtarea = $tarea->id;
+							
+							$hojanota = Nota::whereTarea_id($idtarea)->whereSubject_id($tema->id)->get();
+							if(!$hojanota->isEmpty()){
+								$nota = $hojanota->first();
+							}else{
+								$nota = new Nota;
+								$nota->tarea_id = $idtarea;
+								$nota->subject_id = $tema->id;
+							}
+							$nota->nota = 1;
+							$nota->feedback = isset($_POST['feedback'])?$_POST['feedback']:"";
+							$nota->save();
+						}
+						
 						//aleeeeeeeeeerttttttttttttttttt!!!!!!!!!!!!!!!!!!!!
+						$titulo = "Formato Rechazado";
+						$vista = "emails.rechazo-revisor"
+						$feedback = isset($_POST['feedback'])?$_POST['feedback']:"";
+
+						Correo::correo( $tema->student1, $titulo ,$vista, 
+							array("id"=>$tema->id,"tema"=>$tema->subject,"feedback"=>$feedback)
+						);
+						Correo::correo( $tema->student2, $titulo ,$vista, 
+							array("id"=>$tema->id,"tema"=>$tema->subject,"feedback"=>$feedback)
+						);
 
 					}else{
 						$return["error"] = "Respuesta desconocida";
@@ -499,7 +529,27 @@ class PostHojaRuta{
 						$tema->hojaruta = "rechazada-secretaria";
 						$tema->save();
 						$a = DID::action(Auth::user()->wc_id, "firmar hoja secretaria", $tema->id, "memoria", "rechazar");
+						//guardar en tarea nueva
+						$hojatareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->get();
+						if(!$hojatareas->isEmpty()){
+							$tarea = $hojatareas->first(); 	
+							$idtarea = $tarea->id;
+							
+							$hojanota = Nota::whereTarea_id($idtarea)->whereSubject_id($tema->id)->get();
+							if(!$hojanota->isEmpty()){
+								$nota = $hojanota->first();
+							}else{
+								$nota = new Nota;
+								$nota->tarea_id = $idtarea;
+								$nota->subject_id = $tema->id;
+							}
+							$nota->nota = 1;
+							$nota->feedback = isset($_POST['feedback'])?$_POST['feedback']:"";
+							$nota->save();
+						}
+
 						//aleeeeeeeeeerttttttttttttttttt!!!!!!!!!!!!!!!!!!!!
+
 
 					}else{
 						$return["error"] = "Respuesta desconocida";

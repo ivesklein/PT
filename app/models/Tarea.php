@@ -17,4 +17,9 @@ Class Tarea extends Eloquent{
 		return $query->wherePeriodo_name(Periodo::active())->where("tipo","<",3)->orderBy('n', 'ASC');
 	}
 
+	public function notas()
+    {
+        return $this->hasMany('Nota');
+    }
+
 }
