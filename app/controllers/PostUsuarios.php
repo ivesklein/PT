@@ -152,5 +152,93 @@ class PostUsuarios{
 		return json_encode($return);
 	}
 
+	public static function crearlote()	
+	{	
+
+		if(Rol::hasPermission("profesores")){
+
+			$activepm = false;
+
+			$NPROFESOR = 0 ;
+			$APROFESOR = 1 ;
+			$MPROFESOR = 2 ;
+
+			//$periodo = $_POST['periodo'];
+
+			$file = Files::post("csv");
+
+			if(isset($file["ok"])){
+				$ruta = $file["ok"]["tmp_name"];
+				
+				//return $file["ok"]["type"];
+				
+				$res = CSV::toArray($ruta);
+				if(isset($res['error'])){
+					Session::put('alert', 'No se puede leer el archivo, compruebe que tenga formato \'.csv\'');
+					return Redirect::to("#/funcionarios");
+				}
+
+				//for profesores, 
+					//verificar si existen, 
+					//si no crearlos.
+				$profesores = array();
+				foreach ($res as $n => $fila) {
+					if($n!=0){
+
+						try {
+							if(!isset($profesores[$fila[$MPROFESOR]])){
+
+								//verificar que existe en db
+								$profedb = Staff::whereWc_id($fila[$MPROFESOR])->get();
+								if(!$profedb->isEmpty()){
+									//agregar				
+									$proferow = $profedb->first();
+									$profesores[$proferow->wc_id] = "";
+									//guardar datos para operaciones siguientes
+								}else{
+								//sino
+									//crear
+									$res2 = UserCreation::add(
+										$fila[$MPROFESOR],
+										$fila[$NPROFESOR],
+										$fila[$APROFESOR],
+										"P");
+
+									if(isset($res2["ok"])){
+										$profesores[$res2["ok"]["wc"]] = "";
+										//agregar
+										//guardar datos para operaciones siguientes
+									}else{
+										print_r($res2["error"]);
+									}
+									
+								}//if existe
+							}//if está	
+						} catch (Exception $e) {
+							
+							Session::put('alert', 'No se puede leer el archivo, compruebe que tenga formato \'.csv\'');
+							return Redirect::to("#/funcionarios");
+
+						}
+						
+					}//row encabezado
+				}//for rows
+
+				$a = DID::action(Auth::user()->wc_id, "agregar usuarios", "", "Usuarios", json_encode($profesores));
+
+				return Redirect::to("#/funcionario");
+
+			}else{
+				//error con el archivo
+				Session::put('alert', "No se puede leer el archivo");
+				return Redirect::to("#/funcionarios");
+			}
+
+
+		}else{
+			return Redirect::to("login");
+		}
+	}
+
 
 }

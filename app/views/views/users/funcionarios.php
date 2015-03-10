@@ -57,12 +57,15 @@
                 <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Por lotes</strong><a class="pull-right" href="examples/profesores.csv" style="text-transform: initial;"><span class="glyphicon glyphicon-file"></span> ejemplo.csv</a></div>
                 <div class="panel-body">
                     <div class="row">
-                        <div class="form-group">
-                            <div class="col-md-8">
-                                <input id="subir" type="file" name="csv" title="Buscar Archivo">
+                        <form method="POST" action="#/funcionarios" enctype="multipart/form-data">
+                            <input type="hidden" name="f" value="Usuarios_crearlote"></input>
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="subir" type="file" name="csv" title="Buscar Archivo">
+                                </div>
+                                <div class="col-md-4"><input class="btn btn-success" id="btn-agregar2" type="submit" value="Enviar"></input></div>
                             </div>
-                            <div class="col-md-4"><div class="btn btn-success" id="btn-agregar2">Agregar</div></div>
-                        </div>
+                        </form>
                     </div>
                     <div class="row" id="mesbox2" style="display:none;"><div class="col-md-12"><div class="alert alert-danger" id="mensaje2" style="margin-bottom: 0;margin-top: 10px;"></div></div></div>
                 </div>
@@ -168,6 +171,21 @@
             }
 
         })
+
+    <?php if(Session::has('alert')){ 
+
+        $mensaje = Session::get('alert');
+        Session::forget('alert');
+
+        ?>
+
+        $(function() {
+            $('#mesbox2').show();
+            $('#mensaje2').html("<?=$mensaje?>");
+        });
+
+
+    <?php } ?>
 
     </script>
 </div>

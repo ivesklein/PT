@@ -23,6 +23,7 @@
                                 <input id="subir" type="file" name="csv" title="Buscar">
                             </div>
 	                	</div>
+                        <div class="row" id="mesbox2" style="display:none;"><div class="col-md-12"><div class="alert alert-danger" id="mensaje2"></div></div></div>
 	                	<div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
 	                		    <input type="submit" class="btn btn-success" value="Subir">
@@ -53,6 +54,21 @@
 
 
         });
+
+        <?php if(Session::has('alert')){ 
+
+        $mensaje = Session::get('alert');
+        Session::forget('alert');
+
+        ?>
+
+        $(function() {
+            $('#mesbox2').show();
+            $('#mensaje2').html("<?=$mensaje?>");
+        });
+
+
+    <?php } ?>
     </script>
 
 </div>

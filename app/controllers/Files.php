@@ -10,7 +10,8 @@ class Files {
 				if($_FILES[$name]["tmp_name"]==""){
 					$return["error"] = "no temp file";	
 				}else{
-					$return["ok"] = $_FILES[$name];	
+					$return["ok"] = $_FILES[$name];
+					Log::info("FILE:".$_FILES[$name]["tmp_name"]);
 				}
 			//}else{
 			//	$return["error"] = $_FILES[$name]["error"];

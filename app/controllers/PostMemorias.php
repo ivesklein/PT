@@ -32,7 +32,10 @@ class PostMemorias{
 				//return $file["ok"]["type"];
 				
 				$res = CSV::toArray($ruta);
-
+				if(isset($res['error'])){
+					Session::put('alert', 'No se puede leer el archivo, compruebe que tenga formato \'.csv\'');
+					return Redirect::to("#/itemas");
+				}
 				//for profesores, 
 					//verificar si existen, 
 					//si no crearlos.
@@ -42,67 +45,43 @@ class PostMemorias{
 						//verificar solidez de los datos
 						//usar los datos
 						//si no está el profesor
-						if(!isset($profesores[$fila[$MPROFESOR]])){
+						try {
+							
+							$a = $fila[0];
+							$a = $fila[1];
+							$a = $fila[2];
+							$a = $fila[3];
+							$a = $fila[4];
+							$a = $fila[5];
+							$a = $fila[6];
+							$a = $fila[7];
+							$a = $fila[8];
+							$a = $fila[9];
+							$a = $fila[10];
+							$a = $fila[11];
 
-							//verificar que existe en db
-							$profedb = User::whereWc_id($fila[$MPROFESOR])->get();
-							if(!$profedb->isEmpty()){
-								//agregar
-								
-								if($activepm==true){//con pm
+							if(!isset($profesores[$fila[$MPROFESOR]])){
 
+								//verificar que existe en db
+								$profedb = User::whereWc_id($fila[$MPROFESOR])->get();
+								if(!$profedb->isEmpty()){
+									//agregar
+									
 									$proferow = $profedb->first();
-									if(empty($proferow->pm_uid)){
+									$profesores[$proferow->wc_id] = "";
+						
+									//guardar datos para operaciones siguientes
+								}else{
+								//sino
 
-										$res2 = UserCreation::add(
+									//crear
+									$res2 = UserCreation::add(
 										$fila[$MPROFESOR],
 										$fila[$NPROFESOR],
 										$fila[$APROFESOR],
 										"P");
 
-										if(isset($res2["ok"])){
-											$profesores[$res2["ok"]["wc"]] = $res2["ok"]["pm"];
-											//agregar
-											//guardar datos para operaciones siguientes
-										}else{
-											//error
-											print_r($res2["error"]);
-
-										}
-
-									}else{
-										$profesores[$proferow->wc_id] = $proferow->pm_uid;
-									}
-
-								}else{
-									$proferow = $profedb->first();
-									$profesores[$proferow->wc_id] = "";
-											
-								}
-
-
-								//guardar datos para operaciones siguientes
-							}else{
-							//sino
-
-								//crear
-								$res2 = UserCreation::add(
-									$fila[$MPROFESOR],
-									$fila[$NPROFESOR],
-									$fila[$APROFESOR],
-									"P");
-
-								if($activepm==true){//con pm
-									if(isset($res2["ok"])){
-										$profesores[$res2["ok"]["wc"]] = $res2["ok"]["pm"];
-										//agregar
-										//guardar datos para operaciones siguientes
-									}else{
-										//error
-										print_r($res2["error"]);
-
-									}
-								}else{//sin pm
+			
 									if(isset($res2["ok"])){
 										$profesores[$res2["ok"]["wc"]] = "";
 										//agregar
@@ -112,9 +91,17 @@ class PostMemorias{
 										print_r($res2["error"]);
 
 									}
-								}
-							}//if existe
-						}//if está
+									
+								}//if existe
+							}//if está
+
+						} catch (Exception $e) {
+							
+							Session::put('alert', 'No se puede leer el archivo, compruebe que tenga formato \'.csv\'');
+							return Redirect::to("#/itemas");
+
+						}
+
 					}//row encabezado
 				}//for rows
 
@@ -160,45 +147,17 @@ class PostMemorias{
 				foreach ($res as $n => $fila) {
 					if($n!=0){
 
-						if($activepm==true){
+						$subj = new Subject;
+						$subj->subject = $fila[$TEMA];
+						$subj->student1 = $fila[$EMAIL1];
+						$subj->student2 = $fila[$EMAIL2];
+						$subj->adviser = $fila[$MPROFESOR];
+						$subj->status = "confirm";
+						$subj->pm_uid = "";
+						$subj->periodo = $periodo;
+						$subj->defensa = 0;
+						$subj->save();
 
-							$pm = new PMsoap;
-							$res = $pm->login();
-							if(isset($res['ok'])){
-								$res2 = $pm->newTema($fila[$TEMA], $fila[$EMAIL1], $fila[$EMAIL2], $fila[$MPROFESOR]);
-								if(isset($res2["ok"])){
-									$subj = new Subject;
-									$subj->subject = $fila[$TEMA];
-									$subj->student1 = $fila[$EMAIL1];
-									$subj->student2 = $fila[$EMAIL2];
-									$subj->adviser = $fila[$MPROFESOR];
-									$subj->status = "confirm";
-									$subj->pm_uid = $res2["ok"]["uid"];
-									$subj->periodo = $periodo;
-									$subj->defensa = 0;
-									$subj->save();
-								}else{
-									//error
-								}
-
-							}else{
-								//error
-							}
-
-						}else{//no pm
-
-							$subj = new Subject;
-							$subj->subject = $fila[$TEMA];
-							$subj->student1 = $fila[$EMAIL1];
-							$subj->student2 = $fila[$EMAIL2];
-							$subj->adviser = $fila[$MPROFESOR];
-							$subj->status = "confirm";
-							$subj->pm_uid = "";
-							$subj->periodo = $periodo;
-							$subj->defensa = 0;
-							$subj->save();
-
-						}
 					}
 				}
 
@@ -211,7 +170,8 @@ class PostMemorias{
 
 			}else{
 				//error con el archivo
-				return var_dump($file["error"]);
+				Session::put('alert', 'No se puede leer el archivo');
+				return Redirect::to("#/itemas");
 			}
 
 
