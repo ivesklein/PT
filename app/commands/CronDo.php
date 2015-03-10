@@ -43,12 +43,18 @@ class CronDo extends Command {
 		$function = $cron->function;
 
 		if(method_exists("CronRoute", $function)){
+			Log::info("EJECUTANDO cron ".$cron->id);
 
 			$cron->fired = true;
 			$cron->attempts = $cron->attempts + 1;
 			$cron->save();
 			try {
-				CronRoute::$function($vars);
+				$res = CronRoute::$function($vars);
+				if(isset($res['error'])){
+					Log::info("error :".json_encode($res['error']));
+					$cron->fired = false;
+					$cron->save();
+				}
 			} catch (Exception $e) {
 				Log::info("error ".$e->getMessage());
 				$cron->fired = false;

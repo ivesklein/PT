@@ -32,12 +32,14 @@ class CronRoute {
 		$v["to"] = $to;
 		$v["title"] = $title;
 
+		Log::info("ejecutando mail to ".$to);
+
 		$res = Mail::send($view, $parameters, function($message) use ($v)
 		{
 		    $message->to( $v["to"], '')->subject($v["title"]);
 		});
 
-		return "ok";
+		return array("ok"=>1);
 
 	}
 
@@ -61,7 +63,7 @@ class CronRoute {
 			});
 		}
 
-		return "ok";
+		return array("ok"=>1);
 
 	}
 
@@ -72,8 +74,17 @@ class CronRoute {
 		$wc = $tarea->wc_uid;
 		$fecha = $tarea->date;
 
+		$logs = true;
+		if($logs){
+			Log::info("ejecutando tarea");
+		}
+
 
 		if($array->type=="sub7"){
+
+			if($logs){
+				Log::info("ejecutando tarea tipo sub7");
+			}
 
 			$array = array(
 				"to"=>"",
@@ -90,14 +101,22 @@ class CronRoute {
 					$array["to"] = $subj->student1;
 					$id = Cron::addafter("mail", $array, Carbon::now());
 
+					if($logs){
+						Log::info("ejecutando tarea tipo sub7 add cron:".$id);
+					}
+
 					$array["to"] = $subj->student2;
 					$id = Cron::addafter("mail", $array, Carbon::now());
+
+					if($logs){
+						Log::info("ejecutando tarea tipo sub7 add cron:".$id);
+					}
 
 				}
 			}
 
 		}elseif($array->type=="sub1"){
-
+			Log::info("ejecutando tarea tipo sub1");
 			$array = array(
 				"to"=>"",
 				"title"=>$name,
@@ -110,17 +129,24 @@ class CronRoute {
 			if(!$subjs->isEmpty()){
 				foreach ($subjs as $subj) {
 					# code...
+					
 					$array["to"] = $subj->student1;
 					$id = Cron::adddilued("mail", $array, Carbon::now());
-
+					if($logs){
+						Log::info("ejecutando tarea tipo sub1 add cron:".$id);
+					}
+					
 					$array["to"] = $subj->student2;
 					$id = Cron::adddilued("mail", $array, Carbon::now());
+					if($logs){
+						Log::info("ejecutando tarea tipo sub1 add cron:".$id);
+					}
 
 				}
 			}
 
 		}elseif($array->type=="fecha"){
-
+			Log::info("ejecutando tarea tipo fecha");
 			$array = array(
 				"to"=>"",
 				"title"=>$name,
@@ -135,12 +161,14 @@ class CronRoute {
 					# code...
 					$array["to"] = $subj->adviser;
 					$id = Cron::addafter("mail", $array, Carbon::now());
-
+					if($logs){
+						Log::info("ejecutando tarea tipo fecha add cron:".$id);
+					}
 				}
 			}
 
 		}elseif($array->type=="add7"){
-
+			Log::info("ejecutando tarea tipo add7");
 			$array = array(
 				"to"=>"",
 				"title"=>$name,
@@ -166,7 +194,7 @@ class CronRoute {
 			}
 
 		}elseif($array->type=="add12"){
-
+			Log::info("ejecutando tarea tipo add12");
 			$array = array(
 				"to"=>"",
 				"title"=>$name,
@@ -191,20 +219,14 @@ class CronRoute {
 				}
 			}
 
+		}else{
+			Log::info("tarea tipo desconocido");
 		}
 
 
 
 
-
-
-
-
-
-
-
-
-		$array = array(
+		/*$array = array(
 			"to"=>"dklein@alumnos.uai.cl",
 			"title"=>"Prueba Cron3",
 			"view"=>"emails.welcome",
@@ -212,10 +234,10 @@ class CronRoute {
 		);
 		$id = Cron::add("mail", $array, Carbon::now()->addMinutes($i));
 		echo($id);
+		*/
 
 
-
-		return "ok";
+		return array("ok"=>1);
 
 	}
 
