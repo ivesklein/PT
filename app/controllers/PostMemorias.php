@@ -202,6 +202,9 @@ class PostMemorias{
 					}
 				}
 
+				///avisar
+				Cron::add("confirmarguia", array(), Carbon::now());
+
 				$a = DID::action(Auth::user()->wc_id, "agregar temas", $periodo, "periodo", $n);
 
 				return Redirect::to("#/listatemas");

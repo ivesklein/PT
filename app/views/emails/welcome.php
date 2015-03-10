@@ -1,3 +1,5 @@
-Probando 1 2 3
+Para ingresar a la Plataforma ingresar a:
 
-<?=$hola?>
+ <a href="http://titulacion-fic-uai.cl/#/profile/changepass">http://titulacion-fic-uai.cl/</a>
+
+ Porfavor cambiar contraseña.

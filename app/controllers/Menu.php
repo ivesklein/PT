@@ -11,7 +11,7 @@ class Menu {
 		"temasView"=>array(
 			"where"=>"dashboard",
 			"place"=>"10",
-			"array"=>array("link"=>"#/vista5", "title"=>"Estado Temas", "n"=>0)
+			"array"=>array("link"=>"#/listatemas", "title"=>"Estado Temas", "n"=>0)
 		),
 		"periodosCreate"=>array(
 			"where"=>"periodos",

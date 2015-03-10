@@ -67,9 +67,9 @@ class CronRoute {
 
 	}
 
-	public static function tarea($array)
+	public static function tarea($array1)
 	{
-		$tarea = Tarea::find($array->id);
+		$tarea = Tarea::find($array1->id);
 		$name = $tarea->title;
 		$wc = $tarea->wc_uid;
 		$fecha = $tarea->date;
@@ -80,7 +80,7 @@ class CronRoute {
 		}
 
 
-		if($array->type=="sub7"){
+		if($array1->type=="sub7"){
 
 			if($logs){
 				Log::info("ejecutando tarea tipo sub7");
@@ -115,7 +115,7 @@ class CronRoute {
 				}
 			}
 
-		}elseif($array->type=="sub1"){
+		}elseif($array1->type=="sub1"){
 			Log::info("ejecutando tarea tipo sub1");
 			$array = array(
 				"to"=>"",
@@ -131,13 +131,13 @@ class CronRoute {
 					# code...
 					
 					$array["to"] = $subj->student1;
-					$id = Cron::adddilued("mail", $array, Carbon::now());
+					$id = Cron::addafter("mail", $array, Carbon::now());
 					if($logs){
 						Log::info("ejecutando tarea tipo sub1 add cron:".$id);
 					}
 					
 					$array["to"] = $subj->student2;
-					$id = Cron::adddilued("mail", $array, Carbon::now());
+					$id = Cron::addafter("mail", $array, Carbon::now());
 					if($logs){
 						Log::info("ejecutando tarea tipo sub1 add cron:".$id);
 					}
@@ -145,7 +145,7 @@ class CronRoute {
 				}
 			}
 
-		}elseif($array->type=="fecha"){
+		}elseif($array1->type=="fecha"){
 			Log::info("ejecutando tarea tipo fecha");
 			$array = array(
 				"to"=>"",
@@ -167,7 +167,7 @@ class CronRoute {
 				}
 			}
 
-		}elseif($array->type=="add7"){
+		}elseif($array1->type=="add7"){
 			Log::info("ejecutando tarea tipo add7");
 			$array = array(
 				"to"=>"",
@@ -187,13 +187,13 @@ class CronRoute {
 						$notita = $nota->nota;
 						if(empty($notita)){
 							$array["to"] = $subj->adviser;
-							$id = Cron::adddilued("mail", $array, Carbon::now());
+							$id = Cron::addafter("mail", $array, Carbon::now());
 						}
 					}
 				}
 			}
 
-		}elseif($array->type=="add12"){
+		}elseif($array1->type=="add12"){
 			Log::info("ejecutando tarea tipo add12");
 			$array = array(
 				"to"=>"",
@@ -212,7 +212,7 @@ class CronRoute {
 						$notita = $nota->nota;
 						if(empty($notita)){
 							$array["to"] = $subj->adviser;
-							$id = Cron::adddilued("mail", $array, Carbon::now());
+							$id = Cron::addafter("mail", $array, Carbon::now());
 						}
 					}
 
@@ -223,22 +223,35 @@ class CronRoute {
 			Log::info("tarea tipo desconocido");
 		}
 
+		return array("ok"=>1);
 
+	}
 
+	public static function confirmarguia($a)
+	{
 
-		/*$array = array(
-			"to"=>"dklein@alumnos.uai.cl",
-			"title"=>"Prueba Cron3",
-			"view"=>"emails.welcome",
-			"parameters"=>array("hola"=>"en ".$i." minutos"),
+		Log::info("ejecutando confirmarguias");
+		$array = array(
+			"to"=>"",
+			"title"=>$name,
+			"view"=>"emails.confirmar-guia",
+			"parameters"=>array(),
 		);
-		$id = Cron::add("mail", $array, Carbon::now()->addMinutes($i));
-		echo($id);
-		*/
 
+		$subjs = Subject::active()->get();
+		if(!$subjs->isEmpty()){
+			foreach ($subjs as $subj) {
+
+				$array["to"] = $subj->adviser;
+				$id = Cron::addafter("mail", $array, Carbon::now());
+				Log::info("agregando confirmar mail cron :".$id);
+			}
+		}
 
 		return array("ok"=>1);
 
+
+		Cron::addafter("mail", $array, Carbon::now());
 	}
 
 	public static function objectToArray($d) {
