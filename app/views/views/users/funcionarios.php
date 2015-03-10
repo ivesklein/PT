@@ -154,6 +154,7 @@
                     data:datos,
                     ok:function(data) {
                         console.log(data);
+                        $("#btn-agregar").removeClass("disabled").removeClass("waiting");
                         //location.reload();// = "#/profesores";
                     },//ok
                     error:function(data){
