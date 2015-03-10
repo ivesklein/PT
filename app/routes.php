@@ -221,13 +221,13 @@ Route::get('/test' ,function()
 {
 
 	//$array = array("hola"=>"Variablee!!!");
-	//$a = Correo::enviar('ioryan@alumnos.uai.cl', "Prueba mail", 'emails.welcome', $array);
+	$a = Correo::enviar('divaldivia@alumnos.uai.cl', "Prueba mail", 'emails.welcome', $array);
 
 	//echo "hola";
 	//print_r($a);
 
-	$a = Carbon::parse("03-07-2015");
-	echo $a->timestamp;
+	//$a = Carbon::parse("03-07-2015");
+	//echo $a->timestamp;
 
 	/*for ($i=0; $i < 100; $i += 10) { 
 		$array = array(
