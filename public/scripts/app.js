@@ -131,6 +131,7 @@ angular.module("app",
 
 				.when("/cronlist",{templateUrl:"crons/cronlist",controller: 'Cleancache'})
 				.when("/cronerror",{templateUrl:"crons/cronerror",controller: 'Cleancache'})
+				.when("/cronfired",{templateUrl:"crons/cronfired",controller: 'Cleancache'})
 
 				.when("/revisardefensas",{templateUrl:"entregas/revisarnotas",controller: 'Cleancache'})
 				.when("/revisarnota/:idtema",{templateUrl:"entregas/revisarnota",controller: 'HojaRuta'})
