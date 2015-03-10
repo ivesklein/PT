@@ -9,18 +9,20 @@ class PostMemorias{
 
 			$activepm = false;
 
-			$TEMA = 0 ;
-			$RUN1 = 1 ;
-			$NOMBRE1 = 2 ;
-			$APELLIDO1 = 3 ;
-			$EMAIL1 = 4 ;
-			$RUN2 = 5 ;
-			$NOMBRE2 = 6 ;
-			$APELLIDO2 = 7 ;
-			$EMAIL2 = 8 ;
-			$NPROFESOR = 9 ;
-			$APROFESOR = 10 ;
-			$MPROFESOR = 11 ;
+			$TEMA 		= 0 ;
+			$EMPRESA 	= 1 ;
+			$EMPRESARUT = 2 ;
+			$RUN1 		= 3 ;
+			$NOMBRE1 	= 4 ;
+			$APELLIDO1 	= 5 ;
+			$EMAIL1 	= 6 ;
+			$RUN2 		= 7 ;
+			$NOMBRE2 	= 8 ;
+			$APELLIDO2 	= 9 ;
+			$EMAIL2 	= 10 ;
+			$NPROFESOR 	= 11 ;
+			$APROFESOR 	= 12 ;
+			$MPROFESOR 	= 13 ;
 
 			$periodo = $_POST['periodo'];
 
@@ -59,6 +61,8 @@ class PostMemorias{
 							$a = $fila[9];
 							$a = $fila[10];
 							$a = $fila[11];
+							$a = $fila[12];
+							$a = $fila[13];
 
 							if(!isset($profesores[$fila[$MPROFESOR]])){
 
@@ -156,6 +160,9 @@ class PostMemorias{
 						$subj->pm_uid = "";
 						$subj->periodo = $periodo;
 						$subj->defensa = 0;
+						$subj->company = $fila[$EMPRESA];
+						$subj->company_rut = $fila[$EMPRESARUT];
+
 						$subj->save();
 
 					}
