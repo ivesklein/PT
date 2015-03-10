@@ -515,6 +515,30 @@ class ViewsFirst extends BaseController
 						"AY"=>array("title"=>"Ayudante Taller", "value"=>"AY","n"=>$id)
 					));
 
+					$mirol = Rol::actual();
+					switch ($mirol) {
+						case 'CA':
+							break;
+						case 'SA':
+							break;
+						case 'PT':
+							$array["items"]["SA"]["dis"]=1;
+							$array["items"]["CA"]["dis"]=1;
+							# code...
+							break;
+						case 'AY':
+							$array["items"]["SA"]["dis"]=1;
+							$array["items"]["CA"]["dis"]=1;
+							$array["items"]["PT"]["dis"]=1;
+							break;
+						default:
+							$array["items"]["SA"]["dis"]=1;
+							$array["items"]["CA"]["dis"]=1;
+							$array["items"]["PT"]["dis"]=1;
+							$array["items"]["AY"]["dis"]=1;
+							$array["items"]["P"]["dis"]=1;
+							break;
+					}
 
 
 					$roles = Permission::whereStaff_id($id)->get();

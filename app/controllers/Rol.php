@@ -162,6 +162,15 @@ class Rol {
 		}
 	}
 
+	public static function actual()
+	{
+		if(Auth::check()) {
+			return Session::get('rol' ,"0");
+		}else{
+			return 0;
+		}
+	}
+
 	public static function permissions(){
 		$res = array("permissions"=>array());
 		if(Auth::check()) {

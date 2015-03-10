@@ -1,0 +1,1 @@
+<script type="text/javascript">$(function(){location="login";})</script>
