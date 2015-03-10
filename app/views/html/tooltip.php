@@ -1,0 +1,1 @@
+<div class="fa fa-question" data-toggle="tooltip" title='<?=$title?>' data-placement="left"></div>
