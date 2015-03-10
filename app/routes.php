@@ -220,7 +220,7 @@ Route::get('/a/view' ,function()
 Route::get('/test' ,function()
 {
 
-	//$array = array("hola"=>"Variablee!!!");
+	$array = array("hola"=>"Variablee!!!");
 	$a = Correo::enviar('divaldivia@alumnos.uai.cl', "Prueba mail", 'emails.welcome', $array);
 
 	//echo "hola";
