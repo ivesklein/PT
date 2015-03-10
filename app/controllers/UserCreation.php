@@ -47,7 +47,7 @@ class UserCreation {
 		$title = "Has sido registrado a la Plataforma de Titulación";
 		$view = "emails.welcome";
 		$parameters = array("user"=> $user->wc_id, "pass"=>$user->pmpass);
-		Correo::correo($to, $title, $view, $parameters);
+		Correo::enviar($to, $title, $view, $parameters);
 
 		if(false){//con pm
 
