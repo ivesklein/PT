@@ -52,6 +52,8 @@ class ViewsWC extends BaseController
 				$temas = Subject::studentfind($user)->get();
 				if(!$temas->isEmpty()){
 					$tema = $temas->first();
+
+					$primero = $tema->student1==$user;
 					
 					$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->get();
 
@@ -73,10 +75,31 @@ class ViewsWC extends BaseController
 								$feedback="";
 								//get notas de tarea para el grupo
 								$nota = Nota::whereSubject_id($tema->id)->whereTarea_id($tarea->id)->get();
+								
+
 								if(!$nota->isEmpty()){
 									$notita = $nota->first();
-									$nota = $notita->nota;
-									$feedback = $notita->feedback;
+									if(!empty($notita->nota)){
+										$nota = json_decode($notita->nota);
+										if($primero){
+											$nota = $nota[0];
+										}else{
+											$nota = $nota[1];
+										}
+									}else{
+										$nota = "";	
+									}
+									
+									if(!empty($notita->feedback)){
+										$feedback = json_decode($notita->feedback);
+										if($primero){
+											$feedback = $feedback[0];
+										}else{
+											$feedback = $feedback[1];
+										}
+									}else{
+										$feedback = "";	
+									}
 								}
 								
 							}

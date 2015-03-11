@@ -11,6 +11,10 @@
             display: block;
         }
 
+        .manito{
+            cursor: pointer;
+        }
+
     </style>
 
     <link rel="stylesheet" href="bootstrap-datepicker/css/datepicker.css" />
@@ -179,6 +183,7 @@
                                 $("#t"+n).attr("ng-controller","CollapseCtrl");
                                 
                                 $("#t"+n+" .panel-heading").collapse();
+                                $("#t"+n+" .panel-heading").addClass("manito");
                                 //angular.bootstrap($("#t"+n), ["app.ui.ctrls"]);
 
                             }
@@ -195,12 +200,15 @@
                             }if(tarea.active==1){//if nota mostrar
                                 if(tarea.nota!=""){
                                     var notas = JSON.parse(tarea.nota);
-                                    var feedbacks = JSON.parse(tarea.feedback);
                                     $("#t"+n+" .nota.nota1").val(notas[0]);
                                     $("#t"+n+" .nota.nota2").val(notas[1]);
+                                }
+                                if(tarea.feedback!=""){
+                                    var feedbacks = JSON.parse(tarea.feedback);
                                     $("#t"+n+" .feedback.feedback1").val(feedbacks[0]);
                                     $("#t"+n+" .feedback.feedback2").val(feedbacks[1]);
                                 }
+
                                 
                                 $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
                                 if(tarea.nota!="" || tarea.tipo<3){

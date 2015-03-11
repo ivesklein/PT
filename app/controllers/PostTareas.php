@@ -9,7 +9,9 @@ class PostTareas{
 			if(Rol::hasPermission("tareas")){
 				$per = Periodo::active_obj();
 				if($per!="false"){
-					
+
+					$news = array();					
+
 					$data = json_decode($_POST['data']);
 					foreach ($data as $key => $value) {
 
@@ -31,7 +33,8 @@ class PostTareas{
 								$tarea2->tipo = 3;
 								$tarea2->periodo_name = $per->name;
 								$tarea2->n = $key;
-								$tarea2->save();								
+								$tarea2->save();
+								$news[$tarea2->id] = $tarea2->tipo;							
 							}elseif($tarea->tipo==2){
 								$tarea2 = new Tarea;
 								$tarea2->title = "Defensa";
@@ -39,7 +42,8 @@ class PostTareas{
 								$tarea2->tipo = 4;
 								$tarea2->periodo_name = $per->name;
 								$tarea2->n = $key;
-								$tarea2->save();								
+								$tarea2->save();
+								$news[$tarea2->id] = $tarea2->tipo;							
 							}
 
 							//set event
@@ -53,6 +57,8 @@ class PostTareas{
 
 							CronHelper::tarea($tarea->id, Carbon::createFromFormat('m/d/Y', $value->date));
 
+							$news[$tarea->id] = $tarea->tipo;
+							
 
 						}else{
 							$tarea = $tarea->first();
@@ -79,10 +85,43 @@ class PostTareas{
 
 							CronHelper::tarea($tarea->id, Carbon::createFromFormat('m/d/Y', $value->date));
 
+							if($tarea->tipo==1){
+								$tarea2 = Tarea::whereTitle("Predefensa")->first();
+								if(!empty($tarea2)){
+									$news[$tarea2->id] = $tarea2->tipo;
+								}							
+							}elseif($tarea->tipo==2){
+								$tarea2 = Tarea::whereTitle("Defensa")->first();
+								if(!empty($tarea2)){
+									$news[$tarea2->id] = $tarea2->tipo;
+								}							
+							}
+
+							$news[$tarea->id] = $tarea->tipo;
+
+						}//existe?
+					}//for
+
+					$tareas = Tarea::wherePeriodo_name($per->name)->get();
+					foreach ($tareas as $tarea) {//borrar los que no van
+						$id = $tarea->id;
+						$tipo = $tarea->tipo;
+
+						if(!isset($news[$id])){
+							if($tipo<3){
+								CronHelper::deleteTarea($id);
+							}
+							$eventos = CEvent::whereDetail($id)->get();
+							if(!$eventos->isEmpty()){
+								$evento = $eventos->first();
+								$evento->delete();
+							}
+
+							$tarea->delete();
 						}
-
-
 					}
+
+
 					$a = DID::action(Auth::user()->wc_id, "crear tareas", $per->id, "periodo");
 
 					$return["ok"] = 1;

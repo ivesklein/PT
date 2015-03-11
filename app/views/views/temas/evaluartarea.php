@@ -180,16 +180,18 @@
                                 $("#t"+n+" .feedback").val(tarea.feedback);
                                 $("#t"+n+" .submit").attr("n",tarea.id).on("click",enviar);
                                 $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
-                                
-
                                 if(tarea.nota!=""){
                                     var notas = JSON.parse(tarea.nota);
+                                    $("#t"+n+" .nota.nota1").val(notas[0]);
+                                    $("#t"+n+" .nota.nota2").val(notas[1]);
+                                }
+                                if(tarea.feedback!=""){
                                     var feedbacks = JSON.parse(tarea.feedback);
-                                    $("#t"+n+" .nota.nota1").attr("disabled",1).val(notas[0]);
-                                    $("#t"+n+" .nota.nota2").attr("disabled",1).val(notas[1]);
-                                    $("#t"+n+" .feedback.feedback1").attr("disabled",1).val(feedbacks[0]);
-                                    $("#t"+n+" .feedback.feedback2").attr("disabled",1).val(feedbacks[1]);
+                                    $("#t"+n+" .feedback.feedback1").val(feedbacks[0]);
+                                    $("#t"+n+" .feedback.feedback2").val(feedbacks[1]);
+                                }
 
+                                if(tarea.nota!=""){
                                     $("#t"+n+" .submit").attr("n",tarea.id).addClass("btn-warning").removeClass("btn-success").html("Modificar").on("click",modify);
                                     $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
                                     $("#t"+n+" .panel-body").css("background","#f6f6f6");
@@ -198,9 +200,11 @@
                             }if(tarea.active==2){//disable all if nota mostrar
                                 if(tarea.nota!=""){
                                     var notas = JSON.parse(tarea.nota);
-                                    var feedbacks = JSON.parse(tarea.feedback);
                                     $("#t"+n+" .nota.nota1").val(notas[0]);
                                     $("#t"+n+" .nota.nota2").val(notas[1]);
+                                }
+                                if(tarea.feedback!=""){
+                                    var feedbacks = JSON.parse(tarea.feedback);
                                     $("#t"+n+" .feedback.feedback1").val(feedbacks[0]);
                                     $("#t"+n+" .feedback.feedback2").val(feedbacks[1]);
                                 }
