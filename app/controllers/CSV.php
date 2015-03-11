@@ -6,6 +6,9 @@ class CSV {
 		$return = array();
 
 		try {
+
+            ini_set("auto_detect_line_endings", "1");
+
 			$delimiter = self::getFileDelimiter($file);
 
 			$handle = fopen($file,"r");

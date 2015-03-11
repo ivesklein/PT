@@ -35,7 +35,7 @@ class PostMemorias{
 				
 				$res = CSV::toArray($ruta);
 				if(isset($res['error'])){
-					Session::put('alert', 'No se puede leer el archivo (1), compruebe que tenga formato \'.csv\''.$res['error']);
+					Session::put('alert', 'No se puede leer el archivo (1), compruebe que tenga formato \'.csv\'');
 					return Redirect::to("#/itemas");
 				}
 				//for profesores, 
@@ -101,7 +101,7 @@ class PostMemorias{
 
 						} catch (Exception $e) {
 							
-							Session::put('alert', 'No se puede leer el archivo (2), compruebe que tenga formato \'.csv\'');
+							Session::put('alert', 'No se puede leer el archivo (2), compruebe que sea \'.csv\', y siga el formato del ejemplo.');
 							return Redirect::to("#/itemas");
 
 						}
