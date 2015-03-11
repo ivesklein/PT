@@ -1,7 +1,7 @@
 <div class="page page-table">
 
     <link rel="stylesheet" href="fullcalendar/fullcalendar.css" />
-    <link rel="stylesheet" href="jui/jquery-ui.min.css" />
+    <link rel="stylesheet" href="ajui/jquery-ui.min.css" />
     <style>
     #comisionbox .panel-heading, #fechasbox .panel-heading{
         cursor:pointer;

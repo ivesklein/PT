@@ -560,6 +560,10 @@ class PostMemorias{
 				    	$st2 = explode("@",$tema->student2);
 				    	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
 						$return['grupo'] = $grupo." ".$tema->subject;
+						$al1 = Student::whereWc_id($tema->student1)->first();
+						$al2 = Student::whereWc_id($tema->student2)->first();
+						$return['alumno1'] = $al1->name." ".$al1->surname;
+						$return['alumno2'] = $al2->name." ".$al2->surname;
 
 						//verificar que hayan tareas
 						$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->where("tipo","<",5)->get();
