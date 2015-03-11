@@ -226,7 +226,7 @@ class PostUsuarios{
 
 				$a = DID::action(Auth::user()->wc_id, "agregar usuarios", "", "Usuarios", json_encode($profesores));
 
-				return Redirect::to("#/funcionario");
+				return Redirect::to("#/funcionarios");
 
 			}else{
 				//error con el archivo
