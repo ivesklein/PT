@@ -233,7 +233,7 @@ class CronRoute {
 		Log::info("ejecutando confirmarguias");
 		$array = array(
 			"to"=>"",
-			"title"=>$name,
+			"title"=>"Confirmar Guía",
 			"view"=>"emails.confirmar-guia",
 			"parameters"=>array(),
 		);
