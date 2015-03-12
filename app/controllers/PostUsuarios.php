@@ -85,29 +85,29 @@ class PostUsuarios{
 
 				if($_POST['action']=="add"){//agregar
 					//ver sino existe
-					echo"a1";
+					//echo"a1";
 					if($count==0){
 						//crearlo
 						$nperm = new Permission;
 						$nperm->staff_id = $_POST['id'];
 						$nperm->permission = $_POST['rol'];
 						$nperm->save();
-						echo"a1saved";
+						//echo"a1saved";
 					}
 				}else{//quitar
 					//ver si existe
-					echo"a0";
+					//echo"a0";
 					if($count!=0){
 						//quitarlo
 						$del = $perm->first();
 						$del->delete();
-						echo"a0deleted";
+						//echo"a0deleted";
 					}
 				}
 
 				$return["ok"] = "ok";
 
-				if($_POST['action']==true){
+				if($_POST['action']=="add"){
 					$a = DID::action(Auth::user()->wc_id, "asignar rol", $_POST['id'], "usuario", $_POST['rol']);
 				}else{
 					$a = DID::action(Auth::user()->wc_id, "quitar rol", $_POST['id'], "usuario", $_POST['rol']);

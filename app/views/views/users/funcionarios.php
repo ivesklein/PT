@@ -80,7 +80,7 @@
 
     <script type="text/javascript">
 
-        $("#profesorlist").on("change", 'input[type="checkbox"]', function() {
+        $("#profesorlist").on("click", 'input[type="checkbox"]', function(event) {
 
             var val = $(this).val();
             var id = $(this).attr("n");
@@ -110,11 +110,8 @@
                     }
                 });
             }else{
-                if(action){
-                    $(this).attr("checked",false);
-                }else{
-                    $(this).attr("checked",true);
-                }
+
+                event.preventDefault();
                 
             }
 
