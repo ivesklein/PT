@@ -482,10 +482,10 @@ class PostHojaRuta{
 						$vista = "emails.rechazo-revisor"
 						$feedback = isset($_POST['feedback'])?$_POST['feedback']:"";
 
-						Correo::correo( $tema->student1, $titulo ,$vista, 
+						Correo::enviar( $tema->student1, $titulo ,$vista, 
 							array("id"=>$tema->id,"tema"=>$tema->subject,"feedback"=>$feedback)
 						);
-						Correo::correo( $tema->student2, $titulo ,$vista, 
+						Correo::enviar( $tema->student2, $titulo ,$vista, 
 							array("id"=>$tema->id,"tema"=>$tema->subject,"feedback"=>$feedback)
 						);
 

@@ -114,7 +114,7 @@ class PostComision{
 					$prof = Staff::find($newprof)->wc_id;
 
 					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
-					Correo::correo($prof, $title, $view, $parameters);
+					Correo::enviar($prof, $title, $view, $parameters);
 
 
 				}
@@ -140,7 +140,7 @@ class PostComision{
 					$prof = Staff::find($delprof)->wc_id;
 
 					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
-					Correo::correo($prof, $title, $view, $parameters);
+					Correo::enviar($prof, $title, $view, $parameters);
 
 				}
 				$a = DID::action(Auth::user()->wc_id, "modificar comision", $subject_id, "memoria", "+".$_POST['news']."-".$_POST['dels']);

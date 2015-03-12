@@ -262,8 +262,8 @@ class PostMemorias{
 								$guia = $subj->guia;
 								$name = $guia->name." ".$guia->surname;
 								$parameters = array("guianame"=>$name, "tema"=>$subj->subject);
-								Correo::correo($subj->student1, $title, $view, $parameters);
-								Correo::correo($subj->student2, $title, $view, $parameters);
+								Correo::enviar($subj->student1, $title, $view, $parameters);
+								Correo::enviar($subj->student2, $title, $view, $parameters);
 
 							}else{//resp==1
 								$return["ok"]="ok1";

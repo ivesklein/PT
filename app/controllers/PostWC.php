@@ -102,7 +102,7 @@ class PostWC {
 			                	$nombre = $prof->name;
 			                	$apellido = $prof->surname;
 								//avisar!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-								Correo::correo( $tema->adviser, "Hoja de Ruta" ,"emails.hojaprofesor", 
+								Correo::enviar( $tema->adviser, "Hoja de Ruta" ,"emails.hojaprofesor", 
 									array(
 										"id"=>$tema->id,
 										"tema"=>$tema->subject,
