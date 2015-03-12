@@ -31,10 +31,29 @@ class ViewsReg extends BaseController
 				$fecha = $date->format('m/d/Y');
 
 				$array["content"] = View::make("table.cell",array("content"=>$action->who));
-				$array["content"] .= View::make("table.cell",array("content"=>$action->what));
-				$array["content"] .= View::make("table.cell",array("content"=>$action->where));
+				
+				if(strlen($action->what)>30){
+					$what = View::make("html.tooltip",array("title"=>$action->what));
+				}else{
+					$what = $action->what;
+				}
+
+				$array["content"] .= View::make("table.cell",array("content"=>$what));
+
+				if(strlen($action->where)>30){
+					$where = View::make("html.tooltip",array("title"=>$action->where));
+				}else{
+					$where = $action->where;
+				}
+
+				$array["content"] .= View::make("table.cell",array("content"=>$where));
 				$array["content"] .= View::make("table.cell",array("content"=>$action->related_to));
-				$array["content"] .= View::make("table.cell",array("content"=>$action->data));
+				if(strlen($action->data)>30){
+					$data = View::make("html.tooltip",array("title"=>$action->data));
+				}else{
+					$data = $action->data;
+				}
+				$array["content"] .= View::make("table.cell",array("content"=>$data));
 				$array["content"] .= View::make("table.cell",array("content"=>$action->ip));
 
 				$tool = View::make("html.tooltip",array("title"=>$action->user_agent));
