@@ -656,4 +656,33 @@ class PostMemorias{
 		return json_encode($return);
 	}
 
+
+	public static function cambiarTitulo()
+	{
+		$return = array();
+		if(isset($_POST['id']) && isset($_POST['titulo'])){
+			if(Rol::actual()=="AY" || Rol::actual()=="PT"){
+				$per = Periodo::active_obj();
+				if($per!="false"){
+					$tema = Subject::find($_POST['id']);
+					if(!empty($tema)){
+						$tema->subject = $_POST['titulo'];
+						$tema->save();
+						$return["ok"] = 1;
+					}else{
+						$return["error"] = "tema no existe";
+					}
+				}else{
+					$return["error"] = "no hay semestre activo";
+				}
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+
+	}
+
 }

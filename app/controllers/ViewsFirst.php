@@ -209,8 +209,8 @@ class ViewsFirst extends BaseController
 
 		//print_r($res);
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
-
-		return View::make('table.tableview', array("title"=>"Memorias Activas","table"=>$table));
+		$script = View::make('scripts.cambiartema', array() );
+		return View::make('table.tableview', array("title"=>"Memorias Activas","table"=>$table, "script"=>$script));
 	}
 	
 	//  GUIAS  //
