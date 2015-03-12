@@ -122,7 +122,15 @@ class Menu {
 			"where"=>"temas",
 			"place"=>"24",
 			"array"=>array("link"=>"#/revisardefensas", "title"=>"Modificar Notas", "n"=>0)
+		),
+		"actions"=>array(
+			"where"=>"data",
+			"place"=>"24",
+			"array"=>array("link"=>"#/actions", "title"=>"Registro Acciones", "n"=>0)
 		)
+
+
+		
 
 	);
 
@@ -158,6 +166,10 @@ class Menu {
 		"cron" => array(
 			"place"=>"25",
 			"array"=>array("CronJobs", "#/menu", "calendar", "primary", 0)
+		),
+		"data" => array(
+			"place"=>"30",
+			"array"=>array("Registros", "#/menu", "calendar", "primary", 0)
 		),
 		"otromenu" => array(
 			"place"=>"24",

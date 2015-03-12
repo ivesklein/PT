@@ -6,7 +6,7 @@ class DID {
 		$a = new Action;
 		$a->who = $who;
 		$a->what = $what;
-		$a->what = $where;
+		$a->where = $where;
 		$a->related_to = $related_to;
 		$a->data = $data;
 		$a->ip = $_SERVER['REMOTE_ADDR'];

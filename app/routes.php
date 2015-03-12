@@ -208,6 +208,8 @@ Route::controller('th','ViewsTypeahead');
 
 Route::controller('crons','ViewsCron');
 
+Route::controller('reg','ViewsReg');
+
 
 
 //tests////////////////////////////////////////

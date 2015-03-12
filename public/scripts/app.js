@@ -136,6 +136,7 @@ angular.module("app",
 				.when("/revisardefensas",{templateUrl:"entregas/revisarnotas",controller: 'Cleancache'})
 				.when("/revisarnota/:idtema",{templateUrl:"entregas/revisarnota",controller: 'HojaRuta'})
 				
+				.when("/actions",{templateUrl:"reg/actions",controller: 'Cleancache'})
 
 				/*.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})
