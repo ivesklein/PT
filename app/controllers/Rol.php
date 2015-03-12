@@ -22,7 +22,6 @@ class Rol {
 			),
 		"SA"=>
 			array(
-				"temasCreate",
 				"temasView",
 				"periodosCreate",
 				"periodosEdit",

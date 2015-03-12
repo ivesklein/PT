@@ -4,22 +4,17 @@ class Menu {
 	//public static $colors = array("danger","orange", "warning", "success", "info", "primary-light", "primary", "violet");
 	static $vistaPermiso = array(
 		"temasCreate"=>array(
-			"where"=>"periodos",
+			"where"=>"temas",
 			"place"=>"10",
 			"array"=>array("link"=>"#/itemas", "title"=>"Agregar Temas", "n"=>0)
 		),
 		"temasView"=>array(
-			"where"=>"dashboard",
+			"where"=>"temas",
 			"place"=>"10",
-			"array"=>array("link"=>"#/listatemas", "title"=>"Estado Temas", "n"=>0)
-		),
-		"periodosCreate"=>array(
-			"where"=>"periodos",
-			"place"=>"8",
-			"array"=>array("link"=>"#/vista3", "title"=>"Crear Semestre", "n"=>0)
+			"array"=>array("link"=>"#/listatemas", "title"=>"Temas Activos", "n"=>0)
 		),
 		"periodosEdit"=>array(
-			"where"=>"periodos",
+			"where"=>"temas",
 			"place"=>"9",
 			"array"=>array("link"=>"#/periodos", "title"=>"Semestres", "n"=>0)
 		),

@@ -41,12 +41,16 @@ class PostPeriodos{
 
 			if(Rol::hasPermission("periodosEdit")){
 
-				$event = Periodo::find($_POST["id"]);
-		        $event->status = 'active';
-		        $event->save();
-		        $return["ok"] = $event->id;
-	        	$a = DID::action(Auth::user()->wc_id, "activar periodo", $_POST["id"], "periodo");
+				if(Periodo::active()=="false"){
 
+					$event = Periodo::find($_POST["id"]);
+			        $event->status = 'active';
+			        $event->save();
+			        $return["ok"] = $event->id;
+		        	$a = DID::action(Auth::user()->wc_id, "activar periodo", $_POST["id"], "periodo");
+	        	}else{
+					$return["error"] = "Debe cerrar el periodo anterior.";
+				}
 			}else{
 				$return["error"] = "not permission";
 			}

@@ -117,6 +117,8 @@ class ViewsFirst extends BaseController
 			$status2 = View::make("html.label",array("title"=>"Activo","color"=>"green"));
 			$status3 = View::make("html.label",array("title"=>"Cerrado","color"=>"blue"));
 
+			$active = Periodo::active();
+
 			foreach ($pers as $per) {
 
 				//$res2 = $soap->taskCase($case->guid);
@@ -131,7 +133,9 @@ class ViewsFirst extends BaseController
 
 				switch ($per->status) {
 					case 'draft':
-						$button = $buttonactivate;
+						if($active=="false"){
+							$button = $buttonactivate;
+						}
 						$status = $status1;
 						break;
 					case 'active':
@@ -164,6 +168,7 @@ class ViewsFirst extends BaseController
 
 		}
 		//print_r($res);
+
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
 		return View::make('views.periodos.periodoslist', array("table"=>$table));
 	}
