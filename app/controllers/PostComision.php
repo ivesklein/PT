@@ -143,7 +143,7 @@ class PostComision{
 					Correo::enviar($prof, $title, $view, $parameters);
 
 				}
-				$a = DID::action(Auth::user()->wc_id, "modificar comision", $subject_id, "memoria", "+".$_POST['news']."-".$_POST['dels']);
+				$a = DID::action(Auth::user()->wc_id, "modificar comision", $_POST['id'], "memoria", "+".$_POST['news']."-".$_POST['dels']);
 
 				$return['ok'] = 1;
 

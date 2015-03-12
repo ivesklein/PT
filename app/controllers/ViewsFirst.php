@@ -233,85 +233,37 @@ class ViewsFirst extends BaseController
 
 		$body="";
 
-		if(false){//con processmaker
 
-			$soap = new PMsoap;	
-			$soap->login();
-			$res = $soap->caseList();
 
-			$subjs = Subject::wherePeriodo(Periodo::active())->whereAdviser(Auth::user()->wc_id)->whereStatus("confirm")->get();
+		$subjs = Subject::wherePeriodo(Periodo::active())->whereAdviser(Auth::user()->wc_id)->whereStatus("confirm")->get();
 
-			if(isset($res['ok'])){
-				$buttons = View::make("table.yesno");
+		if(!$subjs->isEmpty()){
+			$buttons = View::make("table.yesno");
+			
+			foreach ($subjs as $subj) {
+
+				$tema = $subj->subject;
+				$alumno1 = $subj->student1;
+				$alumno2 = $subj->student2;
+				$id = $subj->id;
+
+				$content = View::make("table.cell",array("content"=>$tema));
+				$content .= View::make("table.cell",array("content"=>$alumno1));
+				$content .= View::make("table.cell",array("content"=>$alumno2));
+				$content .= View::make("table.cell",array("content"=>$buttons));
+				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+			
 				
-				foreach ($res['ok'] as $case) {
-
-					//$res2 = $soap->taskCase($case->guid);
-
-
-					$subjs = Subject::wherePeriodo(Periodo::active())->wherePm_uid($case->guid)->get();
-					if(!$subjs->isEmpty()){
-						$subj = $subjs->first();
-						if($subj->status=="confirm"){
-							$tema = $subj->subject;
-							$alumno1 = $subj->student1;
-							$alumno2 = $subj->student2;
-							$id = $case->guid;
-
-
-							$content = View::make("table.cell",array("content"=>$tema));
-							$content .= View::make("table.cell",array("content"=>$alumno1));
-							$content .= View::make("table.cell",array("content"=>$alumno2));
-							$content .= View::make("table.cell",array("content"=>$buttons));
-							$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-						}else{
-
-							$content = View::make("table.cell",array("content"=>$case->delIndex));
-							$content .= View::make("table.cell",array("content"=>$case->guid));
-							$body .= View::make("table.row",array("content"=>$content));
-						}
-					}
-				}
-
-			}else{
-				$message = "No hay temas pendientes de confirmación";
-				$content = View::make("table.cell",array("content"=>$message));
-				$body .= View::make("table.row",array("content"=>$content));
-
 			}
 
-
-		}else{//sin pm
-
-			$subjs = Subject::wherePeriodo(Periodo::active())->whereAdviser(Auth::user()->wc_id)->whereStatus("confirm")->get();
-
-			if(!$subjs->isEmpty()){
-				$buttons = View::make("table.yesno");
-				
-				foreach ($subjs as $subj) {
-
-					$tema = $subj->subject;
-					$alumno1 = $subj->student1;
-					$alumno2 = $subj->student2;
-					$id = $subj->id;
-
-					$content = View::make("table.cell",array("content"=>$tema));
-					$content .= View::make("table.cell",array("content"=>$alumno1));
-					$content .= View::make("table.cell",array("content"=>$alumno2));
-					$content .= View::make("table.cell",array("content"=>$buttons));
-					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-				
-					
-				}
-
-			}else{
-				$message = "No hay temas pendientes de confirmación";
-				$content = View::make("table.cell",array("content"=>$message));
-				$body .= View::make("table.row",array("content"=>$content));
-
-			}
+		}else{
+			$message = "No hay temas pendientes de confirmación";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
 
 		}
+
+		
 
 		//print_r($res);
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));

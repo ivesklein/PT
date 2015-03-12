@@ -1,7 +1,7 @@
 <li>
     <a href="<?=$link?>"><i class="fa fa-<?=$icon?>"><span class="icon-bg bg-<?=$background?>"></span></i><span data-i18n="<?=$title?>"></span>
     <?php if($n!=0){
-        echo'<span class="badge badge-danger main-badge">'.$n.'</span>';
+        echo'<span class="badge badge-danger main-badge" style="right: 30px;">'.$n.'</span>';
     }?>
     </a>
     <?php 

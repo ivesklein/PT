@@ -10,7 +10,7 @@ class Menu {
 		),
 		"temasView"=>array(
 			"where"=>"temas",
-			"place"=>"10",
+			"place"=>"11",
 			"array"=>array("link"=>"#/listatemas", "title"=>"Temas Activos", "n"=>0)
 		),
 		"periodosEdit"=>array(
@@ -20,17 +20,17 @@ class Menu {
 		),
 		"guiaConfirmation"=>array(
 			"where"=>"temas",
-			"place"=>"10",
+			"place"=>"12",
 			"array"=>array("link"=>"#/confirmarguia", "title"=>"Confirmar Guías", "n"=>2)
 		),
 		"guiasConfirmation"=>array(
 			"where"=>"temas",
-			"place"=>"11",
+			"place"=>"13",
 			"array"=>array("link"=>"#/vista7", "title"=>"Guías Profesores", "n"=>2)
 		),	
 		"guiasAsignar"=>array(
 			"where"=>"temas",
-			"place"=>"12",
+			"place"=>"14",
 			"array"=>array("link"=>"#/asignarguia", "title"=>"Asignar Profesor", "n"=>2)
 		),
 		"profesores"=>array(
@@ -79,9 +79,9 @@ class Menu {
 			"array"=>array("link"=>"#/listanotas", "title"=>"Evaluar Entregas", "n"=>0)
 		),
 		"hojaderutaĺista"=>array(
-			"where"=>"temas",
+			"where"=>"hojaruta",
 			"place"=>"23",
-			"array"=>array("link"=>"#/listahojasruta", "title"=>"Hojas de Ruta", "n"=>0)
+			"array"=>array("link"=>"#/listahojasruta", "title"=>"Profesor Guía", "n"=>0)
 		),
 		"rutaaleatorio"=>array(
 			"where"=>"hojaruta",
@@ -91,7 +91,7 @@ class Menu {
 		"revisartemas"=>array(
 			"where"=>"hojaruta",
 			"place"=>"30",
-			"array"=>array("link"=>"#/revisartemas", "title"=>"Temas a Revisar", "n"=>0)
+			"array"=>array("link"=>"#/revisartemas", "title"=>"Revisar Formato", "n"=>0)
 		),
 		"listaReasignar"=>array(
 			"where"=>"hojaruta",
@@ -143,11 +143,11 @@ class Menu {
 			"array"=>array("Semestre", "#/menu", "calendar", "orange", 0)
 		),
 		"usuarios" => array(
-			"place"=>"20",
+			"place"=>"31",
 			"array"=>array("Usuarios", "#/menu", "user", "primary", 0)
 		),
 		"calendario" => array(
-			"place"=>"19",
+			"place"=>"30",
 			"array"=>array("Calendario", "#/menu", "calendar", "primary", 0)
 		),
 		"webcursos" => array(
@@ -156,7 +156,7 @@ class Menu {
 		),
 		"hojaruta" => array(
 			"place"=>"22",
-			"array"=>array("Hoja de ruta", "#/menu", "calendar", "primary", 0)
+			"array"=>array("Hoja de ruta", "#/menu", "pencil-square-o", "primary", 0)
 		),
 		"cron" => array(
 			"place"=>"25",
@@ -183,6 +183,7 @@ class Menu {
 		$subrows = "";
 		foreach ($h2 as $key => $value) {
 			$subrows .= View::make("menu.subrow", $value);
+			$n += $value["n"];
 		}
 
 		if($subrows==""){
@@ -226,15 +227,23 @@ class Menu {
 				if(isset(self::$vistaPermiso[$action])){//if existe menú para la acción
 					if(!isset($subrows[self::$vistaPermiso[$action]["where"]])){$subrows[self::$vistaPermiso[$action]["where"]]=array();}
 					//agregar subrow
-					$subrows[self::$vistaPermiso[$action]["where"]][self::$vistaPermiso[$action]["place"]] = self::$vistaPermiso[$action]["array"];
+					$where = self::$vistaPermiso[$action]["where"];
+					$place = self::$vistaPermiso[$action]["place"];
+					$subrows[$where][$place] = self::$vistaPermiso[$action]["array"];
+					
+					//añadir numero
+					$subrows[$where][$place]["n"] = Pendientes::$action();
+
 				}
 			}
 			//print_r($subrows);
 			//order row by place
 			$rows = array();
 			foreach ($subrows as $row => $asd) {
-				self::$Menus[$row]["place"];
-				$rows[self::$Menus[$row]["place"]] = $row ;
+				$place = self::$Menus[$row]["place"];
+				if(!isset($rows[$place])){
+					$rows[$place] = $row ;
+				}
 			}
 			ksort($rows);
 			//
