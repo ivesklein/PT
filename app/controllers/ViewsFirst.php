@@ -209,7 +209,11 @@ class ViewsFirst extends BaseController
 
 		//print_r($res);
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
+		if(Rol::actual()=="AY" || Rol::actual()=="PT"){
 		$script = View::make('scripts.cambiartema', array() );
+		}else{
+			$script ="";
+		}
 		return View::make('table.tableview', array("title"=>"Memorias Activas","table"=>$table, "script"=>$script));
 	}
 	
