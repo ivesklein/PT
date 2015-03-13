@@ -20,7 +20,7 @@ class Pendientes{
     }
 
 
-    public static function hojaderutalista()
+    public static function hojaderutaĺista()
     {
         $temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->whereHojaruta("falta-guia")->count();
         return $temas;
@@ -35,8 +35,8 @@ class Pendientes{
 
         if(!$entregas->isEmpty()){
             if(!$temas->isEmpty()){
-                foreach ($entregas as $entrega) {
-                    foreach ($temas as $tema) {
+                foreach ($temas as $tema) {
+                    foreach ($entregas as $entrega) {
                         $nota = Nota::whereTarea_id($entrega->id)->whereSubject_id($tema->id)->first();
                         if(empty($nota)){
                             $return++;
