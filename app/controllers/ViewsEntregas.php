@@ -51,7 +51,7 @@ class ViewsEntregas extends BaseController
 
 	public function getListanotas()
 	{
-		$ahead = array("Grupo","Tema","Evaluar");
+		$ahead = array("Grupo","Tema","Evaluar", "Pendiente");
 		$head = "";
 		foreach ($ahead as $value) {
 			$head .= View::make('table.head',array('title'=>$value));
@@ -76,6 +76,8 @@ class ViewsEntregas extends BaseController
 				//$tituloentrega = $entrega->title;
 
 				//if(true){
+					$entregas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",3)->where('date', '<', Carbon::now())->where('date', '>', Carbon::now()->subDays(14))->get();
+
 					$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->get();
 				//}else{
 				//	$temas = Staff::find(Auth::user()->id)->comision()->wherePeriodo(Periodo::active())->get();
@@ -101,6 +103,25 @@ class ViewsEntregas extends BaseController
 					    	//buscar en tabla notas
 					    	//$notaarray = array();
 					    	//if(!empty())
+
+					    	$pendiente = "";
+					    	if(!$entregas->isEmpty()){
+					    		$pendiente = 0;
+				                foreach ($entregas as $entrega) {
+				                    $nota = Nota::whereTarea_id($entrega->id)->whereSubject_id($tema->id)->first();
+				                    if(empty($nota)){
+				                        $pendiente++;
+				                    }else{
+				                        if(empty($nota->nota)){
+				                            $pendiente++;
+				                        }
+				                    }
+				                }
+				                if($pendiente>0){
+				                	$pendiente = '<span class="badge badge-danger main-badge">'.$pendiente.'</span>';
+					    		}
+					    	}
+
 					    	$nota = View::make("html.nota",array());
 							$id = $tema->id;
 
@@ -108,6 +129,7 @@ class ViewsEntregas extends BaseController
 							$content = View::make("table.cell",array("content"=>$grupo));
 							$content .= View::make("table.cell",array("content"=>$tema->subject));
 							$content .= View::make("table.cell",array("content"=>$buttons));
+							$content .= View::make("table.cell",array("content"=>$pendiente));
 							$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
 					}
 

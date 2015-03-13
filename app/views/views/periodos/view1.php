@@ -6,7 +6,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading"><strong><span class="glyphicon glyphicon-th-list"></span> Ingresar Temas de Memoria</strong></div>
                 <div class="panel-body">
-                	<form class="form-horizontal" method="POST" action="#/vista2" enctype="multipart/form-data">
+                	<form class="form-horizontal" method="POST" action="#/listatemas" enctype="multipart/form-data">
                          <input type="hidden" name="f" value="Memorias_crear"></input>
                         <div class="form-group">
                             <label for="" class="col-sm-2">Semestre</label>

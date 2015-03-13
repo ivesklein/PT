@@ -220,10 +220,10 @@ class PostTareas{
 						}
 
 					}else{
-						$return["error"] = "no tareas";
+						$return["error"] = "Aun no se han configurado las entregas.";
 					}
 				}else{
-					$return["error"] = "no hay semestre activo";
+					$return["error"] = "No hay semestre activo";
 				}
 			}else{
 				$return["error"] = "not permission";

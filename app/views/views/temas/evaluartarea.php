@@ -216,10 +216,12 @@
                             }
 
                         }//for
-                    }//ok
+                    },//ok
+                    error:function(message) {
+                        $('.panel-default:first').append('<div class="panel-body"><div class="alert alert-danger">'+message+'</div></div>');
+                    }
                 });//ajx
             },100);
         });
     </script>
-
 </div>

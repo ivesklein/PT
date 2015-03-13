@@ -201,6 +201,8 @@ Route::post('/', array( "before"=>'auth' ,function()
 Route::controller('views','ViewsFirst');
 
 Route::controller('entregas','ViewsEntregas');
+
+Route::controller('ruta','ViewsHojaRuta');
 //dir lti for wc
 Route::controller('lti','ViewsWC');
 
