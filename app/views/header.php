@@ -1,8 +1,8 @@
 <?php if(Auth::check()) { ?>
 <header class="clearfix">
-    <a href="#/" data-toggle-min-nav
+    <!--a href="#/" data-toggle-min-nav
                  class="toggle-min"
-                 ><i class="fa fa-bars"></i></a>
+                 ><i class="fa fa-bars"></i></a-->
 
     <!-- Logo -->
     <div class="logo">
