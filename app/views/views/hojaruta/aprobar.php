@@ -42,7 +42,7 @@
                         data:datos,
                         ok:function(data) {
                             console.log(data);
-                            location = "#/listarevisar";
+                            location = "#/aprobartemas";
                         }//ok
                     });//ajx
                 }

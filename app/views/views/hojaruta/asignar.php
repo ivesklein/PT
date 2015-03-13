@@ -59,12 +59,14 @@
                 <hr></hr>
                 <div class="form-group" id="gbuscar">
                     <label for="" class="col-sm-2"><?php echo Auth::user()->wc_id;?></label>
-                    <div class="col-sm-10" id="buscado">
+                    <div class="col-sm-7" id="buscado">
                         <input type="password" class="form-control" id="wcpass" placeholder="Contraseña webcursos"></input>
                         <input type="hidden" id="prof"></input>
                     </div>
+                    <label class="ui-checkbox col-sm-2"><input id="disweb" value="des" type="checkbox"><span>Desabilitar función webcursos</span></label>
                 </div>
                 <div class="alert alert-danger" id="mensaje" style="display:none;"></div>
+                <div class="alert alert-warning" id="aviso" style="display:none;"></div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <div class="btn btn-info" id="submit">Asignar<font class="wait-icon"> <i class="fa fa-refresh fa-spin"></i></font></div>
@@ -81,6 +83,17 @@
     	$(function() {
 
             var option = 0;
+
+            $("#disweb").on("click",function() {
+                if($(this).is(':checked')){
+                    $("#wcpass").attr("disabled",1);
+                    $("#aviso").html("Al desactivar esta función, el documento a revisar se deberá enviar personalmente.").show();
+                    $("#mensaje").hide();
+                }else{
+                    $("#wcpass").attr("disabled",0);
+                    $("#aviso").hide();
+                }
+            })
 
             $( "#buscarprofesor" ).autocomplete({
                 minLength: 2,
@@ -121,14 +134,19 @@
                 
                 if(option==0){
                     //ver busqueda
-                    if($("#prof").val()>0){
-                        $("#mensaje").hide();
-                        ok = true;
-                    }else{
+                    if(!($("#prof").val()>0)){
                         $("#mensaje").html("Seleccione Revisor").show();
                         $("#buscarprofesor").focus();
                         ok=false;
+                    }else if($("#wcpass").val()=="" && !$("#disweb").is(':checked')){
+                        $("#mensaje").html("Ingrese contraseña webcursos para poder registrar usuario en curso.").show();
+                        $("#wcpass").focus();
+                        ok=false;
+                    }else{
+                        $("#mensaje").hide();
+                        ok = true;
                     }
+
                 }else{
                     //ver campos
                     if($("#nombre").val()==""){
@@ -143,7 +161,7 @@
                         $("#mensaje").html("Ingrese email revisor").show();
                         $("#email").focus();
                         ok=false;
-                    }else if($("#wcpass").val()==""){
+                    }else if($("#wcpass").val()=="" && !$("#disweb").is(':checked')){
                         $("#mensaje").html("Ingrese contraseña webcursos para poder registrar usuario en curso.").show();
                         $("#wcpass").focus();
                         ok=false;
@@ -175,6 +193,10 @@
                             surname:$("#apellido").val(),
                             email:$("#email").val()
                         }
+                    }
+
+                    if($("#disweb").is(':checked')){
+                        datos["disweb"] = 1;
                     }
                     
                     ajx({

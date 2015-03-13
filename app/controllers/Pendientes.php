@@ -53,7 +53,39 @@ class Pendientes{
         return $return;
     }
 
+    public static function rutaaleatorio()
+    {
+        $subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("asignar-revisor")->count();
+        return $subjs;
+    }
 
+    public static function revisartemas()
+    {
+        $subjs = Staff::find(Auth::user()->id)->revisor()->wherePeriodo(Periodo::active())->whereHojaruta("en-revision")->count();
+        return $subjs;
+    }
+
+    public static function listaAprobar()
+    {
+        $subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("revisada")->count();
+        return $subjs;
+    }
+
+    public static function tareas()
+    {      
+        $per = Periodo::active();
+        if($per!="false"){
+            $entregas = Tarea::wherePeriodo_name($per)->count();
+            if($entregas==0){
+                return 1;
+            }  else{
+                return 0;
+            }
+        }else{
+            return 0;
+        }
+        
+    }
 
 
 
