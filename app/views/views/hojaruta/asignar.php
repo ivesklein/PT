@@ -146,7 +146,6 @@
                         $("#mensaje").hide();
                         ok = true;
                     }
-
                 }else{
                     //ver campos
                     if($("#nombre").val()==""){

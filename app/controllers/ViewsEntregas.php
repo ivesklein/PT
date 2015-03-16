@@ -193,6 +193,7 @@ class ViewsEntregas extends BaseController
 					}
 
 				}else{
+					$message = "No hay entregas a evaluar";
 					$content = View::make("table.cell",array("content"=>$message));
 					$body .= View::make("table.row",array("content"=>$content));
 
@@ -213,6 +214,132 @@ class ViewsEntregas extends BaseController
 	public function getRevisarnota()
 	{
 		return View::make('views.temas.revisarnota');
+	}
+
+	public function getNotas()
+	{
+		$ahead = array("Grupo","Tema","Profesor Guía","Alumnos");
+		//agregar tareas
+		$tareas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",5)->get();
+		foreach ($tareas as $tarea) {
+			$ahead[] = $tarea->title;
+		}
+		$ahead[] = "Modificar";
+
+
+		$head = "";
+		foreach ($ahead as $value) {
+			$head .= View::make('table.head',array('title'=>$value));
+		}
+
+		$body="";
+
+				$temas = Subject::active()->get();
+
+				if(!$temas->isEmpty()){
+
+					foreach ($temas as $tema) {
+
+							$st1 = explode("@",$tema->student1);
+					    	$st2 = explode("@",$tema->student2);
+					    	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
+					    	$evallink = url("#/revisarnota/".$tema->id);
+					    	$buttons = View::make("html.buttonlink",array("title"=>"Ingresar","color"=>"cyan","url"=>$evallink));
+
+					    	$a1content = View::make("table.cell",array("content"=>$grupo, "span"=>2));
+					    	$tool = View::make("html.tooltip",array("title"=>$tema->subject));
+							$a1content .= View::make("table.cell",array("content"=>$tool, "span"=>2));
+							$a1content .= View::make("table.cell",array("content"=>$tema->adviser, "span"=>2));
+
+					    	$a1 = Student::whereWc_id($tema->student1)->first();
+					    	$a1content .= View::make("table.cell",array("content"=>$a1->name." ".$a1->surname));
+					    	$a2 = Student::whereWc_id($tema->student2)->first();
+					    	$a2content = View::make("table.cell",array("content"=>$a2->name." ".$a2->surname));
+					    	
+					    	foreach ($tareas as $tarea) {
+								$id = $tarea->id;
+								$nota = Nota::whereSubject_id($tema->id)->whereTarea_id($tarea->id)->first();
+								
+								if($tarea->tipo<3){//tiene fecha en tarea
+									$date = CarbonLocale::parse($tarea->date);
+									$now = Carbon::now();
+									if($date>$now){//futura
+										$a1content .= View::make("table.cell",array("content"=>""));
+										$a2content .= View::make("table.cell",array("content"=>""));
+									}elseif($date<$now->subDays(14)){//ya pasó el tiempo de eval
+										
+										if(!empty($nota)){
+											$notas = json_decode($nota->nota);
+											$ca1 = empty($notas[0])?'<div style="color: red; font-size: 20px;" class="glyphicon glyphicon-warning-sign"></div>':$notas[0];
+											$ca2 = empty($notas[1])?'<div style="color: red; font-size: 20px;" class="glyphicon glyphicon-warning-sign"></div>':$notas[1];
+											$a1content .= View::make("table.cell",array("content"=>$ca1));
+											$a2content .= View::make("table.cell",array("content"=>$ca2));
+											
+										}else{
+											$a1content .= View::make("table.cell",array("content"=>'<div style="color: red; font-size: 20px;" class="glyphicon glyphicon-warning-sign"></div>'));
+											$a2content .= View::make("table.cell",array("content"=>'<div style="color: red; font-size: 20px;" class="glyphicon glyphicon-warning-sign"></div>'));
+										}
+
+									}else{//dentro de periododo de evaluacion
+
+										if(!empty($nota)){
+											$notas = json_decode($nota->nota);
+											$ca1 = empty($notas[0])?'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>':$notas[0];
+											$ca2 = empty($notas[1])?'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>':$notas[1];
+											$a1content .= View::make("table.cell",array("content"=>$ca1));
+											$a2content .= View::make("table.cell",array("content"=>$ca2));
+										}else{
+											$a1content .= View::make("table.cell",array("content"=>'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>'));
+											$a2content .= View::make("table.cell",array("content"=>'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>'));
+										}
+									
+									}
+								}else{
+
+									if(!empty($nota)){
+										$notas = json_decode($nota->nota);
+										$ca1 = empty($notas[0])?'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>':$notas[0];
+										$ca2 = empty($notas[1])?'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>':$notas[1];
+										$a1content .= View::make("table.cell",array("content"=>$ca1));
+										$a2content .= View::make("table.cell",array("content"=>$ca2));
+									}
+
+								}
+							}
+
+							$id = $tema->id;
+
+							$a1content .= View::make("table.cell",array("content"=>$buttons, "span"=>2));
+
+							$body .= View::make("table.row",array("content"=>$a1content, "id"=>$id));
+							$body .= View::make("table.row",array("content"=>$a2content, "id"=>$id));
+					}
+
+				}else{
+					$message = "No hay grupos activos";
+					$content = View::make("table.cell",array("content"=>$message));
+					$body .= View::make("table.row",array("content"=>$content));
+
+				}
+
+		/*	}
+		}else{
+			$message = "No hay entregas a evaluar";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
+
+		}*/
+		//print_r($res);
+		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
+		$script = '
+		</script>
+		<script src="js/tooltip.js"></script>
+		<script src="js/popover.js"></script>
+		<script>
+		$(function () {
+					  $(\'[data-toggle="popover"]\').popover()
+					})';
+		return View::make('table.tableview', array("table"=>$table, "script"=>$script));		
 	}
 
 

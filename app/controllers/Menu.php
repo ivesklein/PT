@@ -122,6 +122,11 @@ class Menu {
 			"where"=>"data",
 			"place"=>"24",
 			"array"=>array("link"=>"#/actions", "title"=>"Registro Acciones", "n"=>0)
+		),
+		"notas"=>array(
+			"where"=>"temas",
+			"place"=>"27",
+			"array"=>array("link"=>"#/notas", "title"=>"Notas", "n"=>0)
 		)
 
 

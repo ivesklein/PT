@@ -37,7 +37,7 @@ class ViewsCron extends BaseController
 				$array["content"] = View::make("table.cell",array("content"=>$cron->id));
 				$array["content"] .= View::make("table.cell",array("content"=>$cron->function));
 				$array["content"] .= View::make("table.cell",array("content"=>$fecha));
-				$array["content"] .= View::make("table.cell",array("content"=>$datos));
+				$array["content"] .= View::make("table.cell",array("content"=>$tool));
 				$body .= View::make("table.row",$array);
 			}
 
@@ -49,7 +49,15 @@ class ViewsCron extends BaseController
 		}
 		//print_r($res);
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
-		return View::make('table.tableview', array("title"=>"CronJobs","table"=>$table));
+				$script = '
+		</script>
+		<script src="js/tooltip.js"></script>
+		<script src="js/popover.js"></script>
+		<script>
+		$(function () {
+					  $(\'[data-toggle="popover"]\').popover()
+					})';
+		return View::make('table.tableview', array("title"=>"CronJobs","table"=>$table, "script"=>$script));
 	}
 
 	public function getCronfired()
@@ -90,7 +98,15 @@ class ViewsCron extends BaseController
 		}
 		//print_r($res);
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
-		return View::make('table.tableview', array("title"=>"CronJobs","table"=>$table));
+				$script = '
+		</script>
+		<script src="js/tooltip.js"></script>
+		<script src="js/popover.js"></script>
+		<script>
+		$(function () {
+					  $(\'[data-toggle="popover"]\').popover()
+					})';
+		return View::make('table.tableview', array("title"=>"CronJobs","table"=>$table, "script"=>$script));
 	}
 
 	public function getCronerror()

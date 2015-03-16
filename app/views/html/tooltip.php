@@ -1,1 +1,1 @@
-<div class="fa fa-question" data-toggle="tooltip" title='<?=$title?>' data-placement="left"></div>
+<button type="button" class="btn btn-default" data-placement="top" data-toggle="popover" data-content='<?=$title?>'><div class="fa fa-eye"></div></button>

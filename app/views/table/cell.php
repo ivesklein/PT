@@ -1,1 +1,1 @@
-<td><?=$content?></td>
+<td <?php echo isset($span)?"rowspan='".$span."'":""; ?>><?=$content?></td>

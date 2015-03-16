@@ -139,6 +139,8 @@ angular.module("app",
 				
 				.when("/actions",{templateUrl:"reg/actions",controller: 'Cleancache'})
 
+				.when("/notas",{templateUrl:"entregas/notas",controller: 'Cleancache'})
+
 				/*.when("/dashboard",{templateUrl:"views/dashboard.html"})
 				.when("/ui/typography",{templateUrl:"views/ui/typography.html"})
 				.when("/ui/buttons",{templateUrl:"views/ui/buttons.html"})

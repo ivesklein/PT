@@ -224,11 +224,22 @@ Route::get('/a/view' ,function()
 Route::get('/test' ,function()
 {
 
-	$array = array("hola"=>"Variablee!!!");
-	$a = Correo::enviar('divaldivia@alumnos.uai.cl', "Prueba mail", 'emails.welcome', $array);
+	//$array = array("hola"=>"Variablee!!!");
+	//$a = Correo::enviar('divaldivia@alumnos.uai.cl', "Prueba mail", 'emails.welcome', $array);
 
 	//echo "hola";
 	//print_r($a);
+
+
+
+	$res = Staff::whereWc_id("dkleinas@alumnos.uai.cl")->get();
+
+	foreach ($res as $re) {
+		echo $re->name;
+	}
+
+	echo "ok";
+
 
 	//$a = Carbon::parse("03-07-2015");
 	//echo $a->timestamp;

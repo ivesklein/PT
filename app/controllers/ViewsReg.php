@@ -72,7 +72,15 @@ class ViewsReg extends BaseController
 		}
 		//print_r($res);
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
-		return View::make('table.tableview', array("title"=>"CronJobs","table"=>$table));
+				$script = '
+		</script>
+		<script src="js/tooltip.js"></script>
+		<script src="js/popover.js"></script>
+		<script>
+		$(function () {
+					  $(\'[data-toggle="popover"]\').popover()
+					})';
+		return View::make('table.tableview', array("title"=>"Acciones","table"=>$table, "script"=>$script));
 	}
 
 	
