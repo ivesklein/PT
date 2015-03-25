@@ -20,19 +20,19 @@
                                 $array = array("items"=>array(
                                     "CA"=>array("title"=>"Cordinador Académico", "value"=>"CA"),
                                     "SA"=>array("title"=>"Secretario Académico", "value"=>"SA"),
-                                    "P"=>array("title"=>"Profesor", "value"=>"P"),
+                                    "P"=>array("title"=>"Profesor Guía o Comisión", "value"=>"P"),
                                     "PT"=>array("title"=>"Profesor Taller", "value"=>"PT", "sel"=>1),
                                     "AY"=>array("title"=>"Ayudante Taller", "value"=>"AY")
                                 ));
                             }elseif($rol == "PT"){
                                 $array = array("items"=>array(
-                                    "P"=>array("title"=>"Profesor", "value"=>"P"),
+                                    "P"=>array("title"=>"Profesor Guía o Comisión", "value"=>"P"),
                                     "PT"=>array("title"=>"Profesor Taller", "value"=>"PT"),
                                     "AY"=>array("title"=>"Ayudante Taller", "value"=>"AY", "sel"=>1)
                                 ));
                             }elseif($rol == "AY"){
                                 $array = array("items"=>array(
-                                    "P"=>array("title"=>"Profesor", "value"=>"P"),
+                                    "P"=>array("title"=>"Profesor Guía o Comisión", "value"=>"P"),
                                     "AY"=>array("title"=>"Ayudante Taller", "value"=>"AY", "sel"=>1)
                                 ));
                             }else{

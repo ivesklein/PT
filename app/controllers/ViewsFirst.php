@@ -465,7 +465,7 @@ class ViewsFirst extends BaseController
 					$array = array("items"=>array(
 						"CA"=>array("title"=>"Cordinador Académico", "value"=>"CA","n"=>$id),
 						"SA"=>array("title"=>"Secretario Académico", "value"=>"SA","n"=>$id),
-						"P"=>array("title"=>"Profesor", "value"=>"P","n"=>$id),
+						"P"=>array("title"=>"Profesor Guía o Comisión", "value"=>"P","n"=>$id),
 						"PT"=>array("title"=>"Profesor Taller", "value"=>"PT","n"=>$id),
 						"AY"=>array("title"=>"Ayudante Taller", "value"=>"AY","n"=>$id)
 					));
