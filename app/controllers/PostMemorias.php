@@ -2,6 +2,17 @@
 
 class PostMemorias{
 
+	public static function testdata()
+	{
+		
+		$a = array();
+
+		$a[] = array("name"=>"Nijiya Market","price"=>"$$","sales"=>292,"rating"=>4);
+
+		return json_encode($a);
+
+	}
+
 	public static function crear()	
 	{	
 

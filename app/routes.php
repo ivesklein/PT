@@ -221,6 +221,12 @@ Route::get('/a/view' ,function()
 	return View::make("lti.notas");
 });
 
+Route::get('/dynamic' ,function()
+{
+	return View::make("dynamic");
+});
+
+
 Route::get('/test' ,function()
 {
 

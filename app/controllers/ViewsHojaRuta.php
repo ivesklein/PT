@@ -39,28 +39,30 @@ class ViewsHojaRuta extends BaseController
 			    	$st2 = explode("@",$tema->student2);
 			    	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
 
-			    	if($tema->hojaruta == "falta-guia"){
-			    		$evallink = url("#/firmarhojaprofesor/".$tema->id);
-			    		$buttons = View::make("html.buttonlink",array("title"=>"Firmar","color"=>"green","url"=>$evallink));
-			    	}else{
-			    		$evallink = url("#/hojaprofesor/".$tema->id);
-			    		$buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"cyan","url"=>$evallink));
-			    	}
+			    	$hoja = $tema->firmas;
+			    	
+			    	if(!empty($hoja)){
+				    	if($hoja->status=="profesor"){
+				    		$evallink = url("#/firmarhojaprofesor/".$tema->id);
+				    		$buttons = View::make("html.buttonlink",array("title"=>"Firmar","color"=>"green","url"=>$evallink));
+				    		$estado = "Solicitud de Firma";
+				    	}else{
+				    		$evallink = url("#/firmarhojaprofesor/".$tema->id);
+				    		$buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"cyan","url"=>$evallink));
+				    		if($hoja->adviser=="firmado"){
+				    			$estado = "Firmada";	
+				    		}else{
+				    			$estado = "";
+				    		}
+				    	}
+			   		}else{
+			   			$evallink = url("#/firmarhojaprofesor/".$tema->id);
+			   			$buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"cyan","url"=>$evallink));
+			   			$estado="Vacía";
+			   		}
 
-			    	$nota = View::make("html.nota",array());
+			    	//$nota = View::make("html.nota",array());
 					$id = $tema->id;
-
-					if(empty($tema->hojaruta)){
-						$estado = "En blanco";
-					}elseif(strpos($tema->hojaruta, "@")!==false){
-						$estado = "Una firma";
-					}elseif($tema->hojaruta=="falta-guia"){
-						$estado = "Solicitud de Firma";
-					}else{
-						$estado = "otro";
-					}
-
-
 
 					$content = View::make("table.cell",array("content"=>$grupo));
 					$content .= View::make("table.cell",array("content"=>$estado));
@@ -99,36 +101,32 @@ class ViewsHojaRuta extends BaseController
 
 		$body="";
 
-		//$soap = new PMsoap;	
-		//$soap->login();
-		//$res = $soap->caseList();
-		$subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("asignar-revisor")->get();
-		//$subjs = Subject::whereStatus("confirm")->get();
+		$subjs = Subject::wherePeriodo(Periodo::active())->get();
 
 		if(!$subjs->isEmpty()){
 
 			foreach ($subjs as $subj) {
+				$hoja = $subj->firmas;
+				if(!empty($hoja)){
+					if($hoja->status=="buscar-revisor"){
 
-				$st1 = explode("@",$subj->student1);
-		    	$st2 = explode("@",$subj->student2);
-		    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+						$st1 = explode("@",$subj->student1);
+				    	$st2 = explode("@",$subj->student2);
+				    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
 
-				$tema = $subj->subject;
-				$id = $subj->id;
+						$tema = $subj->subject;
+						$id = $subj->id;
 
-				$evallink = url("#/hojaasignar/".$subj->id);
-			    $buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"cyan","url"=>$evallink));
+						$evallink = url("#/hojaasignar/".$subj->id);
+					    $buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"cyan","url"=>$evallink));
 
-				$content = View::make("table.cell",array("content"=>$grupo));
-				$content .= View::make("table.cell",array("content"=>$tema));
-				$content .= View::make("table.cell",array("content"=>$buttons));
-				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-				/*else{
+						$content = View::make("table.cell",array("content"=>$grupo));
+						$content .= View::make("table.cell",array("content"=>$tema));
+						$content .= View::make("table.cell",array("content"=>$buttons));
+						$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
 
-					$content = View::make("table.cell",array("content"=>$case->delIndex));
-					$content .= View::make("table.cell",array("content"=>$case->guid));
-					$body .= View::make("table.row",array("content"=>$content));
-				}*/
+					}
+				}
 			}
 
 		}else{
@@ -161,42 +159,33 @@ class ViewsHojaRuta extends BaseController
 
 		$body="";
 
-		//$soap = new PMsoap;	
-		//$soap->login();
-		//$res = $soap->caseList();
-		
-		//los mios???
-		//$subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("en-revision")->get();
-
-		$subjs = Staff::find(Auth::user()->id)->revisor()->wherePeriodo(Periodo::active())->whereHojaruta("en-revision")->get();
-
-
-		//$subjs = Subject::whereStatus("confirm")->get();
+		$subjs = Staff::find(Auth::user()->id)->revisor()->wherePeriodo(Periodo::active())->get();
 
 		if(!$subjs->isEmpty()){
 
 			foreach ($subjs as $subj) {
 
-				$st1 = explode("@",$subj->student1);
-		    	$st2 = explode("@",$subj->student2);
-		    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
 
-				$tema = $subj->subject;
-				$id = $subj->id;
+				$hoja = $subj->firmas;
+				if(!empty($hoja)){
+					if($hoja->status=="en-revision"){
 
-				$evallink = url("#/revisartema/".$subj->id);
-			    $buttons = View::make("html.buttonlink",array("title"=>"Revisar","color"=>"cyan","url"=>$evallink));
+						$st1 = explode("@",$subj->student1);
+				    	$st2 = explode("@",$subj->student2);
+				    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
 
-				$content = View::make("table.cell",array("content"=>$grupo));
-				$content .= View::make("table.cell",array("content"=>$tema));
-				$content .= View::make("table.cell",array("content"=>$buttons));
-				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-				/*else{
+						$tema = $subj->subject;
+						$id = $subj->id;
 
-					$content = View::make("table.cell",array("content"=>$case->delIndex));
-					$content .= View::make("table.cell",array("content"=>$case->guid));
-					$body .= View::make("table.row",array("content"=>$content));
-				}*/
+						$evallink = url("#/revisartema/".$subj->id);
+					    $buttons = View::make("html.buttonlink",array("title"=>"Revisar","color"=>"cyan","url"=>$evallink));
+
+						$content = View::make("table.cell",array("content"=>$grupo));
+						$content .= View::make("table.cell",array("content"=>$tema));
+						$content .= View::make("table.cell",array("content"=>$buttons));
+						$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+					}
+				}
 			}
 
 		}else{
@@ -229,51 +218,45 @@ class ViewsHojaRuta extends BaseController
 		}
 
 		$body="";
-
-		//$soap = new PMsoap;	
-		//$soap->login();
-		//$res = $soap->caseList();
 		
 		//los mios???
-		$subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("en-revision")->get();
-
-
-		//$subjs = Subject::whereStatus("confirm")->get();
+		$subjs = Subject::wherePeriodo(Periodo::active())->get();
 
 		if(!$subjs->isEmpty()){
 
 			foreach ($subjs as $subj) {
 
-				$st1 = explode("@",$subj->student1);
-		    	$st2 = explode("@",$subj->student2);
-		    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+				$hoja = $subj->firmas;
+				if(!empty($hoja)){
+					if($hoja->status=="en-revision"){
 
-				$tema = $subj->subject;
-				$id = $subj->id;
+						$st1 = explode("@",$subj->student1);
+				    	$st2 = explode("@",$subj->student2);
+				    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
 
-				$profs = $subj->revisor()->get();
-				if(!$profs->isEmpty()){
-					$prof = $profs->first();
-					$profe = $prof->wc_id;
-				}else{
-					$profe = "";
+						$tema = $subj->subject;
+						$id = $subj->id;
+
+						$profs = $subj->revisor()->get();
+						if(!$profs->isEmpty()){
+							$prof = $profs->first();
+							$profe = $prof->wc_id;
+						}else{
+							$profe = "";
+						}
+
+						$evallink = url("#/reasignartema/".$subj->id);
+					    $buttons = View::make("html.buttonlink",array("title"=>"Reasignar","color"=>"cyan","url"=>$evallink));
+
+						$content = View::make("table.cell",array("content"=>$grupo));
+						$content .= View::make("table.cell",array("content"=>$tema));
+						$content .= View::make("table.cell",array("content"=>$profe));
+						$content .= View::make("table.cell",array("content"=>$buttons));
+						$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+				
+					}
 				}
 
-
-				$evallink = url("#/reasignartema/".$subj->id);
-			    $buttons = View::make("html.buttonlink",array("title"=>"Reasignar","color"=>"cyan","url"=>$evallink));
-
-				$content = View::make("table.cell",array("content"=>$grupo));
-				$content .= View::make("table.cell",array("content"=>$tema));
-				$content .= View::make("table.cell",array("content"=>$profe));
-				$content .= View::make("table.cell",array("content"=>$buttons));
-				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-				/*else{
-
-					$content = View::make("table.cell",array("content"=>$case->delIndex));
-					$content .= View::make("table.cell",array("content"=>$case->guid));
-					$body .= View::make("table.row",array("content"=>$content));
-				}*/
 			}
 
 		}else{
@@ -310,7 +293,7 @@ class ViewsHojaRuta extends BaseController
 		//$res = $soap->caseList();
 		
 		//los mios???
-		$subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("revisada")->get();
+		$subjs = Subject::wherePeriodo(Periodo::active())->get();
 
 
 		//$subjs = Subject::whereStatus("confirm")->get();
@@ -319,35 +302,35 @@ class ViewsHojaRuta extends BaseController
 
 			foreach ($subjs as $subj) {
 
-				$st1 = explode("@",$subj->student1);
-		    	$st2 = explode("@",$subj->student2);
-		    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+				$hoja = $subj->firmas;
+				if(!empty($hoja)){
+					if($hoja->status=="revisada"){
 
-				$tema = $subj->subject;
-				$id = $subj->id;
+						$st1 = explode("@",$subj->student1);
+				    	$st2 = explode("@",$subj->student2);
+				    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
 
-				$profs = $subj->revisor()->get();
-				if(!$profs->isEmpty()){
-					$prof = $profs->first();
-					$profe = $prof->wc_id;
-				}else{
-					$profe = "";
+						$tema = $subj->subject;
+						$id = $subj->id;
+
+						$profs = $subj->revisor()->get();
+						if(!$profs->isEmpty()){
+							$prof = $profs->first();
+							$profe = $prof->wc_id;
+						}else{
+							$profe = "";
+						}
+
+
+						$evallink = url("#/aprobartema/".$subj->id);
+					    $buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"cyan","url"=>$evallink));
+
+						$content = View::make("table.cell",array("content"=>$grupo));
+						$content .= View::make("table.cell",array("content"=>$tema));
+						$content .= View::make("table.cell",array("content"=>$buttons));
+						$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+					}
 				}
-
-
-				$evallink = url("#/aprobartema/".$subj->id);
-			    $buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"cyan","url"=>$evallink));
-
-				$content = View::make("table.cell",array("content"=>$grupo));
-				$content .= View::make("table.cell",array("content"=>$tema));
-				$content .= View::make("table.cell",array("content"=>$buttons));
-				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-				/*else{
-
-					$content = View::make("table.cell",array("content"=>$case->delIndex));
-					$content .= View::make("table.cell",array("content"=>$case->guid));
-					$body .= View::make("table.row",array("content"=>$content));
-				}*/
 			}
 
 		}else{

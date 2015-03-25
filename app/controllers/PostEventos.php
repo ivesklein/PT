@@ -76,7 +76,7 @@ class PostEventos{
 	        $id = Auth::user()->id;
 
 	        $events = Staff::find($id)->events()->get();
-
+	        //eventos registrados al profe
 	        $return['data']=array();
 	        foreach ($events as $event) {
 	        	$return['data'][] = array(
@@ -88,6 +88,10 @@ class PostEventos{
 				        "color" => $event->color
 	        		);
 	        }
+
+	        //eventos globales
+	        
+	        
 
 
 	        $return["ok"] = $events;

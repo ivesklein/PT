@@ -22,8 +22,18 @@ class Pendientes{
 
     public static function hojaderutaĺista()
     {
-        $temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->whereHojaruta("falta-guia")->count();
-        return $temas;
+        $temas = Staff::find(Auth::user()->id)->guias()->confirmed()->wherePeriodo(Periodo::active())->get();
+        $n=0;
+        foreach ($temas as $tema) {
+            $hoja = $tema->firmas;
+            if(!empty($hoja)){
+                if($hoja->status=="profesor"){
+                    $n++;
+                }
+            }
+
+        }
+        return $n;
     }
 
     public static function listanotas()
@@ -31,7 +41,7 @@ class Pendientes{
         $return = 0;
         $entregas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",3)->where('date', '<', Carbon::now())->where('date', '>', Carbon::now()->subDays(14))->get();
         
-        $temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->get();
+        $temas = Staff::find(Auth::user()->id)->guias()->confirmed()->wherePeriodo(Periodo::active())->get();
 
         if(!$entregas->isEmpty()){
             if(!$temas->isEmpty()){
@@ -55,20 +65,52 @@ class Pendientes{
 
     public static function rutaaleatorio()
     {
-        $subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("asignar-revisor")->count();
-        return $subjs;
+        $temas = Subject::wherePeriodo(Periodo::active())->get();
+        $n=0;
+        foreach ($temas as $tema) {
+            $hoja = $tema->firmas;
+            if(!empty($hoja)){
+                if($hoja->status=="buscar-revisor"){
+                    $n++;
+                }
+            }
+
+        }
+        return $n;
     }
 
     public static function revisartemas()
     {
-        $subjs = Staff::find(Auth::user()->id)->revisor()->wherePeriodo(Periodo::active())->whereHojaruta("en-revision")->count();
-        return $subjs;
+
+        $temas = Staff::find(Auth::user()->id)->revisor()->wherePeriodo(Periodo::active())->get();
+        $n=0;
+        foreach ($temas as $tema) {
+            $hoja = $tema->firmas;
+            if(!empty($hoja)){
+                if($hoja->status=="en-revision"){
+                    $n++;
+                }
+            }
+
+        }
+        return $n;
+
     }
 
     public static function listaAprobar()
     {
-        $subjs = Subject::wherePeriodo(Periodo::active())->whereHojaruta("revisada")->count();
-        return $subjs;
+        $temas = Subject::wherePeriodo(Periodo::active())->get();
+        $n=0;
+        foreach ($temas as $tema) {
+            $hoja = $tema->firmas;
+            if(!empty($hoja)){
+                if($hoja->status=="revisada"){
+                    $n++;
+                }
+            }
+
+        }
+        return $n;
     }
 
     public static function tareas()

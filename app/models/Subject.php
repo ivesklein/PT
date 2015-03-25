@@ -24,6 +24,11 @@ Class Subject extends Eloquent{
 		return $this->hasOne('Student', "wc_id", "student2");
 	}
 
+	public function firmas()
+	{
+		return $this->hasOne('Firma');
+	}
+
 	public function scopeStudentfind($query, $student)
 	{
 		return $query->wherePeriodo(Periodo::active())->whereStudent1($student)->orWhere("student2",$student);
@@ -43,6 +48,11 @@ Class Subject extends Eloquent{
 	public function scopeActive($query)
 	{
 		return $query->wherePeriodo(Periodo::active());	
+	}
+
+	public function scopeConfirmed($query)
+	{
+		return $query->whereStatus("confirmed");
 	}
 
 

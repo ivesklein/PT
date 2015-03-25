@@ -202,7 +202,7 @@
                         data:datos,
                         ok:function(data) {
                             console.log(data);
-                            location = "#/listahojasruta";
+                            location = "#/definiraleatorio";
                         },//ok
                         error:function(data){
                             if(data="bad-login"){

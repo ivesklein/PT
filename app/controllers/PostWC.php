@@ -75,25 +75,53 @@ class PostWC {
 		if($user!="0"){
 
 
-			$temas = Subject::studentfind($user)->get();
-			if(!$temas->isEmpty()){
-				$tema = $temas->first();
+			$tema = Subject::studentfind($user)->wherePeriodo(Periodo::active())->first();
+			if(!empty($tema)){
 					
-				$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->get();
-				if(!$tareas->isEmpty()){
-					$tarea = $tareas->first();
+				$tarea = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->first();
+				if(!empty($tarea)){
 					$date = CarbonLocale::parse($tarea->date);
 					if($date<Carbon::now()){
-								//nadie ha firmado		o	//alguien firmó					y  que ese alguin no sea yo
-						if( empty($tema->hojaruta)|| (strpos($tema->hojaruta, "@")!==false && $tema->hojaruta!=$user ) ){//no he firmado
-							if(empty($tema->hojaruta)) {//soy el primero
-								$tema->hojaruta = $user;	
-								$a = DID::action($user, "firmar hoja", $tema->id, "memoria", "aceptar");
 
-							}else{//solo falto yo
-								$tema->hojaruta = "falta-guia";
-								$a = DID::action($user, "firmar hoja", $tema->id, "memoria", "aceptar");
+						$nstudent = $tema->student1==$user?"student1":"student2";
 
+						$hoja = $tema->firmas;
+
+						$firmado = false;
+
+						if(!empty($hoja)){
+							if($hoja->$nstudent=="firmado"){
+								//firmado
+								log::info("ya firmado");
+							}else{
+								//no firmado
+								$hoja->$nstudent = "firmado";
+								$hoja->save();
+								$firmado = true;
+								$a = DID::action($user, "firmar hoja", $tema->id, "memoria", "aceptar");
+								log::info("firmado ya existe");
+							}
+						}else{
+							//no firmado
+							$hoja = new Firma;
+							$hoja->subject_id = $tema->id;
+							$hoja->$nstudent = "firmado";
+							$hoja->save();
+							$firmado = true;
+							$a = DID::action($user, "firmar hoja", $tema->id, "memoria", "aceptar");
+							log::info("firmado no existe");
+						}
+
+						if($firmado==true){
+
+							$other = $nstudent=="student1"?"student2":"student1";
+							if($hoja->$other=="firmado"){
+								log::info("no aviso");
+							}else{
+								log::info("si aviso");
+
+								$hoja->status("profesor");
+								$hoja->save();
 
 								$st1 = explode("@",$tema->student1);
 			                	$st2 = explode("@",$tema->student2);
@@ -111,14 +139,10 @@ class PostWC {
 										"apellido"=>$apellido
 									)
 								);
-
 							}
-							$tema->save();
-							$return["ok"] = 1;
-						}else{
-							//ya firmé
-							$return["ok"] = 2;
 						}
+
+
 					}else{//ya se entregó
 						$return['error'] = "not yet";
 					}
@@ -128,7 +152,6 @@ class PostWC {
 			}else{//hay tema
 				$return['error'] = "No perteneces a algún tema activo";
 			}
-
 
 			//$return['ok'] = $user;//View::make("lti.notas");
 		}else{

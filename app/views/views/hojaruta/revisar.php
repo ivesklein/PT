@@ -5,7 +5,7 @@
         <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Revisar Memoria <font id="tema"></font></strong></div>
         <div class="panel-body">
         	
-            <a id="link" class="btn btn-info" target="_blanc">Ver Memoria</a>
+            <a id="link" class="btn btn-info" target="_blanc">Ver Memoria en webcursos</a>
             <br><br>
             <div class="alert alert-info">Buscar por nombre de grupo: <h3 id="grupo"></h3></div>
             <hr></hr>

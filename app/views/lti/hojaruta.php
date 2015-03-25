@@ -24,7 +24,7 @@
                     f:"ajxfirmarhoja"
                 },
             ok: function(data) {
-                document.reload();
+                location.reload();
             }
         })
     })

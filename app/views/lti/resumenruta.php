@@ -91,11 +91,22 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-xs-12">
-		<div class="panel" style="margin-right: 7px;" id="secre">
+	<div class="col-xs-6">
+		<div class="panel" id="secre1">
 		        <div class="panel-heading"><strong><span class="fa fa-gavel"></span> Secretaría Académica</strong></div>
 		        <div class="panel-body">
-		        <p id="dec-secre"></p>
+		        <p id="dec-secre1"></p>
+		        <span class="aceptado pull-right glyphicon glyphicon-ok-circle" style="color: green; font-size: 48px;"></span>
+		        <span class="rechazado pull-right glyphicon glyphicon-remove-circle" style="color: red; font-size: 48px;"></span>
+		        <span class="waiting pull-right glyphicon glyphicon-edit" style="font-size: 48px;"></span>
+		        </div>
+		</div>
+	</div>
+	<div class="col-xs-6">
+		<div class="panel" style="margin-right: 7px;" id="secre2">
+		        <div class="panel-heading"><strong><span class="fa fa-gavel"></span> Secretaría Académica</strong></div>
+		        <div class="panel-body">
+		        <p id="dec-secre2"></p>
 		        <span class="aceptado pull-right glyphicon glyphicon-ok-circle" style="color: green; font-size: 48px;"></span>
 		        <span class="rechazado pull-right glyphicon glyphicon-remove-circle" style="color: red; font-size: 48px;"></span>
 		        <span class="waiting pull-right glyphicon glyphicon-edit" style="font-size: 48px;"></span>
@@ -160,12 +171,19 @@
 		echo "$('#revisor').addClass('".color($aleatorio["status"])."');";
 		echo "$('#dec-aleatorio').html('".$aleatorio["declaracion"]."');";
 	}
-	if(isset($secretaria)){
-		if(isset($secretaria["name"])){
-			echo "$('#secrename').html('".$secretaria["name"]."');";
+	if(isset($secretaria1)){
+		if(isset($secretaria1["name"])){
+			echo "$('#secrename1').html('".$secretaria1["name"]."');";
 		}
-		echo "$('#secre').addClass('".color($secretaria["status"])."');";
-		echo "$('#dec-secre').html('".$secretaria["declaracion"]."');";
+		echo "$('#secre1').addClass('".color($secretaria1["status"])."');";
+		echo "$('#dec-secre1').html('".$secretaria1["declaracion"]."');";
+	}
+	if(isset($secretaria2)){
+		if(isset($secretaria2["name"])){
+			echo "$('#secrename2').html('".$secretaria2["name"]."');";
+		}
+		echo "$('#secre2').addClass('".color($secretaria2["status"])."');";
+		echo "$('#dec-secre2').html('".$secretaria2["declaracion"]."');";
 	}
 
 	?>

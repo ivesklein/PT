@@ -121,6 +121,15 @@ class LTI extends BaseController{
 		}
 
 		$response = array();
+		
+		if(Session::has('wc.user')){
+			if(Session::get('wc.user')==Input::get('lis_person_contact_email_primary')){
+				$ok=true;
+			}
+		}
+
+
+
 
 		if($ok){
 			if(isset($_POST['lis_person_contact_email_primary'])){

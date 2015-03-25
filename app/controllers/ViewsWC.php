@@ -32,7 +32,8 @@ class ViewsWC extends BaseController
 
 			$pt = Staff::whereWc_id($lti['email'])->get();
 			$ps = Student::whereWc_id($lti['email'])->get();
-			if(!$pt->isEmpty()){ //profesor
+			if(false){
+			//if(!$pt->isEmpty()){ //profesor
 				$user = $pt->first()->rol;
 
 
@@ -130,7 +131,8 @@ class ViewsWC extends BaseController
 
 			$pt = Staff::whereWc_id($lti['email'])->get();
 			$ps = Student::whereWc_id($lti['email'])->get();
-			if(!$pt->isEmpty()){ //profesor
+			if(false){
+			//if(!$pt->isEmpty()){ //profesor
 				$user = $pt->first()->rol;
 
 
@@ -188,7 +190,8 @@ class ViewsWC extends BaseController
 
 			$pt = Staff::whereWc_id($lti['email'])->get();
 			$ps = Student::whereWc_id($lti['email'])->get();
-			if(!$pt->isEmpty()){ //profesor
+			if(false){
+			//if(!$pt->isEmpty()){ //profesor
 				$user = $pt->first()->rol;
 
 
@@ -264,7 +267,8 @@ class ViewsWC extends BaseController
 
 			$pt = Staff::whereWc_id($lti['email'])->get();
 			$ps = Student::whereWc_id($lti['email'])->get();
-			if(!$pt->isEmpty()){ //profesor
+			if(false){
+			//if(!$pt->isEmpty()){ //profesor
 				$user = $pt->first()->rol;
 
 
@@ -274,158 +278,167 @@ class ViewsWC extends BaseController
 			}elseif(!$ps->isEmpty()){//alumno
 				//get data
 				Session::put('wc.user', $lti['email']);
-				$subj = Subject::studentfind($lti['email'])->get();
-				if(!$subj->isEmpty()){
-					$tema = $subj->first();
+				$tema = Subject::studentfind($lti['email'])->wherePeriodo(Periodo::active())->first();
 
-					$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->get();
-					if(!$tareas->isEmpty()){
-						$tarea = $tareas->first();
+				$nstudent = $tema->student1==$lti['email']?"student1":"student2";
+
+				if(!empty($tema)){
+
+					$tarea = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->first();
+					if(!empty($tarea)){
 						$date = CarbonLocale::parse($tarea->date);
 						if($date<Carbon::now()){
+
 									//nadie ha firmado		o	//alguien firmó					y  que ese alguin no sea yo
-							if( empty($tema->hojaruta)|| (strpos($tema->hojaruta, "@")!==false && $tema->hojaruta!=$lti['email'] ) ){//no he firmado
+							//if( empty($tema->hojaruta)|| (strpos($tema->hojaruta, "@")!==false && $tema->hojaruta!=$lti['email'] ) ){//no he firmado
+							$hoja = $tema->firmas;
+							if(!empty($hoja)){
+								if($hoja->$nstudent=="firmado"){
+									//ya firmó
+									$estado = array(
+										"alumno1"=>array("status"=>1)
+										,"alumno2"=>array("status"=>1)
+										,"profesor"=>array("status"=>0)
+										,"aleatorio"=>array("status"=>0)
+										,"secretaria1"=>array("status"=>0)
+										,"secretaria2"=>array("status"=>0)
+									);
 
-								$declaracion = Texto::whereTexto("declaracion-alumno")->get();
-								if(!$declaracion->isEmpty()){
-									$declaracion = $declaracion->first();
-									$declaracion = $declaracion->parrafo;
-								}else{
-									$declaracion = "Declaro ante mi que el trabajo \"".$tema->subject."\" es obra mía.";
-								}
+									$a1 = Student::whereWc_id($tema->student1)->first();
+									$a2 = Student::whereWc_id($tema->student2)->first();
+									$prof = Staff::whereWc_id($tema->adviser)->first();
 
-								return View::make("lti.hojaruta", array(
-																	"declaracion"=>$declaracion,
-																	//"profesor"=>$prof->name." ".$prof->surname,
-																	"tema"=>$tema->subject
-																	)
-								);
-
-
-							}else{//ya firmé
-
-								$estado = array(
-									"alumno1"=>array("status"=>0)
-									,"alumno2"=>array("status"=>0)
-									,"profesor"=>array("status"=>0)
-									,"aleatorio"=>array("status"=>0)
-									,"secretaria"=>array("status"=>0)
-								);
-
-								$a1 = Student::whereWc_id($tema->student1)->first();
-								$a2 = Student::whereWc_id($tema->student2)->first();
-								$prof = Staff::whereWc_id($tema->adviser)->first();
-
-								$estado["profesor"]["name"]=$prof->name." ".$prof->surname;
-								$estado["alumno1"]["name"]=$a1->name." ".$a1->surname;
-								$estado["alumno2"]["name"]=$a2->name." ".$a2->surname;
+									$estado["profesor"]["name"]=$prof->name." ".$prof->surname;
+									$estado["alumno1"]["name"]=$a1->name." ".$a1->surname;
+									$estado["alumno2"]["name"]=$a2->name." ".$a2->surname;
 
 
-								$estado["alumno1"]["declaracion"] = Texto::texto("declaracion-alumno","Declaro ante mi que el trabajo \"".$tema->subject."\" es obra mía.");
-								$estado["alumno2"]["declaracion"] = $estado["alumno1"]["declaracion"];
-								$estado["profesor"]["declaracion"] = Texto::texto("declaracion-profesor","Declaro ante mi que el trabajo es digno de llamar memoria de Ingeniería.");
-								$estado["aleatorio"]["declaracion"] = Texto::texto("declaracion-revisor","Declaro ante mi que el trabajo tiene un formato acorde a los estandares de la UAI.");
-								$estado["secretaria"]["declaracion"] = Texto::texto("declaracion-secretaria","Declaro ante mi que el trabajo cumple con todos los requisitos para presentarse a defensa.");
-						
-								
-								if(strpos($tema->hojaruta, "@")!==false){
-									if($tema->alumno1==$lti['email']){//soy el primero
+									$estado["alumno1"]["declaracion"] = Texto::texto("declaracion-alumno","Declaro ante mi que el trabajo \"".$tema->subject."\" es obra mía.");
+									$estado["alumno2"]["declaracion"] = $estado["alumno1"]["declaracion"];
+									$estado["profesor"]["declaracion"] = Texto::texto("declaracion-profesor","Declaro ante mi que el trabajo es digno de llamar memoria de Ingeniería.");
+									$estado["aleatorio"]["declaracion"] = Texto::texto("declaracion-revisor","Declaro ante mi que el trabajo tiene un formato acorde a los estandares de la UAI.");
+									$estado["secretaria1"]["declaracion"] = Texto::texto("declaracion-secretaria","Declaro ante mi que el trabajo cumple con todos los requisitos para presentarse a defensa.");
+									$estado["secretaria2"]["declaracion"] = $estado["secretaria1"]["declaracion"];
+
+									if($hoja->student1=="firmado"){
 										$estado["alumno1"]["status"]=2;
-										$estado["alumno2"]["status"]=1;
-									}else{//soy el segundo
+										$estado["profesor"]["status"]=1;
+									}
+									if($hoja->student2=="firmado"){
 										$estado["alumno2"]["status"]=2;
-										$estado["alumno1"]["status"]=1;
+										$estado["profesor"]["status"]=1;
 									}
-								}elseif ($tema->hojaruta=="falta-guia") {
-									$estado["alumno1"]["status"]=2;
-									$estado["alumno2"]["status"]=2;
-									$estado["profesor"]["status"]=1;
-								}elseif ($tema->hojaruta=="asignar-revisor") {
-									$estado["alumno1"]["status"]=2;
-									$estado["alumno2"]["status"]=2;
-									$estado["profesor"]["status"]=2;
-									$estado["aleatorio"]["status"]=1;
-								}elseif ($tema->hojaruta=="en-revision") {
-									$estado["alumno1"]["status"]=2;
-									$estado["alumno2"]["status"]=2;
-									$estado["profesor"]["status"]=2;
-									$estado["aleatorio"]["status"]=1;
-								}elseif ($tema->hojaruta=="revisada") {
-									$estado["alumno1"]["status"]=2;
-									$estado["alumno2"]["status"]=2;
-									$estado["profesor"]["status"]=2;
-									$estado["aleatorio"]["status"]=2;
-									$estado["secretaria"]["status"]=1;
-								}elseif ($tema->hojaruta=="aprobada") {
-									$estado["alumno1"]["status"]=2;
-									$estado["alumno2"]["status"]=2;
-									$estado["profesor"]["status"]=2;
-									$estado["aleatorio"]["status"]=2;
-									$estado["secretaria"]["status"]=2;
-								}elseif ($tema->hojaruta=="rechazada-alumno") {
-									$estado["alumno1"]["status"]=-1;
-									$estado["alumno2"]["status"]=-1;
-								}elseif ($tema->hojaruta=="rechazada-profesor") {
-									$estado["alumno1"]["status"]=2;
-									$estado["alumno2"]["status"]=2;
-									$estado["profesor"]["status"]=-1;
-
-									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->get();
-									if(!$tareas->isEmpty()){
-										$notas = $tareas->first()->notas()->get();
-										if(!$notas->isEmpty()){
-											$estado["profesor"]["feedback"] = $notas->first()->feedback;
-										}else{
-											$estado["profesor"]["feedback"] = "1";
+									if($hoja->adviser=="firmado"){
+										$estado["profesor"]["status"]=2;
+										$estado["aleatorio"]["status"]=1;
+									}
+									if($hoja->revisor=="firmado"){
+										$estado["aleatorio"]["status"]=2;
+										if($hoja->student1=="firmado"){
+											$estado["secretaria1"]["status"]=1;
 										}
-									}else{
-										$estado["profesor"]["feedback"] = "2";
-									}								
-
-								}elseif ($tema->hojaruta=="rechazada-revisor") {
-									$estado["alumno1"]["status"]=2;
-									$estado["alumno2"]["status"]=2;
-									$estado["profesor"]["status"]=2;
-									$estado["aleatorio"]["status"]=-1;
-
-									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->get();
-									if(!$tareas->isEmpty()){
-										$notas = $tareas->first()->notas()->get();
-										if(!$notas->isEmpty()){
-											$estado["aleatorio"]["feedback"] = $notas->first()->feedback;
-										}else{
-											$estado["aleatorio"]["feedback"] = "3";
+										if($hoja->student2=="firmado"){
+											$estado["secretaria2"]["status"]=1;
 										}
-									}else{
-										$estado["aleatorio"]["feedback"] = "4";
+									}
+									if($hoja->secre1=="firmado"){
+										$estado["secretaria1"]["status"]=2;
+									}
+									if($hoja->secre2=="firmado"){
+										$estado["secretaria2"]["status"]=2;
 									}
 
-								}elseif ($tema->hojaruta=="rechazada-secretaria") {
-									$estado["alumno1"]["status"]=2;
-									$estado["alumno2"]["status"]=2;
-									$estado["profesor"]["status"]=2;
-									$estado["aleatorio"]["status"]=2;
-									$estado["secretaria"]["status"]=-1;
+									//RECHAZADO//
 
-									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->get();
-									if(!$tareas->isEmpty()){
-										$notas = $tareas->first()->notas()->get();
-										if(!$notas->isEmpty()){
-											$estado["secretaria"]["feedback"] = $notas->first()->feedback;
+									if($hoja->adviser=="rechazado"){
+										$estado["profesor"]["status"]=-1;
+
+										$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
+										if(!empty($tareas)){
+											$notas = $tareas->notas()->first();
+											if(!empty($notas)){
+												$estado["profesor"]["feedback"] = $notas->first()->feedback;
+											}else{
+												$estado["profesor"]["feedback"] = "1";
+											}
 										}else{
-											$estado["secretaria"]["feedback"] = "5";
+											$estado["profesor"]["feedback"] = "2";
 										}
-									}else{
-										$estado["secretaria"]["feedback"] = "6";
 									}
+
+									if($hoja->revisor=="rechazado"){
+										$estado["aleatorio"]["status"]=-1;
+
+										$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
+										if(!empty($tareas)){
+											$notas = $tareas->notas()->first();
+											if(!empty($notas)){
+												$estado["profesor"]["feedback"] = $notas->first()->feedback;
+											}else{
+												$estado["profesor"]["feedback"] = "3";
+											}
+										}else{
+											$estado["profesor"]["feedback"] = "4";
+										}
+									}
+
+									if($hoja->secre1=="rechazado"){
+										$estado["secretaria1"]["status"]=-1;
+
+										$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
+										if(!empty($tareas)){
+											$notas = $tareas->notas()->first();
+											if(!empty($notas)){
+												$estado["profesor"]["feedback"] = $notas->first()->feedback;
+											}else{
+												$estado["profesor"]["feedback"] = "5";
+											}
+										}else{
+											$estado["profesor"]["feedback"] = "6";
+										}
+									}
+
+									if($hoja->secre2=="rechazado"){
+										$estado["secretaria2"]["status"]=-1;
+
+										$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
+										if(!empty($tareas)){
+											$notas = $tareas->notas()->first();
+											if(!empty($notas)){
+												$estado["profesor"]["feedback"] = $notas->first()->feedback;
+											}else{
+												$estado["profesor"]["feedback"] = "7";
+											}
+										}else{
+											$estado["profesor"]["feedback"] = "8";
+										}
+									}
+
+									return View::make("lti.resumenruta", $estado);
+								}else{//no ha firmado
+									//tiene que firmar
+									$declaracion = Texto::texto("declaracion-alumno","Declaro ante mi que el trabajo \"".$tema->subject."\" es obra mía.");
+									return View::make("lti.hojaruta", array(
+										"declaracion"=>$declaracion,
+										//"profesor"=>$prof->name." ".$prof->surname,
+										"tema"=>$tema->subject
+										)
+									);
 								}
-									
-								
-
-								return View::make("lti.resumenruta", $estado);
-
+							}else{//nadie ha firmado
+								//tiene que firmar
+								$declaracion = Texto::texto("declaracion-alumno","Declaro ante mi que el trabajo \"".$tema->subject."\" es obra mía.");
+								return View::make("lti.hojaruta", array(
+									"declaracion"=>$declaracion,
+									//"profesor"=>$prof->name." ".$prof->surname,
+									"tema"=>$tema->subject
+									)
+								);
 							}
 
+
+							//}else{//ya firmé
+							//}
 
 						}else{
 							return View::make("lti.notyet");
