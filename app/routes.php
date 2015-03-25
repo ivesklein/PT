@@ -226,7 +226,6 @@ Route::get('/dynamic' ,function()
 	return View::make("dynamic");
 });
 
-
 Route::get('/test' ,function()
 {
 

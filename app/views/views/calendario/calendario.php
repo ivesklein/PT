@@ -71,17 +71,20 @@
             }
 
             var click = function(event){
-                var del = confirm("¿Borrar "+event.detail+"?");
-                if(del==true){
-                    ajx({
-                        data:{
-                            f:'Eventos_borrar',
-                            id: event.id
-                        },
-                        ok:function(data){
-                            $('#calendar').fullCalendar('removeEvents',event.id);
-                        }
-                    });
+                console.log(event.editable);
+                if(event.editable!=false){
+                    var del = confirm("¿Borrar "+event.detail+"?");
+                    if(del==true){
+                        ajx({
+                            data:{
+                                f:'Eventos_borrar',
+                                id: event.id
+                            },
+                            ok:function(data){
+                                $('#calendar').fullCalendar('removeEvents',event.id);
+                            }
+                        });
+                    }
                 }
 
             }

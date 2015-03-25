@@ -79,7 +79,8 @@ class PostEventos{
 	        //eventos registrados al profe
 	        $return['data']=array();
 	        foreach ($events as $event) {
-	        	$return['data'][] = array(
+
+	        	$array = array(
 	        			"id" => $event->id,
 				    	"title" => $event->title,
 				        "detail" => $event->detail,
@@ -87,11 +88,32 @@ class PostEventos{
 				        "end" => $event->end,
 				        "color" => $event->color
 	        		);
+
+	        	if($event->color=="blue"||$event->color=="darkcyan"){
+					$array["editable"]=false;
+	        	}
+
+	        	$return['data'][] = $array;
 	        }
 
 	        //eventos globales
 	        
-	        
+	        $tareas = Tarea::tareas()->get();
+	        foreach ($tareas as $tarea) {
+	        	$title = $tarea->title;
+	 			$start = $tarea->date;
+	 			$end = Carbon::parse($tarea->date)->addDays(14)->toDateTimeString();
+
+        		$return['data'][] = array(
+        			"id" => "tarea".$tarea->id,
+			    	"title" => " Plazo Revisión ".$title,
+			        "detail" => "",
+			        "start" => $start,
+			        "end" => $end,
+			        "color" => "cyan",
+			        "editable" => false
+        		);
+	        }
 
 
 	        $return["ok"] = $events;
