@@ -62,7 +62,7 @@
 
         var setted = <?php echo json_encode($data) ?>;
         
-        function modified () {
+        function modified () {//cambiar a estado modified
             var el = $("#guardar")
             if(!el.hasClass("waiting")){
                 $("#savelabel").html("Guardar");
@@ -70,7 +70,7 @@
             }
         }
 
-        function tareaview (i, titulo, fecha, tipo) {
+        function tareaview (i, titulo, fecha, tipo, entrega, eval) {
 
             var t0 = tipo==0?"selected":"";
             var t1 = tipo==1?"selected":"";
@@ -97,11 +97,25 @@
                         '    <div class="col-sm-3">'+
                         '        <span class="ui-select">'+
                         '        <select n="'+i+'" class="tipo">'+
-                        '            <option value="0" '+t0+'>Entrega</option>'+
-                        '            <option value="1" '+t1+'>Predefensa</option>'+
-                        '            <option value="2" '+t2+'>Defensa</option>'+
+                        '            <option value="0" '+t0+'>Avance</option>'+
+                        '            <option value="1" '+t1+'>Para Predefensa</option>'+
+                        '            <option value="2" '+t2+'>Para Defensa</option>'+
                         '        </select>'+
                         '        </span>'+
+                        '    </div>'+
+                        '</div>'+
+                        '<div class="form-group e'+i+'">'+
+                        '    <label for="" class="col-sm-2">Tiempo para entregar</label>'+
+                        '    <div class="col-sm-2">'+
+                        '       <div class="input-group">'+
+                        '           <input type="text" class="form-control entrega onlynumbers" value="'+entrega+'"><span class="input-group-addon">dias</span>'+
+                        '       </div>'+
+                        '    </div>'+
+                        '    <label for="" class="col-sm-2">Tiempo para evaluar</label>'+
+                        '    <div class="col-sm-2">'+
+                        '       <div class="input-group">'+
+                        '           <input type="text" class="form-control eval onlynumbers" value="'+eval+'"><span class="input-group-addon">dias</span>'+
+                        '       </div>'+
                         '    </div>'+
                         '</div>'+
                         '</div>';
@@ -127,12 +141,17 @@
                         var tit = "";
                         var dat = "";
                         var tip = "";
+                        var ent = "";
+                        var eva = "";
                         if(i in setted){
                             tit = setted[i].title;
                             dat = setted[i].date;
                             tip = setted[i].tipo;
+                            ent = setted[i].entrega;
+                            eva = setted[i].eval;
+
                         }
-                        $('.submit').before(tareaview(i,tit,dat,tip));
+                        $('.submit').before(tareaview(i,tit,dat,tip,ent,eva));
 
                         $('.e'+i+' .input-group.date').datepicker({
                             todayBtn: true,
@@ -210,7 +229,9 @@
                     data[i] = {
                                 "title":$(".bloque.e"+i+" .titulo").val(),
                                 "date":$(".bloque.e"+i+" .datepicker").val(),
-                                "tipo":$(".bloque.e"+i+" .tipo").val()
+                                "tipo":$(".bloque.e"+i+" .tipo").val(),
+                                "entrega":$(".bloque.e"+i+" .entrega").val(),
+                                "eval":$(".bloque.e"+i+" .eval").val()
                               }
 
                     var d = new Date($(".bloque.e"+i+" .datepicker").val());

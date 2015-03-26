@@ -39,7 +39,7 @@ class Pendientes{
     public static function listanotas()
     {
         $return = 0;
-        $entregas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",3)->where('date', '<', Carbon::now())->where('date', '>', Carbon::now()->subDays(14))->get();
+        $entregas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",3)->get();
         
         $temas = Staff::find(Auth::user()->id)->guias()->confirmed()->wherePeriodo(Periodo::active())->get();
 
@@ -47,12 +47,14 @@ class Pendientes{
             if(!$temas->isEmpty()){
                 foreach ($temas as $tema) {
                     foreach ($entregas as $entrega) {
-                        $nota = Nota::whereTarea_id($entrega->id)->whereSubject_id($tema->id)->first();
-                        if(empty($nota)){
-                            $return++;
-                        }else{
-                            if(empty($nota->nota)){
+                        if(Carbon::parse($entrega->date)>Carbon::now()->subDays($entrega->evaltime)){
+                            $nota = Nota::whereTarea_id($entrega->id)->whereSubject_id($tema->id)->first();
+                            if(empty($nota)){
                                 $return++;
+                            }else{
+                                if(empty($nota->nota)){
+                                    $return++;
+                                }
                             }
                         }
                     }

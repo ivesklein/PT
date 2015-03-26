@@ -26,7 +26,7 @@ class Menu {
 		"guiasConfirmation"=>array(
 			"where"=>"temas",
 			"place"=>"13",
-			"array"=>array("link"=>"#/vista7", "title"=>"Guías Profesores", "n"=>2)
+			"array"=>array("link"=>"#/vista7", "title"=>"Confirmar Guias P.", "n"=>2)
 		),	
 		"guiasAsignar"=>array(
 			"where"=>"temas",
@@ -81,12 +81,12 @@ class Menu {
 		"hojaderutaĺista"=>array(
 			"where"=>"hojaruta",
 			"place"=>"23",
-			"array"=>array("link"=>"#/listahojasruta", "title"=>"Profesor Guía", "n"=>0)
+			"array"=>array("link"=>"#/listahojasruta", "title"=>"Firmar Hoja", "n"=>0)
 		),
 		"rutaaleatorio"=>array(
 			"where"=>"hojaruta",
 			"place"=>"24",
-			"array"=>array("link"=>"#/definiraleatorio", "title"=>"Revisor Aleatorio", "n"=>0)
+			"array"=>array("link"=>"#/definiraleatorio", "title"=>"Asignar Aleatorio", "n"=>0)
 		),
 		"revisartemas"=>array(
 			"where"=>"hojaruta",
@@ -141,7 +141,7 @@ class Menu {
 		),
 		"temas" => array(
 			"place"=>"11",
-			"array"=>array("Memorias", "#/menu", "book", "warning", 0)
+			"array"=>array("Proyectos", "#/menu", "book", "warning", 0)
 		),
 		"periodos" => array(
 			"place"=>"10",

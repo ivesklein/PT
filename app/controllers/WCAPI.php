@@ -508,13 +508,13 @@ class WCAPI {
 		return $return;
 	}
 
-	public function createTarea($title,$date, $idupdate = 0)
+	public function createTarea($title,$date, $uptime, $idupdate = 0)
 	{
 		$return = array();
 		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
 			$url = "http://webcursos.uai.cl/course/modedit.php";//&perpage=5000";
 
-			$datestart = $date->copy()->subDays(7);
+			$datestart = $date->copy()->subDays($uptime);
 
 			$startday = $datestart->day;
 			$startmonth = $datestart->month;

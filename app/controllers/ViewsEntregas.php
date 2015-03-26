@@ -38,7 +38,7 @@ class ViewsEntregas extends BaseController
 		if(!$tareas->isEmpty()){
 			foreach ($tareas as $tarea) {
 				$cdate = Carbon::parse($tarea->date);
-				$data[$tarea->n] = array("title"=>$tarea->title, "date"=>$cdate->format('m/d/Y'), "tipo"=>$tarea->tipo);
+				$data[$tarea->n] = array("title"=>$tarea->title, "date"=>$cdate->format('m/d/Y'), "tipo"=>$tarea->tipo, "entrega"=>$tarea->uptime, "eval"=>$tarea->evaltime);
 				if(!empty($tarea->wc_uid)){
 					$data[$tarea->n]['wc'] = $tarea->wc_uid;
 				}
@@ -76,7 +76,9 @@ class ViewsEntregas extends BaseController
 				//$tituloentrega = $entrega->title;
 
 				//if(true){
-					$entregas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",3)->where('date', '<', Carbon::now())->where('date', '>', Carbon::now()->subDays(14))->get();
+					$entregas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",3)->where('date', '<', Carbon::now())->get();
+
+					//->where('date', '>', Carbon::now()->subDays(14))
 
 					$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->get();
 				//}else{
@@ -108,14 +110,16 @@ class ViewsEntregas extends BaseController
 					    	if(!$entregas->isEmpty()){
 					    		$pendiente = 0;
 				                foreach ($entregas as $entrega) {
-				                    $nota = Nota::whereTarea_id($entrega->id)->whereSubject_id($tema->id)->first();
-				                    if(empty($nota)){
-				                        $pendiente++;
-				                    }else{
-				                        if(empty($nota->nota)){
-				                            $pendiente++;
-				                        }
-				                    }
+				                	if(Carbon::parse($entrega->date)>Carbon::now()->subDays($entrega->evaltime)){
+					                    $nota = Nota::whereTarea_id($entrega->id)->whereSubject_id($tema->id)->first();
+					                    if(empty($nota)){
+					                        $pendiente++;
+					                    }else{
+					                        if(empty($nota->nota)){
+					                            $pendiente++;
+					                        }
+					                    }
+				                	}
 				                }
 				                if($pendiente>0){
 				                	$pendiente = '<span class="badge badge-danger main-badge">'.$pendiente.'</span>';
@@ -266,7 +270,7 @@ class ViewsEntregas extends BaseController
 									if($date>$now){//futura
 										$a1content .= View::make("table.cell",array("content"=>""));
 										$a2content .= View::make("table.cell",array("content"=>""));
-									}elseif($date<$now->subDays(14)){//ya pasó el tiempo de eval
+									}elseif($date<$now->subDays($tarea->evaltime)){//ya pasó el tiempo de eval
 										
 										if(!empty($nota)){
 											$notas = json_decode($nota->nota);

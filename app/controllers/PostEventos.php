@@ -102,7 +102,7 @@ class PostEventos{
 	        foreach ($tareas as $tarea) {
 	        	$title = $tarea->title;
 	 			$start = $tarea->date;
-	 			$end = Carbon::parse($tarea->date)->addDays(14)->toDateTimeString();
+	 			$end = Carbon::parse($tarea->date)->addDays($tarea->evaltime)->toDateTimeString();
 
         		$return['data'][] = array(
         			"id" => "tarea".$tarea->id,

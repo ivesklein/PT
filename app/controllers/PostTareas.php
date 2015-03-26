@@ -24,6 +24,8 @@ class PostTareas{
 							$tarea->tipo = $value->tipo;
 							$tarea->periodo_name = $per->name;
 							$tarea->n = $key;
+							$tarea->uptime = $value->entrega;
+							$tarea->evaltime = $value->eval;
 							$tarea->save();
 
 							if($tarea->tipo==1){
@@ -65,6 +67,8 @@ class PostTareas{
 							$tarea->title = $value->title;
 							$tarea->date = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date);
 							$tarea->tipo = $value->tipo;
+							$tarea->uptime = $value->entrega;
+							$tarea->evaltime = $value->eval;
 							$tarea->save();
 
 							$eventos = CEvent::whereDetail($tarea->id)->get();
@@ -180,7 +184,7 @@ class PostTareas{
 								$url="";
 								$nota="";
 								$feedback="";
-							}elseif($date<$now->subDays(14)){
+							}elseif($date<$now->subDays($tarea->evaltime)){
 								$active = 2;
 								$url=$wc;
 								$nota="";
@@ -246,7 +250,7 @@ class PostTareas{
 					
 					$modify=isset($_POST['modify']);
 					
-					if( ($date<Carbon::now() || $tarea->tipo>=3) && ($date>Carbon::now()->subDays(14) || Rol::hasPermission("revisartareas") ) ){
+					if( ($date<Carbon::now() || $tarea->tipo>=3) && ($date>Carbon::now()->subDays($tarea->evaltime) || Rol::hasPermission("revisartareas") ) ){
 
 						$feedback = isset($_POST['feedback'])? $_POST['feedback']:"";
 						

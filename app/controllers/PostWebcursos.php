@@ -536,7 +536,7 @@ class PostWebcursos{
 								//$date->month
 								//$date->day
 
-								$res2 = $wc->createTarea($title,$date);
+								$res2 = $wc->createTarea($title, $date, $tarea->uptime);
 								if(isset($res2["ok"])){
 									$tarea->wc_uid = $res2["ok"];
 									$tarea->save();
