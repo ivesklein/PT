@@ -78,7 +78,7 @@ class ViewsFirst extends BaseController
 			$periodo = "No hay periodo Activo<input type='hidden' value='0' name='periodo'>";
 		}
 
-		return View::make('views.periodos.view1',array("periodo"=>$periodo));
+		return View::make('views.periodos.agregartemas',array("periodo"=>$periodo));
 	}
 	
 	public function getVista3()

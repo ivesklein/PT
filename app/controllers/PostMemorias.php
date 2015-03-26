@@ -21,19 +21,30 @@ class PostMemorias{
 			$activepm = false;
 
 			$TEMA 		= 0 ;
-			$EMPRESA 	= 1 ;
-			$EMPRESARUT = 2 ;
-			$RUN1 		= 3 ;
-			$NOMBRE1 	= 4 ;
-			$APELLIDO1 	= 5 ;
-			$EMAIL1 	= 6 ;
-			$RUN2 		= 7 ;
-			$NOMBRE2 	= 8 ;
-			$APELLIDO2 	= 9 ;
-			$EMAIL2 	= 10 ;
-			$NPROFESOR 	= 11 ;
-			$APROFESOR 	= 12 ;
-			$MPROFESOR 	= 13 ;
+			$RUN1 		= 1 ;
+			$NOMBRE1 	= 2 ;
+			$APELLIDO1 	= 3 ;
+			$EMAIL1 	= 4 ;
+			$RUN2 		= 5 ;
+			$NOMBRE2 	= 6 ;
+			$APELLIDO2 	= 7 ;
+			$EMAIL2 	= 8 ;
+			$NPROFESOR 	= 9 ;
+			$APROFESOR 	= 10 ;
+			$MPROFESOR 	= 11 ;
+
+			
+			$V2RUN1 		= 0 ;
+			$V2APELLIDO1 	= 1 ;
+			$V2NOMBRE1 		= 2 ;
+			$V2EMAIL1 		= 3 ;
+			$V2NPROFESOR 	= 4 ;
+			$V2APROFESOR 	= 5 ;
+			$V2MPROFESOR 	= 6 ;
+			$V2GRUPO 		= 7 ;
+			$V2TEMA 		= 8 ;
+
+
 
 			$periodo = $_POST['periodo'];
 
@@ -52,139 +63,269 @@ class PostMemorias{
 				//for profesores, 
 					//verificar si existen, 
 					//si no crearlos.
-				$profesores = array();
-				foreach ($res as $n => $fila) {
-					if($n!=0){
-						//verificar solidez de los datos
-						//usar los datos
-						//si no está el profesor
-						try {
-							
-							$a = $fila[0];
-							$a = $fila[1];
-							$a = $fila[2];
-							$a = $fila[3];
-							$a = $fila[4];
-							$a = $fila[5];
-							$a = $fila[6];
-							$a = $fila[7];
-							$a = $fila[8];
-							$a = $fila[9];
-							$a = $fila[10];
-							$a = $fila[11];
-							$a = $fila[12];
-							$a = $fila[13];
 
-							if(!isset($profesores[$fila[$MPROFESOR]])){
+				$pos1 = strpos($res[1][$EMAIL1], "@");
+				$pos2 = strpos($res[1][$V2MPROFESOR], "@");
 
-								//verificar que existe en db
-								$profedb = User::whereWc_id($fila[$MPROFESOR])->get();
-								if(!$profedb->isEmpty()){
-									//agregar
-									
-									$proferow = $profedb->first();
-									$profesores[$proferow->wc_id] = "";
-						
-									//guardar datos para operaciones siguientes
-								}else{
-								//sino
+				if($pos1!==false){//formato 1
 
-									//crear
-									$res2 = UserCreation::add(
-										$fila[$MPROFESOR],
-										$fila[$NPROFESOR],
-										$fila[$APROFESOR],
-										"P");
+					$profesores = array();
+					foreach ($res as $n => $fila) {
+						if($n!=0){
+							//verificar solidez de los datos
+							//usar los datos
+							//si no está el profesor
+							try {
+								
+								$a = $fila[0];
+								$a = $fila[1];
+								$a = $fila[2];
+								$a = $fila[3];
+								$a = $fila[4];
+								$a = $fila[5];
+								$a = $fila[6];
+								$a = $fila[7];
+								$a = $fila[8];
+								$a = $fila[9];
+								$a = $fila[10];
+								$a = $fila[11];
+								//$a = $fila[12];
+								//$a = $fila[13];
 
-			
-									if(isset($res2["ok"])){
-										$profesores[$res2["ok"]["wc"]] = "";
+								if(!isset($profesores[$fila[$MPROFESOR]])){
+
+									//verificar que existe en db
+									$profedb = User::whereWc_id($fila[$MPROFESOR])->get();
+									if(!$profedb->isEmpty()){
 										//agregar
+										
+										$proferow = $profedb->first();
+										$profesores[$proferow->wc_id] = "";
+							
 										//guardar datos para operaciones siguientes
 									}else{
-										//error
-										print_r($res2["error"]);
+									//sino
 
-									}
-									
-								}//if existe
-							}//if está
+										//crear
+										$res2 = UserCreation::add(
+											$fila[$MPROFESOR],
+											$fila[$NPROFESOR],
+											$fila[$APROFESOR],
+											"P");
 
-						} catch (Exception $e) {
+				
+										if(isset($res2["ok"])){
+											$profesores[$res2["ok"]["wc"]] = "";
+											//agregar
+											//guardar datos para operaciones siguientes
+										}else{
+											//error
+											print_r($res2["error"]);
+
+										}
+										
+									}//if existe
+								}//if está
+
+							} catch (Exception $e) {
+								
+								Session::put('alert', 'No se puede leer el archivo (2), compruebe que sea \'.csv\', y siga el formato del ejemplo.');
+								return Redirect::to("#/itemas");
+
+							}
+
+						}//row encabezado
+					}//for rows
+
+
+					//for alumnos
+						//si no existe, crearlo
+					foreach ($res as $n => $fila) {
+						if($n!=0){
+							//alumno 1
+							$run = $fila[$RUN1];
+							$name = $fila[$NOMBRE1];
+							$surname = $fila[$APELLIDO1];
+							$mail = $fila[$EMAIL1];
+							$studentdb = Student::whereWc_id($mail)->get();
+							if($studentdb->isEmpty()){
+								$student = new Student;
+								$student->wc_id = $mail;
+								$student->run = $run;
+								$student->name = $name; 
+								$student->surname = $surname; 
+								$student->save();
+							}
+
+							//alumno 2
+							$run = $fila[$RUN2];
+							$name = $fila[$NOMBRE2];
+							$surname = $fila[$APELLIDO2];
+							$mail = $fila[$EMAIL2];
+							$studentdb = Student::whereWc_id($mail)->get();
+							if($studentdb->isEmpty()){
+								$student = new Student;
+								$student->wc_id = $mail;
+								$student->run = $run;
+								$student->name = $name; 
+								$student->surname = $surname; 
+								$student->save();
+							}
+						}
+					}
+
+					//for temas
+						//registrar
+					foreach ($res as $n => $fila) {
+						if($n!=0){
+
+							$subj = new Subject;
+							$subj->subject = $fila[$TEMA];
+							$subj->student1 = $fila[$EMAIL1];
+							$subj->student2 = $fila[$EMAIL2];
+							$subj->adviser = $fila[$MPROFESOR];
+							$subj->status = "confirm";
+							$subj->pm_uid = "";
+							$subj->periodo = $periodo;
+							$subj->defensa = 0;
+							//$subj->company = $fila[$EMPRESA];
+							//$subj->company_rut = $fila[$EMPRESARUT];
+
+							$subj->save();
+
+						}
+					}
+
+					///avisar
+					Cron::add("confirmarguia", array(), Carbon::now());
+
+					$a = DID::action(Auth::user()->wc_id, "agregar temas", $periodo, "periodo", $n);
+
+					return Redirect::to("#/listatemas");
+
+				}elseif($pos2!==false){//formato 2
+
+					$profesores = array();
+					foreach ($res as $n => $fila) {
+						if($n!=0){
+							//verificar solidez de los datos
+							//usar los datos
+							//si no está el profesor
+							try {
+								
+								$a = $fila[0];
+								$a = $fila[1];
+								$a = $fila[2];
+								$a = $fila[3];
+								$a = $fila[4];
+								$a = $fila[5];
+								$a = $fila[6];
+								$a = $fila[7];
+								$a = $fila[8];
+
+								if(!isset($profesores[$fila[$V2MPROFESOR]])){
+
+									//verificar que existe en db
+									$profedb = User::whereWc_id($fila[$V2MPROFESOR])->get();
+									if(!$profedb->isEmpty()){
+										//agregar
+										
+										$proferow = $profedb->first();
+										$profesores[$proferow->wc_id] = "";
 							
-							Session::put('alert', 'No se puede leer el archivo (2), compruebe que sea \'.csv\', y siga el formato del ejemplo.');
-							return Redirect::to("#/itemas");
+										//guardar datos para operaciones siguientes
+									}else{
+									//sino
+										//crear
+										$res2 = UserCreation::add(
+											$fila[$V2MPROFESOR],
+											$fila[$V2NPROFESOR],
+											$fila[$V2APROFESOR],
+											"P");
 
-						}
+										if(isset($res2["ok"])){
+											$profesores[$res2["ok"]["wc"]] = "";
+											//agregar
+											//guardar datos para operaciones siguientes
+										}else{
+											//error
+											print_r($res2["error"]);
+										}
+									}//if existe
+								}//if está
 
-					}//row encabezado
-				}//for rows
+							} catch (Exception $e) {
+								
+								Session::put('alert', 'No se puede leer el archivo (2), compruebe que sea \'.csv\', y siga el formato del ejemplo.');
+								return Redirect::to("#/itemas");
 
+							}
 
-				//for alumnos
-					//si no existe, crearlo
-				foreach ($res as $n => $fila) {
-					if($n!=0){
-						//alumno 1
-						$run = $fila[$RUN1];
-						$name = $fila[$NOMBRE1];
-						$surname = $fila[$APELLIDO1];
-						$mail = $fila[$EMAIL1];
-						$studentdb = Student::whereWc_id($mail)->get();
-						if($studentdb->isEmpty()){
-							$student = new Student;
-							$student->wc_id = $mail;
-							$student->run = $run;
-							$student->name = $name; 
-							$student->surname = $surname; 
-							$student->save();
-						}
+						}//row encabezado
+					}//for rows
 
-						//alumno 2
-						$run = $fila[$RUN2];
-						$name = $fila[$NOMBRE2];
-						$surname = $fila[$APELLIDO2];
-						$mail = $fila[$EMAIL2];
-						$studentdb = Student::whereWc_id($mail)->get();
-						if($studentdb->isEmpty()){
-							$student = new Student;
-							$student->wc_id = $mail;
-							$student->run = $run;
-							$student->name = $name; 
-							$student->surname = $surname; 
-							$student->save();
+					//for alumnos
+						//si no existe, crearlo
+					foreach ($res as $n => $fila) {
+						if($n!=0){
+							//alumno 1
+							$run = $fila[$V2RUN1];
+							$name = $fila[$V2NOMBRE1];
+							$surname = $fila[$V2APELLIDO1];
+							$mail = $fila[$V2EMAIL1];
+							$studentdb = Student::whereWc_id($mail)->get();
+							if($studentdb->isEmpty()){
+								$student = new Student;
+								$student->wc_id = $mail;
+								$student->run = $run;
+								$student->name = $name; 
+								$student->surname = $surname; 
+								$student->save();
+							}
 						}
 					}
-				}
 
-				//for temas
-					//registrar
-				foreach ($res as $n => $fila) {
-					if($n!=0){
+					//for temas
+						//registrar
+					foreach ($res as $n => $fila) {
+						if($n!=0){
 
-						$subj = new Subject;
-						$subj->subject = $fila[$TEMA];
-						$subj->student1 = $fila[$EMAIL1];
-						$subj->student2 = $fila[$EMAIL2];
-						$subj->adviser = $fila[$MPROFESOR];
-						$subj->status = "confirm";
-						$subj->pm_uid = "";
-						$subj->periodo = $periodo;
-						$subj->defensa = 0;
-						$subj->company = $fila[$EMPRESA];
-						$subj->company_rut = $fila[$EMPRESARUT];
+							$subj = Subject::wherePm_uid($fila[$V2GRUPO])->wherePeriodo($periodo)->first();
+							if(empty($subj)){
+								$subj = new Subject;
+								$subj->subject = $fila[$V2TEMA];
+								$subj->student1 = $fila[$V2EMAIL1];
+								$subj->adviser = $fila[$V2MPROFESOR];
+								$subj->status = "confirm";
+								$subj->pm_uid = $fila[$V2GRUPO];
+								$subj->periodo = $periodo;
+								$subj->defensa = 0;
+								$subj->save();
+							}else{
+								if(empty($subj->student2)){
+									$subj->student2 = $fila[$V2EMAIL1];
+									$subj->save();
+								}else{
+									//error?
+								}
+							}
+							
 
-						$subj->save();
-
+						}
 					}
+
+					///avisar
+					Cron::add("confirmarguia", array(), Carbon::now());
+
+					$a = DID::action(Auth::user()->wc_id, "agregar temas", $periodo, "periodo", $n);
+
+					return Redirect::to("#/listatemas");
+
+				}else{
+					//error
 				}
 
-				///avisar
-				Cron::add("confirmarguia", array(), Carbon::now());
-
-				$a = DID::action(Auth::user()->wc_id, "agregar temas", $periodo, "periodo", $n);
-
-				return Redirect::to("#/listatemas");
+				
 
 			}else{
 				//error con el archivo
