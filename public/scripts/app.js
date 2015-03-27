@@ -167,7 +167,7 @@ angular.module("app",
 			return $routeProvider
 				.when("/",{redirectTo:"/listatemas"})
 				//.when("/dashboard",		{templateUrl:"views/dashboard.html",controller: 'Cleancache'})
-				.when("/pages/signin",	{templateUrl:"views/login",controller: 'Cleancache'})
+				
 				.when("/itemas",		{templateUrl:"views/itemas",controller: 'Cleancache'})
 				.when("/vista3",		{templateUrl:"views/vista3",controller: 'Cleancache'})
 				.when("/vista4",		{templateUrl:"views/vista4",controller: 'Cleancache'})
@@ -177,25 +177,30 @@ angular.module("app",
 				.when("/vista8",		{templateUrl:"views/vista8",controller: 'Cleancache'})
 				.when("/vista9",		{templateUrl:"views/vista9",controller: 'Cleancache'})
 				.when("/vista10",		{templateUrl:"views/vista10",controller: 'Cleancache'})
-				.when("/funcionarios",	{templateUrl:"views/funcionarios",controller: 'Cleancache'})
-				.when("/ayudantes",		{templateUrl:"views/ayudantes",controller: 'Cleancache'})
-				.when("/alumnos",		{templateUrl:"views/alumnos",controller: 'Cleancache'})
+
 				.when("/asignarguia",	{templateUrl:"views/asignarguia",controller: 'Cleancache'})
 				.when("/calendario",	{templateUrl:"views/calendario",controller: 'Cleancache'})
 				.when("/coordefensa",	{templateUrl:"views/coordefensa",controller: 'Cleancache'})
 				.when("/periodos",		{templateUrl:"views/periodos",controller: 'Cleancache'})
 				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision",controller: 'Cleancache'})
 				.when("/webcursos",		{templateUrl:"views/webcursos",controller: 'Cleancache'})
+				//usuario
+				.when("/pages/signin",	{templateUrl:"user/login",controller: 'Cleancache'})
+				.when("/profile/changepass",{templateUrl:"user/changepass",controller: 'Cleancache'})
+				.when("/funcionarios",	{templateUrl:"user/funcionarios",controller: 'Cleancache'})
+				.when("/ayudantes",		{templateUrl:"user/ayudantes",controller: 'Cleancache'})
+				.when("/alumnos",		{templateUrl:"user/alumnos",controller: 'Cleancache'})
 
+				//entregas
 				.when("/tareas",		{templateUrl:"entregas/tareas",controller: 'Cleancache'})
 				.when("/listanotas",	{templateUrl:"entregas/listanotas",controller: 'Cleancache'})
 				.when("/evaluartarea/:idtarea",{templateUrl:"entregas/evaluartarea",controller: 'TareaController'})
-				
+				.when("/revisardefensas",{templateUrl:"entregas/revisarnotas",controller: 'Cleancache'})
+				.when("/revisarnota/:idtema",{templateUrl:"entregas/revisarnota",controller: 'HojaRuta'})
+				.when("/notas",{templateUrl:"entregas/notas",controller: 'Cleancache'})
+				//hojaruta
 				.when("/listahojasruta",{templateUrl:"ruta/listahojasruta",controller: 'Cleancache'})
 				.when("/firmarhojaprofesor/:idtema",{templateUrl:"ruta/firmarhojaprofesor",controller: 'HojaRuta'})
-				
-				.when("/profile/changepass",{templateUrl:"views/changepass",controller: 'Cleancache'})
-				
 				.when("/definiraleatorio",{templateUrl:"ruta/definiraleatorio",controller: 'Cleancache'})
 				.when("/hojaasignar/:idtema",{templateUrl:"ruta/hojaasignar",controller: 'HojaRuta'})
 				.when("/revisartemas",{templateUrl:"ruta/revisartemas",controller: 'Cleancache'})
@@ -204,17 +209,16 @@ angular.module("app",
 				.when("/reasignartema/:idtema",{templateUrl:"ruta/reasignartema",controller: 'HojaRuta'})
 				.when("/aprobartemas",{templateUrl:"ruta/aprobartemas",controller: 'Cleancache'})
 				.when("/aprobartema/:idtema",{templateUrl:"ruta/aprobartema",controller: 'HojaRuta'})
-
+				//otros
 				.when("/cronlist",{templateUrl:"crons/cronlist",controller: 'Cleancache'})
 				.when("/cronerror",{templateUrl:"crons/cronerror",controller: 'Cleancache'})
 				.when("/cronfired",{templateUrl:"crons/cronfired",controller: 'Cleancache'})
 
-				.when("/revisardefensas",{templateUrl:"entregas/revisarnotas",controller: 'Cleancache'})
-				.when("/revisarnota/:idtema",{templateUrl:"entregas/revisarnota",controller: 'HojaRuta'})
-				
 				.when("/actions",{templateUrl:"reg/actions",controller: 'Cleancache'})
+				
+				.when("/texto",{templateUrl:"texto/modificar",controller: 'Cleancache'})
 
-				.when("/notas",{templateUrl:"entregas/notas",controller: 'Cleancache'})
+
 
 				.when("/dynamic",{templateUrl:"dynamic"})
 				/*.when("/dashboard",{templateUrl:"views/dashboard.html"})

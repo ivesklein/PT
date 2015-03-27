@@ -203,6 +203,10 @@ Route::controller('views','ViewsFirst');
 Route::controller('entregas','ViewsEntregas');
 
 Route::controller('ruta','ViewsHojaRuta');
+
+Route::controller('user','ViewsUsers');
+
+Route::controller('texto','ViewsTexto');
 //dir lti for wc
 Route::controller('lti','ViewsWC');
 

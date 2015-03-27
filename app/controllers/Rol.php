@@ -32,7 +32,8 @@ class Rol {
 				"rutaaleatorio",
 				"revisartemas",
 				"listaReasignar",
-				"listaAprobar"
+				"listaAprobar",
+				"textos"
 			),
 		"P"=>
 			array(
