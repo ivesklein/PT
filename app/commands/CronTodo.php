@@ -65,7 +65,9 @@ class CronTodo extends Command {
 				$i++;
 			}
 		}
-		Log::info($i." task executed.");
+		if($i>0){
+			Log::info($i." task executed.");
+		}
 		$this->info($i." task executed.");
 	}
 

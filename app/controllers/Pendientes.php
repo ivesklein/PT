@@ -3,7 +3,7 @@ class Pendientes{
 	
 	public static function __callStatic($method, $arguments)
     {
-		Log::info("Pendientes metodo:".$method." no existe");
+		//Log::info("Pendientes metodo:".$method." no existe");
 		return 0;
     }
 
