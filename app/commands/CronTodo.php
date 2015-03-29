@@ -61,7 +61,7 @@ class CronTodo extends Command {
 
 		if(!$res->isEmpty()){
 			foreach ($res as $cron) {
-				exec("php /home/pm/GIT/artisan cron_do ".$cron->id." >> /dev/null &");
+				exec("php ".Configuracion::$artisan." cron_do ".$cron->id." >> /dev/null &");
 				$i++;
 			}
 		}
