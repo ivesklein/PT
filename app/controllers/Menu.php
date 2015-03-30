@@ -127,6 +127,11 @@ class Menu {
 			"where"=>"temas",
 			"place"=>"27",
 			"array"=>array("link"=>"#/notas", "title"=>"Notas", "n"=>0)
+		),
+		"textos"=>array(
+			"where"=>"otros",
+			"place"=>"27",
+			"array"=>array("link"=>"#/texto", "title"=>"Textos Firmas", "n"=>0)
 		)
 
 
@@ -171,9 +176,9 @@ class Menu {
 			"place"=>"30",
 			"array"=>array("Registros", "#/menu", "calendar", "primary", 0)
 		),
-		"otromenu" => array(
-			"place"=>"24",
-			"array"=>array("Otro menú", "#/menu", "calendar", "primary", 0)
+		"otros" => array(
+			"place"=>"99",
+			"array"=>array("Otros", "#/menu", "calendar", "primary", 0)
 		)
 	);
 

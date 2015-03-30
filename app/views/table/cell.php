@@ -1,1 +1,1 @@
-<td <?php echo isset($span)?"rowspan='".$span."'":""; ?>><?=$content?></td>
+<td <?php echo isset($span)?"rowspan='".$span."' style='vertical-align: middle;'":""; ?>><?=$content?></td>

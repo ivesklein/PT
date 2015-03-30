@@ -13,6 +13,7 @@
         	</div>
         	<div class="col-xs-8">
         		<p id="feedback">otras cosas</p>
+        		<a class="btn btn-info fileup" style="display:none;">Ver archivo feedback</a>
         	</div>
         	<div class="col-xs-4">
         		<div class="btn btn-warning back">Volver</div>
@@ -40,6 +41,11 @@ $(".feedback").on("click",function() {
 			$("#nota").html(data.data.nota);
 			$("#feedback").html(data.data.feedback);
 			//mostrar
+
+			if(data.data.file>0){
+                $(".fileup").show().attr("href","../feedback/"+data.data.file);
+            }
+
 			$(".notas").hide();
 			$(".nota").show();
 

@@ -8,9 +8,11 @@ class PostWC {
 		if($user!="0"){
 
 			if(isset($_POST["n"])){
-				$temas = Subject::studentfind($user)->get();
+				$temas = Subject::studentfind($user)->wherePeriodo(Periodo::active())->get();
 				if(!$temas->isEmpty()){
 					$tema = $temas->first();
+
+					$nstudent = $user==$tema->student1?0:1;
 					
 					$tareas = Tarea::whereId($_POST["n"])->get();
 
@@ -25,30 +27,48 @@ class PostWC {
 
 						$active = 0; //0 es futura, 1 es activa, 2 es pasado con eval.
 						$now = Carbon::now();
+
+						$file = 0;
+
 						if($date>$now){//futura
 							$active = 0;
 							//$url="";
-							$nota="";
+							$notaa="";
 							$feedback="";
 						}else{
 							$active = 1;
 							//$url=$wc;
-							$nota="";
+							$notaa="";
 							$feedback="";
 							//get notas de tarea para el grupo
 							$nota = Nota::whereSubject_id($tema->id)->whereTarea_id($tarea->id)->get();
 							if(!$nota->isEmpty()){
 								$notita = $nota->first();
-								$nota = $notita->nota;
-								$feedback = $notita->feedback;
+								$notas = $notita->nota;
+								$feedbacks = $notita->feedback;
+
+
+								if($notas!=""){
+                                    $notas = json_decode($notas);
+                                    $notaa = $notas[$nstudent];
+                                }
+                                if($feedbacks!=""){
+                                    $feedbacks = json_decode($feedbacks);
+                                    $feedback = $feedbacks[$nstudent];
+                                }
+
+								if(!empty($notita->file)){
+									$file = $notita->id;	
+								}
 							}
 							
 						}
 
 						$return['data'] = array(
 							"title"=>$title,
-							"nota"=>$nota,
+							"nota"=>$notaa,
 							"feedback"=>$feedback,
+							"file"=>$file
 						);
 
 						

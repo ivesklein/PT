@@ -176,7 +176,7 @@ class PostTareas{
 							$date = CarbonLocale::parse($tarea->date);
 							$wc = $tarea->wc_uid;
 
-							
+							$file = 0;
 							$active = 0; //0 es futura, 1 es activa, 2 es pasado con eval.
 							$now = Carbon::now();
 							if($date>$now){//futura
@@ -195,6 +195,9 @@ class PostTareas{
 									$notita = $notadb->first();
 									$nota = empty($notita->nota)?"":$notita->nota;
 									$feedback = $notita->feedback;
+									if(!empty($notita->file)){
+										$file=$notita->id;
+									}
 								}
 								
 							}else{
@@ -208,8 +211,13 @@ class PostTareas{
 									$notita = $notadb->first();
 									$nota = empty($notita->nota)?"":$notita->nota;
 									$feedback = $notita->feedback;
+									if(!empty($notita->file)){
+										$file=$notita->id;
+									}
 								}
 							}
+
+
 
 							$return['data'][] = array(
 								"id"=>$tarea->id,
@@ -219,6 +227,7 @@ class PostTareas{
 								"url"=>$url,
 								"nota"=>$nota,
 								"feedback"=>$feedback,
+								"file"=>$file
 							);
 
 						}
@@ -253,29 +262,52 @@ class PostTareas{
 					if( ($date<Carbon::now() || $tarea->tipo>=3) && ($date>Carbon::now()->subDays($tarea->evaltime) || Rol::hasPermission("revisartareas") ) ){
 
 						$feedback = isset($_POST['feedback'])? $_POST['feedback']:"";
-						
-						if($modify){
-							$nota = Nota::whereSubject_id($_POST['id'])->whereTarea_id($_POST['tarea'])->get();
-							if(!$nota->isEmpty()){
-								$notita = $nota->first();
-								if($notita->nota!=$_POST['nota']){
-									$notita->nota=$_POST['nota'];
-								}
-								if($notita->feedback!=$_POST['feedback']){
-									$notita->feedback=$_POST['feedback'];
-								}
-								$notita->save();
-								$return["ok"] = 1;
-								$a = DID::action(Auth::user()->wc_id, "reevaluar tarea", $_POST['tarea'], "tarea", $_POST['nota']);
-							}else{
-								$return["error"] = "evaluación no existe";
+			
+						$nota = Nota::whereSubject_id($_POST['id'])->whereTarea_id($_POST['tarea'])->first();
+						if(!empty($nota)){
+							$notita = $nota;
+							if($notita->nota!=$_POST['nota']){
+								$notita->nota=$_POST['nota'];
 							}
+							if($notita->feedback!=$_POST['feedback']){
+								$notita->feedback=$_POST['feedback'];
+							}
+
+							if(isset($_POST['file'])){
+								if($_POST['file']==1){
+									$file = Input::file("archivo");
+									$name = $file->getClientOriginalName();
+									$newname = md5(Hash::make($name));
+									$notita->file = Configuracion::$feedback.$newname;
+									$notita->filename = $name;
+									$notita->filetype = $file->getMimeType();
+									$file->move(Configuracion::$feedback , $newname);
+								}
+							}
+
+							$notita->save();
+							$return["ok"] = 1;
+							$a = DID::action(Auth::user()->wc_id, "reevaluar tarea", $_POST['tarea'], "tarea", $_POST['nota']);
+						
 						}else{
 							$notita = new Nota;
 							$notita->subject_id=$_POST['id'];
 							$notita->tarea_id=$_POST['tarea'];
 							$notita->nota=$_POST['nota'];
 							$notita->feedback=$_POST['feedback'];
+
+							if(isset($_POST['file'])){
+								if($_POST['file']==1){
+									$file = Input::file("archivo");
+									$name = $file->getClientOriginalName();
+									$newname = md5(Hash::make($name));
+									$notita->file = Configuracion::$feedback.$newname;
+									$notita->filename = $name;
+									$notita->filetype = $file->getMimeType();
+									$file->move(Configuracion::$feedback , $newname);
+								}
+							}
+
 							$notita->save();
 
 							$a = DID::action(Auth::user()->wc_id, "evaluar tarea", $_POST['tarea'], "tarea", $_POST['nota']);
