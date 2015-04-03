@@ -113,6 +113,7 @@ class PostComision{
 					$view="emails.confirmar-comision";
 					$prof = Staff::find($newprof)->wc_id;
 
+					$wc = WCtodo::add("newuser", array('user'=>$prof, 'rol'=>'P'));
 					$wc = WCtodo::add("u2g", array('subject_id'=>$_POST['id'], 'user'=>$prof));
 
 					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);

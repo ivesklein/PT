@@ -213,6 +213,23 @@ class PostMemorias{
 
 					$a = DID::action(Auth::user()->wc_id, "agregar temas", $periodo, "periodo", $n);
 
+					foreach ($temas as $key => $tema) {
+						
+						$st1 = explode("@",$tema["s1"]);
+				    	$st2 = explode("@",$tema["s2"]);
+				    	$grupo = $st1[0]." & ".$st2[0]."(".$key.")";
+
+				    	$wc = WCtodo::add("newuser", array('user'=>$tema["s1"], 'rol'=>'ST'));
+				    	$wc = WCtodo::add("newuser", array('user'=>$tema["s2"], 'rol'=>'ST'));
+				    	$wc = WCtodo::add("newuser", array('user'=>$tema["p"], 'rol'=>'P'));
+
+				    	$wc = WCtodo::add("newgroup", array('group'=>$grupo, 'subject_id'=>$key));
+				    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["s1"]));
+				    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["s2"]));
+				    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["p"]));
+
+					}
+
 					return Redirect::to("#/listatemas");
 
 				}elseif($pos2!==false){//formato 2
@@ -338,24 +355,31 @@ class PostMemorias{
 
 					$a = DID::action(Auth::user()->wc_id, "agregar temas", $periodo, "periodo", $n);
 
+					foreach ($temas as $key => $tema) {
+						
+						$st1 = explode("@",$tema["s1"]);
+				    	$st2 = explode("@",$tema["s2"]);
+				    	$grupo = $st1[0]." & ".$st2[0]."(".$key.")";
+
+
+				    	$wc = WCtodo::add("newuser", array('user'=>$tema["s1"], 'rol'=>'ST'));
+				    	$wc = WCtodo::add("newuser", array('user'=>$tema["s2"], 'rol'=>'ST'));
+				    	$wc = WCtodo::add("newuser", array('user'=>$tema["p"], 'rol'=>'P'));
+
+				    	$wc = WCtodo::add("newgroup", array('group'=>$grupo, 'subject_id'=>$key));
+				    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["s1"]));
+				    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["s2"]));
+				    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["p"]));
+
+					}
+
 					return Redirect::to("#/listatemas");
 
 				}else{
 					//error
 				}
 
-				foreach ($temas as $key => $tema) {
-					
-					$st1 = explode("@",$tema["s1"]);
-			    	$st2 = explode("@",$tema["s2"]);
-			    	$grupo = $st1[0]." & ".$st2[0]."(".$key.")";
 
-			    	$wc = WCtodo::add("newgroup", array('group'=>$grupo, 'subject_id'=>$key));
-			    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["s1"]));
-			    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["s2"]));
-			    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["p"]));
-
-				}
 
 			}else{
 				//error con el archivo
@@ -581,30 +605,6 @@ class PostMemorias{
 
 			if(isset($_POST['prof']) && isset($_POST['id'])){
 
-				if(false){//con pm
-					$soap = new PMsoap;
-					$res = $soap->login();
-					if(isset($res["ok"])){
-						$prof = $_POST['prof'];
-						$id = $_POST['id'];
-
-							//registrar en pm y routear
-							$res1 = $soap->assignGuia($id, $prof);
-							if(isset($res1["ok"])){
-								$return["ok"]="ok0";
-								$subj = Subject::wherePm_uid($id)->first();
-								$subj->status = "confirm";
-								$subj->save();
-							}else{
-								$return["error"] = $res1['error'];
-							}
-
-					}else{//if soaplogin
-						$return["error"] = $res['error'];
-					}
-
-				}else{//sin pm
-
 					$prof = $_POST['prof'];
 					$id = $_POST['id'];
 
@@ -612,10 +612,17 @@ class PostMemorias{
 
 					if(!$subjs->isEmpty()){
 						$subj = $subjs->first();
-
+						$ant = $subj->adviser;
+						$subj->adviser = $prof;
 						$return["ok"]="ok0";
 						$subj->status = "confirm";
 						$subj->save();
+
+
+
+						$wc = WCtodo::add("newuser", array('user'=>$prof, 'rol'=>'P'));
+						$wc = WCtodo::add("u!2g", array('subject_id'=>$subj->id, 'user'=>$ant));
+						$wc = WCtodo::add("u2g", array('subject_id'=>$subj->id, 'user'=>$prof));
 
 						$a = DID::action(Auth::user()->wc_id, "asignar guía", $id, "memoria", $prof);
 
@@ -623,7 +630,7 @@ class PostMemorias{
 						$return["error"] = "Tema no existe";
 					}
 
-				}
+				
 			}else{//if variables
 				$return["error"] = "faltan variables";
 			}

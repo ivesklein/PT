@@ -41,8 +41,6 @@ class UserCreation {
 		$parameters = array("user"=> $user->wc_id, "pass"=>$user->pmpass);
 		Correo::enviar($to, $title, $view, $parameters);
 
-		$wc = WCtodo::add("newuser", array('user'=>$user->wc_id, 'rol'=>$rol));
-
 		$return["ok"]=array("wc"=>$email);
 		
 

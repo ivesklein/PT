@@ -246,163 +246,10 @@ class PostHojaRuta{
 			                	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
 							}
 
-							/*if(!isset($_POST['disweb'])){
-
-								if($ok==true){
-									$wc = new WCAPI;
-									$res = $wc->login(Auth::user()->wc_id, $_POST['wcpass']);
-									if(isset($res['error'])){
-										$ok=false;
-										$return["error"] = $res['error'];
-									}
-								}
-
-								if($ok==true){
-									$grupos = $wc->groupList();
-									if(isset($grupos['error'])){
-										$ok=false;
-										$return["error"] = $grupos['error'];
-									}
-								}
-									
-								if($ok==true){
-									$wcusers = $wc->userList();
-									if(isset($wcusers['error'])){
-										$ok=false;
-										$return["error"] = $wcusers['error'];
-									}
-								}
-
-							}*/
 
 
 							if($ok==true){
 
-								/*if(!isset($_POST['disweb'])){
-								
-									if(isset($wcusers['users'][$staff->wc_id])){
-										//está en queso, está en curso
-										//asignar grupo en wc
-										if(empty($staff->wc_uid)){
-											$staff->wc_uid = $wcusers['users'][$staff->wc_id]['uid'];
-											$staff->save();
-										}
-
-										if(!isset($grupos['groups'][$grupo])){
-											$ok=false;
-											$return["error"] = "Grupo no registrado en Webcursos";
-										}
-
-										//verificar si está en grupo antes de agregalo
-
-										if($ok==true){
-											$res2 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
-											if(isset($res2['error'])){
-												$ok=false;
-												$return["error"] = $res2['error'];
-											}
-										}
-
-										if($ok==true){
-											if(!isset($wcusers['users'][$staff->wc_id]['roles'][4])){
-				                				//asignar rol
-				                				$wcres5 = $wc->role2user($staff->wc_uid, 4);
-				                			}
-			                			}
-
-										$res2 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
-											
-
-										if($ok==true){
-											//asignar grupop en pt
-
-											if(isset($_POST["reasignar"])){
-												$revs = Revisor::whereSubject_id($_POST['id'])->get();
-												if(!$revs->isEmpty()){
-													$rev = $revs->first();
-												}else{
-													$rev = new Revisor;
-													$rev->subject_id = $_POST['id'];
-												}
-											}else{
-												$rev = new Revisor;
-												$rev->subject_id = $_POST['id'];
-											}
-											$rev->staff_id = $staff->id;
-											$rev->save();
-
-
-											//enviar mail!!!!!
-											$hoja = $tema->firmas;
-											$hoja->status = "en-revision";
-											$hoja->save();
-
-											$a = DID::action(Auth::user()->wc_id, "asignar revisor", $staff->id, "revisor", "");
-
-											$return["ok"]=1;
-											$return["data"]="está en queso, está en curso";
-										}
-
-									}else{
-										//está en queso, no está en curso
-										//buscar en wc
-										$res1 = $wc->searchUser($staff->wc_id);
-										if(isset($res1['error'])){
-											$ok=false;
-											$return["error"] = $res1['error'];
-										}
-										//registrar en curso
-										if($ok==true){
-											//guardar uid
-											$staff->wc_uid = $res1["ok"]->id;
-
-											$res3 = $wc->enrolUser($staff->wc_uid, 4);//ayudante corrector
-											if(isset($res3['error'])){
-												$ok=false;
-												$return["error"] = $res3['error'];
-											}
-										}
-										
-										//asignar a tema wc
-										if($ok==true){
-											$res4 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
-											if(isset($res4['error'])){
-												$ok=false;
-												$return["error"] = $res4['error'];
-											}
-										}
-
-										if($ok==true){
-											//asignar grupo en pt
-											if(isset($_POST["reasignar"])){
-												$revs = Revisor::whereSubject_id($_POST['id'])->get();
-												if(!$revs->isEmpty()){
-													$rev = $revs->first();
-												}else{
-													$rev = new Revisor;
-													$rev->subject_id = $_POST['id'];
-												}
-											}else{
-												$rev = new Revisor;
-												$rev->subject_id = $_POST['id'];
-											}
-											$rev->staff_id = $staff->id;
-											$rev->save();
-
-											$hoja = $tema->firmas;
-											$hoja->status = "en-revision";
-											$hoja->save();
-
-											$a = DID::action(Auth::user()->wc_id, "asignar revisor", $staff->id, "revisor", "también se registra en webcursos");
-											//enviar mail!!!!!
-
-											$return["ok"]=1;
-											$return["data"]="está en queso, recién registrado en curso";
-										}
-
-									}//else en curso
-									
-								}else{//sin wc*/
 
 									if(isset($_POST["reasignar"])){
 										$revs = Revisor::whereSubject_id($_POST['id'])->get();
@@ -421,6 +268,7 @@ class PostHojaRuta{
 										$ant = Staff::find($rev->staff_id);
 										$wc = WCtodo::add("u!2g", array('subject_id'=>$_POST['id'], 'user'=>$ant->wc_id));
 									}
+									$wc = WCtodo::add("newuser", array('user'=>$staff->wc_id, 'rol'=>'P'));
 									$wc = WCtodo::add("u2g", array('subject_id'=>$_POST['id'], 'user'=>$staff->wc_id));
 
 									$rev->staff_id = $staff->id;
@@ -498,157 +346,11 @@ class PostHojaRuta{
 								}
 							}
 						}
-
-						/*if(!isset($_POST['disweb'])){
-
-							if($ok==true){
-								$wc = new WCAPI;
-								$res = $wc->login(Auth::user()->wc_id, $_POST['wcpass']);
-								if(isset($res['error'])){
-									$ok=false;
-									$return["error"] = $res['error'];
-								}
-							}
-
-							if($ok==true){
-								$grupos = $wc->groupList();
-								if(isset($grupos['error'])){
-									$ok=false;
-									$return["error"] = $grupos['error'];
-								}
-							}
-								
-							if($ok==true){
-								$wcusers = $wc->userList();
-								if(isset($wcusers['error'])){
-									$ok=false;
-									$return["error"] = $wcusers['error'];
-								}
-							}
-
-						}*/
 						
 						//si no está en curso
 						if($ok==true){
 
-							/*if(!isset($_POST['disweb'])){
-
-								if(isset($wcusers['users'][$staff->wc_id])){
-									//agregado a queso, está en curso
-									//asignar grupo en wc
-									$staff->wc_uid = $wcusers['users'][$staff->wc_id]['uid'];
-									$staff->save();
-									
-
-									if(!isset($grupos['groups'][$grupo])){
-										$ok=false;
-										$return["error"] = "Grupo no registrado en Webcursos";
-									}
-
-									//verificar si está en grupo antes de agregalo
-									if($ok==true){
-										if(!isset($wcusers['users'][$staff->wc_id]['roles'][4])){
-			                				//asignar rol
-			                				$wcres5 = $wc->role2user($staff->wc_uid, 4);
-			                			}
-		                			}
-
-									if($ok==true){
-										$res2 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
-										if(isset($res2['error'])){
-											$ok=false;
-											$return["error"] = $res2['error'];
-										}
-									}
-
-									if($ok==true){
-										//asignar grupop en pt
-										if(isset($_POST["reasignar"])){
-											$revs = Revisor::whereSubject_id($_POST['id'])->get();
-											if(!$revs->isEmpty()){
-												$rev = $revs->first();
-											}else{
-												$rev = new Revisor;
-												$rev->subject_id = $_POST['id'];
-											}
-										}else{
-											$rev = new Revisor;
-											$rev->subject_id = $_POST['id'];
-										}
-										$rev->staff_id = $staff->id;
-										$rev->save();
-
-										$hoja = $tema->firmas;
-										$hoja->status = "en-revision";
-										$hoja->save();
-
-										$a = DID::action(Auth::user()->wc_id, "asignar revisor", $staff->id, "revisor", "registrado en plataforma");
-										//enviar mail!!!!!
-
-										$return["ok"]=1;
-										$return["data"]="agregado a queso, está en curso";
-									}
-
-								}else{
-									//agregado a queso, no está en curso
-									//buscar en wc
-									$res1 = $wc->searchUser($staff->wc_id);
-									if(isset($res1['error'])){
-										$ok=false;
-										$return["error"] = $res1['error'];
-									}
-									//registrar en curso
-									if($ok==true){
-										//guardar uid
-										$staff->wc_uid = $res1["ok"]->id;
-
-										$res3 = $wc->enrolUser($staff->wc_uid, 4);//ayudante corrector
-										if(isset($res3['error'])){
-											$ok=false;
-											$return["error"] = $res3['error'];
-										}
-									}
-									
-									//asignar a tema wc
-									if($ok==true){
-										$res4 = $wc->user2group($staff->wc_uid, $grupos['groups'][$grupo]);
-										if(isset($res4['error'])){
-											$ok=false;
-											$return["error"] = $res4['error'];
-										}
-									}
-
-									if($ok==true){
-										//asignar grupo en pt
-										if(isset($_POST["reasignar"])){
-											$revs = Revisor::whereSubject_id($_POST['id'])->get();
-											if(!$revs->isEmpty()){
-												$rev = $revs->first();
-											}else{
-												$rev = new Revisor;
-												$rev->subject_id = $_POST['id'];
-											}
-										}else{
-											$rev = new Revisor;
-											$rev->subject_id = $_POST['id'];
-										}
-										$rev->staff_id = $staff->id;
-										$rev->save();
-
-										$hoja = $tema->firmas;
-										$hoja->status = "en-revision";
-										$hoja->save();
-
-										$a = DID::action(Auth::user()->wc_id, "asignar revisor", $staff->id, "revisor", "también se registra en webcursos y plataforma");
-										//enviar mail!!!!!
-
-										$return["ok"]=1;
-										$return["data"]="agregado a queso, recién registrado en curso";
-									}
-
-								}//else en curso
-
-							}else{//sin wc*/
+						
 
 								if(isset($_POST["reasignar"])){
 									$revs = Revisor::whereSubject_id($_POST['id'])->get();
@@ -668,11 +370,12 @@ class PostHojaRuta{
 									$ant = Staff::find($rev->staff_id);
 									$wc = WCtodo::add("u!2g", array('subject_id'=>$_POST['id'], 'user'=>$ant->wc_id));
 								}
+								$wc = WCtodo::add("newuser", array('user'=>$staff->wc_id, 'rol'=>'P'));
 								$wc = WCtodo::add("u2g", array('subject_id'=>$_POST['id'], 'user'=>$staff->wc_id));
 
 								$rev->staff_id = $staff->id;
 								$rev->save();
-								
+
 								$hoja = $tema->firmas;
 								$hoja->status = "en-revision";
 								$hoja->save();

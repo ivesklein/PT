@@ -46,6 +46,22 @@ class PostWebcursos{
 				if($per!="false"){
 					$per->wc_course = $_POST['id'];
 					$per->save();
+
+					$perms = Permission::wherePermission("AY")->get();
+        			foreach ($perms as $perm) {
+	                    $wc = WCtodo::add("newuser", array('user'=>$perm->staff->wc_id, 'rol'=>'PT'));
+					}
+            		
+            		$perms = Permission::wherePermission("CA")->get();
+        			foreach ($perms as $perm) {
+        				$wc = WCtodo::add("newuser", array('user'=>$perm->staff->wc_id, 'rol'=>'PT'));
+					}
+            		
+            		$perms = Permission::wherePermission("SA")->get();
+        			foreach ($perms as $perm) {
+        				$wc = WCtodo::add("newuser", array('user'=>$perm->staff->wc_id, 'rol'=>'PT'));
+					}
+            		
 					$a = DID::action(Auth::user()->wc_id, "elegir Curso", $per->id, "periodo");
 				}else{
 					$return["error"] = "error";
@@ -275,7 +291,106 @@ class PostWebcursos{
 
 	public static function regusuarios()
 	{
-	# code...
+		$return = array("groups"=>array(),"users"=>array());
+		$time_start = microtime(true);
+
+		if(isset($_POST['p'])){
+			if(Rol::hasPermission("webcursos")){
+
+			    //obtener lista de usuarios de wc
+        		$wc = new WCAPI;
+        		$res0 = $wc->login(Auth::user()->wc_id,$_POST['p']);
+        		if(isset($res0["error"])){
+        			return json_encode($res0);
+        		}
+
+        		$u=0;
+        		$u += WCtodo::wherePeriodo(Periodo::active())->whereAction('newgroup')->whereDid(0)->count();
+		        $u += WCtodo::wherePeriodo(Periodo::active())->whereAction('newuser')->whereDid(0)->count();
+
+                $u += WCtodo::wherePeriodo(Periodo::active())->whereAction('u2g')->whereDid(0)->count();
+                $u += WCtodo::wherePeriodo(Periodo::active())->whereAction('u!2g')->whereDid(0)->count();
+                
+                $u += WCtodo::wherePeriodo(Periodo::active())->whereAction('addrol')->whereDid(0)->count();
+                $u += WCtodo::wherePeriodo(Periodo::active())->whereAction('delrol')->whereDid(0)->count();
+
+        		$newgroups = WCtodo::wherePeriodo(Periodo::active())->whereAction('newgroup')->whereDid(0)->get();
+
+        		foreach ($newgroups as $group) {
+        			$data = json_decode($group->data);
+        			$name = $data->group;
+        			$idsubj = $data->subject_id;
+
+					/*$res = $wc->createGroup($name,$tema->id);
+                	if(isset($res["ok"])){
+                		$subj = Subject::find($idsubj);
+                		$subj->wc_uid = $res["ok"];
+                		//$wcgroups[$grupo] = $res["ok"];
+                	}*/
+
+                	$return['groups'][] = $name;
+
+        		}
+
+        		$newusers = WCtodo::wherePeriodo(Periodo::active())->whereAction('newuser')->whereDid(0)->get();
+        		$t = WCtodo::wherePeriodo(Periodo::active())->
+							whereDid(0)->
+					        where(function ($query) {
+					            $query->where('action', '=', 'addrol')
+					                  ->orWhere('action', '=', 'delrol');
+					        })->get();
+
+				$users = array();
+
+				foreach ($newusers as $newuser) {
+					$data = json_decode($newuser->data);
+					$users[$data->user] = array($data->rol);
+				}
+				foreach ($t as $role) {
+					$data = json_decode($role->data);
+					$user = Staff::find($data->user_id);
+					$permission = $data->permission;
+					if($permission=="AY" || $permission=="PT" || $permission=="CA" || $permission=="SA"){
+						$rol = "PT";
+					}
+					if($permission=="P"){
+						$rol = "P";
+					}
+
+					if($newuser->action=='addrol'){
+						$n = array_search($rol ,$users[$user->wc_id]);
+						if($n===false){
+							$users[$user->wc_id][] = $rol;
+						}
+					}elseif($newuser->action=='delrol'){
+						$n = array_search($rol ,$users[$user->wc_id]);
+						if($n!==false){
+							unset($users[$user->wc_id][$n]);
+						}
+					}
+				}
+
+				$return['users'] = $users;
+
+
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+
+
+		return json_encode($return);
+
+            		/*$wcres1 = $wc->userList();
+            		if(!isset($wcres1["error"])){
+            			$wcusers = $wcres1["users"];
+            		}else{
+            			return json_encode($wcres1);
+            		}*/
+
+
 	}
 
 	public static function regall()
