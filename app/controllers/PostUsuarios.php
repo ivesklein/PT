@@ -92,6 +92,8 @@ class PostUsuarios{
 						$nperm->staff_id = $_POST['id'];
 						$nperm->permission = $_POST['rol'];
 						$nperm->save();
+
+						$wc = WCtodo::add("addrol", array('user_id'=>$_POST['id'], 'permission'=>$_POST['rol']));
 						//echo"a1saved";
 					}
 				}else{//quitar
@@ -102,6 +104,7 @@ class PostUsuarios{
 						$del = $perm->first();
 						$del->delete();
 						//echo"a0deleted";
+						$wc = WCtodo::add("delrol", array('user_id'=>$_POST['id'], 'permission'=>$_POST['rol']));
 					}
 				}
 

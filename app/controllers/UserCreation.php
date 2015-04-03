@@ -28,14 +28,6 @@ class UserCreation {
 			$user->save();
 		}
 
-		$role = array(
-			"P"=>2,
-			"PT"=>2,
-			"SA"=>1,
-			"CA"=>1,
-			"AY"=>2
-		);
-
 		$userid = User::whereWc_id($email)->first()->id;
 
 		$perm = new Permission;
@@ -49,40 +41,10 @@ class UserCreation {
 		$parameters = array("user"=> $user->wc_id, "pass"=>$user->pmpass);
 		Correo::enviar($to, $title, $view, $parameters);
 
-		if(false){//con pm
+		$wc = WCtodo::add("newuser", array('user'=>$user->wc_id, 'rol'=>$rol));
 
-			if($pm==null){
-				$pm = new PMsoap;
-				$res = $pm->login();
-			}else{
-				$res["ok"] = 1;
-			}
-			if(isset($res['ok'])){
-				$res2 = $pm->newUser($email, $name, $surname, $email, $role[$rol], $pass);
-				if(isset($res2["ok"])){
-					$user->pm_uid = $res2["ok"];
-					$user->save();
-					$useruid = $res2["ok"];
-					$groupid = PMG::whereGroup($rol)->first()->uid;
-
-					$res3 = $pm->user2group($useruid,$groupid);
-
-					if(isset($res3["ok"])){
-						$return["ok"]=array("wc"=>$email,"pm"=>$useruid);
-					}else{
-						$return["error"]=$res3["error"];
-					}
-
-				}else{
-					$return["error"]=$res2["error"];
-				}
-			}else{
-				$return["error"]=$res["error"];
-			}
-
-		}else{//sin pm
-			$return["ok"]=array("wc"=>$email);
-		}
+		$return["ok"]=array("wc"=>$email);
+		
 
 
 		//mail

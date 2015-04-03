@@ -131,6 +131,18 @@ class Pendientes{
         
     }
 
+    public static function webcursos()
+    {      
+        $per = Periodo::active();
+        if($per!="false"){
+            $todo = WCtodo::wherePeriodo($per)->whereDid(0)->count();
+            return $todo;
+        }else{
+            return 0;
+        }
+        
+    }
+
 
 
 

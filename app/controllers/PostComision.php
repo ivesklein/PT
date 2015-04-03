@@ -83,7 +83,7 @@ class PostComision{
 
 				$subj = Subject::find($_POST['id']);
 
-				for ($i=0; $i < sizeof($news)-1 ; $i++) { 
+				for ($i=0; $i < sizeof($news)-1 ; $i++) { //for news
 					$newprof = $news[$i];
 					//agregar profesor a comision
 					$com = new Comision;
@@ -113,13 +113,15 @@ class PostComision{
 					$view="emails.confirmar-comision";
 					$prof = Staff::find($newprof)->wc_id;
 
+					$wc = WCtodo::add("u2g", array('subject_id'=>$_POST['id'], 'user'=>$prof));
+
 					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
 					Correo::enviar($prof, $title, $view, $parameters);
 
 
 				}
 
-				for ($i=0; $i < sizeof($dels)-1 ; $i++) { 
+				for ($i=0; $i < sizeof($dels)-1 ; $i++) { //for deleted
 					$delprof = $dels[$i];
 					//agregar profesor a comision
 					$com = Comision::whereStaff_id($delprof)->whereSubject_id($_POST['id'])->delete();
@@ -138,6 +140,8 @@ class PostComision{
 					$title="Exención de Comisión";
 					$view="emails.delete-from-comision";
 					$prof = Staff::find($delprof)->wc_id;
+
+					$wc = WCtodo::add("u!2g", array('subject_id'=>$_POST['id'], 'user'=>$prof));
 
 					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
 					Correo::enviar($prof, $title, $view, $parameters);

@@ -96,7 +96,12 @@ class WCAPI {
 			"username"=>$user,
 			"password"=>$pass
 		);
+
 		$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
+		
+		$fp = fopen($this->cookie, "w");
+	    fclose($fp);
+
 		$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
 		
 		if(!isset($contenido["error"])){
@@ -720,8 +725,46 @@ class WCAPI {
 		return $return;
 	}
 
+	public function deleteResource($id)
+	{
+	$return = array();
+		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
+			$url = "http://webcursos.uai.cl/course/rest.php";//&perpage=5000";
+			$data = array(	
+				"class"=>"resource",
+				"action"=>"DELETE",
+				"id"=>$id,
+				"sesskey"=>$this->sesskey,
+				"courseId"=>$this->course
+			);
+			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
+			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
+
+			
+			if(isset($contenido["ok"])){
+				$return["ok"] = 1;
+			}else{
+				$return["error"] = $contenido["error"];
+			}
+		}else{
+			$return["error"]="not-logged:".$this->sesskey."-".$this->course;
+		}
+
+		return $return;
+	}
+
 
 /*
+
+DELETE RESOURCE
+	http://webcursos.uai.cl/course/rest.php
+
+	class:resource
+	action:DELETE
+	id:624919
+	sesskey:1a08LSWzTy
+	courseId:26032
+
 LOGIN
 	https://webcursos.uai.cl/login/index.php
 

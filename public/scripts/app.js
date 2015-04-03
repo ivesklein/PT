@@ -183,7 +183,7 @@ angular.module("app",
 				.when("/coordefensa",	{templateUrl:"views/coordefensa",controller: 'Cleancache'})
 				.when("/periodos",		{templateUrl:"views/periodos",controller: 'Cleancache'})
 				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision",controller: 'Cleancache'})
-				.when("/webcursos",		{templateUrl:"views/webcursos",controller: 'Cleancache'})
+				
 				//usuario
 				.when("/pages/signin",	{templateUrl:"user/login",controller: 'Cleancache'})
 				.when("/profile/changepass",{templateUrl:"user/changepass",controller: 'Cleancache'})
@@ -210,6 +210,8 @@ angular.module("app",
 				.when("/aprobartemas",{templateUrl:"ruta/aprobartemas",controller: 'Cleancache'})
 				.when("/aprobartema/:idtema",{templateUrl:"ruta/aprobartema",controller: 'HojaRuta'})
 				//otros
+				.when("/webcursos",	{templateUrl:"webcursos/webcursos",controller: 'Cleancache'})
+
 				.when("/cronlist",{templateUrl:"crons/cronlist",controller: 'Cleancache'})
 				.when("/cronerror",{templateUrl:"crons/cronerror",controller: 'Cleancache'})
 				.when("/cronfired",{templateUrl:"crons/cronfired",controller: 'Cleancache'})

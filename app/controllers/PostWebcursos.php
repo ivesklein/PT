@@ -59,6 +59,226 @@ class PostWebcursos{
 		return json_encode($return);
 	}
 
+	public static function reglti()
+	{
+		$return = array();
+		$time_start = microtime(true);
+
+		if(isset($_POST['p'])){
+			if(Rol::hasPermission("webcursos")){
+				$wctodo = WCtodo::wherePeriodo(Periodo::active())->whereAction('addlti')->whereDid(0)->first();
+				if(!empty($wctodo)){
+					$wc = new WCAPI;
+            		$res0 = $wc->login(Auth::user()->wc_id,$_POST['p']);
+            		if(isset($res0["error"])){
+            			return json_encode($res0);
+            		}
+
+    				//create ltis
+					$res2 = $wc->createLTI("Notas",url("lti/notas"),"http://webcursos.uai.cl/theme/image.php/essential/emarking/1421344949/icon");
+					
+					if(isset($res2["ok"])){
+						//$tarea->wc_uid = $res2["ok"];
+					}else{
+						$return["warning"][] = array("lti notas"=>$res2);
+					}
+
+					$res2 = $wc->createLTI("Defensas",url("lti/defensas"),url("icon/defensas.png"));
+					if(isset($res2["ok"])){
+						//$tarea->wc_uid = $res2["ok"];
+					}else{
+						$return["warning"][] = array("lti defensas"=>$res2);
+					}
+
+					$res2 = $wc->createLTI("Evaluación Docente",url("lti/evaluacion"),url("icon/evaluacion.png"));
+					if(isset($res2["ok"])){
+						//$tarea->wc_uid = $res2["ok"];
+					}else{
+						$return["warning"][] = array("lti docente"=>$res2);
+					}
+
+					$res2 = $wc->createLTI("Hoja de Ruta",url("lti/hojaruta"),url("icon/hojaruta.png"));
+					if(isset($res2["ok"])){
+						//$tarea->wc_uid = $res2["ok"];
+					}else{
+						$return["warning"][] = array("lti ruta"=>$res2);
+					}
+
+					$wctodo->did = 1;
+					$wctodo->response = json_encode($return);
+					$wctodo->save();
+
+				}else{
+					$return["ok"] = "Ya fueron creadas";
+				}
+			}else{
+				$return["error"] = "not permission";
+			}
+		}else{
+			$return["error"] = "faltan variables";
+		}
+
+		return json_encode($return);
+
+	}
+
+	public static function regtareas()
+	{
+		$return = array();
+		try {
+			
+			$time_start = microtime(true);
+
+			if(isset($_POST['p'])){
+				if(Rol::hasPermission("webcursos")){
+					
+					
+						/*$t = WCtodo::wherePeriodo(Periodo::active())
+									->whereDid(0)
+									->whereAction('newtarea')
+									->orWhere("action",'updatetarea')
+									->orWhere("action",'deletetarea')
+									->orderBy('created_at')
+									->get();*/
+
+						$t = WCtodo::wherePeriodo(Periodo::active())->
+				        where(function ($query) {
+				            $query->where('action', '=', 'newtarea')
+				                  ->orWhere('action', '=', 'updatetarea')
+				                  ->orWhere('action', '=', 'deletetarea');
+				        })->get();
+
+				        $todo2 = array();
+						foreach ($t as $todo) {
+							$return["ok"][] = array($todo->action, $todo->data);
+							$data = json_decode($todo->data);
+
+							if(isset($todo2[$data->tarea_id])){
+								if($todo->action=='updatetarea'){
+									//dejo la accion anterior, si es update ok, si es create lo crea.
+									$todo2[$data->tarea_id]['todos'][] = $todo->id;
+								}
+								if($todo->action=='deletetarea'){
+									if(empty($data->tarea_wcid)){
+										$todo2[$data->tarea_id]['todos'][] = $todo->id;
+										$todo2[$data->tarea_id]['action'] = 'nothing';
+									}else{
+										$todo2[$data->tarea_id]['todos'][] = $todo->id;
+										$todo2[$data->tarea_id]['action'] = 'deletetarea';
+										$todo2[$data->tarea_id]['uid'] = $data->tarea_wcid;
+									}
+								}
+							}else{
+								if($todo->action=='deletetarea'){
+									if(empty($data->tarea_wcid)){
+										$todo2[$data->tarea_id] = array('action'=>'nothing','todos'=>array($todo->id));
+									}else{
+										$todo2[$data->tarea_id] = array('action'=>$todo->action,'todos'=>array($todo->id));
+										$todo2[$data->tarea_id]['uid'] = $data->tarea_wcid;
+									}
+								}else{
+									$todo2[$data->tarea_id] = array('action'=>$todo->action,'todos'=>array($todo->id));
+								}
+							}
+						}
+
+						$return["warning"] = array();
+
+						$wc = new WCAPI;
+	            		$res0 = $wc->login(Auth::user()->wc_id,$_POST['p']);
+	            		if(isset($res0["error"])){
+	            			return json_encode($res0);
+	            		}
+
+						foreach ($todo2 as $key => $value) {
+							$asd = array();
+							$tarea = Tarea::find($key);
+							if(!empty($tarea)) {
+
+								$title = $tarea->title;
+								$date = Carbon::parse($tarea->date);
+
+								if($value['action']=='newtarea'){
+									$res2 = $wc->createTarea($title, $date, $tarea->uptime);
+									if(isset($res2["ok"])){
+										$tarea->wc_uid = $res2["ok"];
+										$tarea->save();
+									}else{
+										$return["warning"][] = array("tarea: ".$title=>$res2);
+										$asd[] = array("tarea: ".$title=>$res2);
+									}
+								}elseif($value['action']=='updatetarea'){
+									$res2 = $wc->createTarea($title, $date, $tarea->uptime, $tarea->wc_uid);
+									if(isset($res2["ok"])){
+										
+									}else{
+										$return["warning"][] = array("tarea: ".$title=>$res2);
+										$asd[] = array("tarea: ".$title=>$res2);
+									}
+
+								}elseif($value['action']=='deletetarea'){
+
+									$id = $value['uid'];
+									$res2 = $wc->deleteResource($id);
+									if(isset($res2["ok"])){
+										
+									}else{
+										$return["warning"][] = array("tarea: ".$title=>$res2);
+										$asd[] = array("tarea: ".$title=>$res2);
+									}
+
+								}elseif($value['action']=='nothing'){
+
+								}
+
+								foreach ($value['todos'] as $value2) {
+									$todos = WCtodo::find($value2);
+									if(!empty($todos)){
+										$todos->did = 1;
+										$todos->response = $value['action'];
+										$todos->save();
+									}
+								}
+
+								
+							}
+						}
+
+
+
+
+
+
+						/*
+						
+	    				*/
+	    				//$return["ok"] = $t;
+
+					
+				}else{
+					$return["error"] = "not permission";
+				}
+			}else{
+				$return["error"] = "faltan variables";
+			}
+
+		} catch (Exception $e) {
+			$return["error"] = $e->getMessage();
+		}
+
+		return json_encode($return);
+	}
+
+	public static function regusuarios()
+	{
+	# code...
+	}
+
+	public static function regall()
+	{
+	# code...
+	}
+
 	public static function registrar()
 	{
 		$return = array();

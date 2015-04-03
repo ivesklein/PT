@@ -1,197 +1,189 @@
 <div class="page page-table">
-    <?php 
-        $per = Periodo::active_obj();
-        if($per!="false"){
-            if(!$per->wc_course==""){///////////
-                    
-                $temas = Subject::wherePeriodo($per->name)->get();
-                $reg = 0;
-                $notreg = 0;
-                $users = array();
-
-                if(!$temas->isEmpty()){
-                    foreach ($temas as $tema) {
-
-                        
-                        $guia = $tema->guia;
-                        if(!empty($guia->wc_uid)){
-                            $users[$guia->wc_id] = 1;
-                        }else{
-                            $users[$guia->wc_id] = 0;
-                        }
-
-                        
-                        $comision = $tema->comision;
-                        if(!$comision->isEmpty()){
-                            foreach ($comision as $prof) {
-                                if(!empty($prof->wc_uid)){
-                                    $users[$prof->wc_id] = 1;
-                                }else{
-                                    $users[$prof->wc_id] = 0;
-                                }
-                            }
-                        }
-
-
-                        $alumno1 = $tema->ostudent1;
-                        $alumno2 = $tema->ostudent2;
-                        
-                        //print_r($alumno1);
-                        if(!empty($alumno1->wc_uid)){
-                            $users[$alumno1->wc_id] = 1;
-                        }else{
-                            $users[$alumno1->wc_id] = 0;
-                        }
-
-                        if(!empty($alumno2->wc_uid)){
-                            $users[$alumno2->wc_id] = 1;
-                        }else{
-                            $users[$alumno2->wc_id] = 0;
-                        }
-                                
-                
-                    }
-
-                    foreach ($users as $value) {
-                        if($value==0){
-                            $notreg++;
-                        }elseif ($value==1) {
-                            $reg++;
-                        }
-                    }
-                }else{
-                    $message = "<div class='alert alert-warning'>No hay temas de memoria registrados.</div>";
-                }
-
-                ?>
                 <?php echo isset($message)? $message : ""; ?>
                 <div class="row">
-                    <div class="col-lg-3 .col-xsm-6">
+                    <div class="col-lg-3 .col-xsm-6" id="curso">
                         <div class="panel mini-box">
                             <span class="box-icon bg-info"><i class="fa fa-graduation-cap"></i></span>
                             <div class="box-info">
                                 <p class="text-muted">Curso Registrado</p>
-                                <a class='btn btn-info' href='http://webcursos.uai.cl/course/view.php?id=<?=$per->wc_course?>' target='_blanc'>Ver</a>
+                                <a class='btn btn-info' href='http://webcursos.uai.cl/course/view.php?id=<?=$wc_course?>' target='_blanc'>Ver</a>
+                            </div>
+                            <hr class='todo'></hr>
+                            <span class="box-icon todo"></span>
+                            <div class="box-info todo">
+                                <div class='btn btn-warning' id='confcourse'>Cambiar</div>
+                            </div>
+                            <div id="selectcourse"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 .col-xsm-6" id="lti">
+                        <div class="panel mini-box">
+                            <span class="box-icon bg-info"><i class="fa fa-retweet"></i></span>
+                            <div class="box-info">
+                                <p class="size-h3">Recursos LTI</p>
+                                <p class="text-muted"><?=$lti?></p>
+                            </div>
+                            <hr class='todo'></hr>
+                            <span class="box-icon todo"></span>
+                            <div class="box-info todo">
+                                <div class='btn btn-warning' id='clti'>Crear</div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 .col-xsm-6">
+                    <div class="col-lg-3 .col-xsm-6" id="tareas">
+                        <div class="panel mini-box">
+                            <span class="box-icon bg-warning"><i class="fa fa-pencil"></i></span>
+                            <div class="box-info">
+                                <p class="size-h2">Tareas</p>
+                                <p class="text-muted"><?=$tareas?></p>
+                            </div>
+                            <hr class='todo'></hr>
+                            <span class="box-icon todo"></span>
+                            <div class="box-info todo">
+                                <div class='btn btn-warning' id='ctareas'>Actualizar</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 .col-xsm-6" id="usuarios">
                         <div class="panel mini-box">
                             <span class="box-icon bg-success"><i class="fa fa-users"></i></span>
                             <div class="box-info">
-                                <p class="size-h2"><?=$reg?></p>
-                                <p class="text-muted">Usuarios Registrados</p>
+                                <p class="size-h2">Usuarios</p>
+                                <p class="text-muted"><?=$usuarios?></p>
+                            </div>
+                            <hr class='todo'></hr>
+                            <span class="box-icon todo"></span>
+                            <div class="box-info todo">
+                                <div class='btn btn-warning' id='cusuarios'>Actualizar</div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 .col-xsm-6">
+
+                    <div class="col-lg-offset-3 col-lg-6 .col-xsm-6" id="todo">
                         <div class="panel mini-box">
-                            <span class="box-icon bg-danger"><i class="fa fa-users"></i></span>
+                            <span class="box-icon bg-success"><i class="fa fa-cubes"></i></span>
                             <div class="box-info">
-                                <p class="size-h2"><?=$notreg?></p>
-                                <p class="text-muted">No Registrados</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 .col-xsm-6">
-                        <div class="panel mini-box">
-                            <span class="box-icon bg-warning"><i class="fa fa-question"></i></span>
-                            <div class="box-info">
-                                <p class="size-h2">0</p>
-                                <p class="text-muted">No existentes</p>
+                                <p class="size-h2">Todo <?=$todo?></p>
+                                <div class='btn btn-warning todo' id='ctodo'>Actualizar todo </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
 
-                <div class="panel panel-default">
-                        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Webcursos</strong></div>
-                        <div class="panel-body">
-                            <div class="col-xs-2"><input class="form-control" type="password" id="passi" placeholder="wc pass"></input></div>
-                            <div class="col-xs-8">
-                                <div class="btn btn-warning">Actualizar</div><div class="space"></div>
-                                <div class="btn btn-warning" id="regusers">Registrar Usuarios</div><div class="space"></div>
-                                <div class="btn btn-warning" id="recursos">Crear Recursos en Curso</div>
-                            </div>
-                            <div class="col-xs-12">
-                                <div id="mensaje" class='alert alert-danger' style="display:none;"></div>
-                            </div>
-                            <div class="row" id="porcregistrado" data-ng-controller="ProgressCtrl">
-                                <h3>Progreso</h3>
-                                <div class="col-xs-12">
-                                    <progressbar class="progress-striped active" value="dynamic" type="{{type}}">{{dynamic}}%</progressbar>
-                                </div>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tableusers">
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            
-
-                        </div>
-                </div>
-
-                <?php
-
-            }else{
-                echo "<div class='alert alert-warning'>Aun no se selecciona curso para llevar el proceso</div>
-                        <div class='form-control'>
-                        <label class='col-xs-2'>".Auth::user()->wc_id."</label>
-                        <div class='col-xs-2'>
-                            <input class='form-control' type='password' id='passi' placeholder='wc pass'></input>
-                        </div>
-                        <div class='btn btn-warning' id='confcourse'>Configurar <i style='display:none' class='fa fa-spin fa-refresh waiting'></i></div>
-                        </div>
-                <div id='mensaje' class='alert alert-danger' style='display:none;'></div>
-                <div id='selectcourse'></div>
-                <div id='btnselectcourse'></div>
-                ";
-            }
-        }else{
-            echo "<div class='alert alert-danger'>No hay semestre activo. Coordinación debe activar un semestre para poder continuar.</div>";
-        }
-    ?>
+<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="gridSystemModalLabel"><?=Auth::user()->wc_id ?></h4>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="form-group"><label>Contraseña Webcursos</label><input type="password" class="form-control" id="passi"></div>
+            <div class="form-group">
+                <div class="btn btn-warning" id="ok">Realizar Cambios  <i style='display:none' class='fa fa-spin fa-refresh waiting'></i></div>
+            </div>
+          </div>
+        </div>
+      </div>        
+    </div>
+  </div>
+</div>
 
 
-
-
-<!--h3>Crear Conexión</h3>
-<form action="#/webcursos" method="POST">
-<input type="hidden" name="f" value="ltinew"></input>
-<label>name</label>
-<input type="text" name="name"></input>
-<label>Public</label>
-<input type="text" name="public"></input>
-<label>Secret</label>
-<input type="text" name="secret"></input>
-<input type="submit" value="Crear"></input>
-</form>
-<br-->
-<?php
-/*
-$ltis = Consumer::all();
-
-
-foreach($ltis as $lti){
-	echo $lti->name."<br>";
-}
-
-*/
-?>
-
+<script src="js/modal.js"></script>
 <script type="text/javascript">
 	
+
     ok1=false;
 
-	$('#confcourse').on("click", function() {
+    var resumen = <?=$resumen ?>;
+
+    $(function() {
+
+        //$('.modal').modal();
+
+        if(resumen.lti == 0)
+            $('#lti .todo').hide();
+        if(resumen.tareas == 0)
+            $('#tareas .todo').hide();
+        if(resumen.usuarios == 0)
+            $('#usuarios .todo').hide();
+        if(resumen.todo == 0)
+            $('#todo .todo').hide();
+    })
+
+    var todo = "";
+
+    $('#clti').click(function() {
+        todo = "reglti";
+        $('.modal').modal("show");
+    });
+
+    $('#ctareas').click(function() {
+        todo = "regtareas";
+        $('.modal').modal("show");
+    });
+
+    $('#cusuarios').click(function() {
+        todo = "regusuarios";
+        $('.modal').modal("show");
+    });
+
+    $('#ctodo').click(function() {
+        todo = "regtodo";
+        $('.modal').modal("show");
+    });
+
+    $('#confcourse').click(function() {
+        todo = "cursos";
+        $('.modal').modal("show");
+    });
+
+    $('#ok').on("click", function() {
+        var res=$('#passi').val();
+        
+        if(res!=null && res!=""){
+            $(".waiting").show();
+            $('#ok').addClass("disabled");
+             $('#mensaje').hide();
+            var datos = {
+                "f":"Webcursos_"+todo,
+                "p":res
+            };
+            ajx({
+                data:datos,
+                ok:function(data) {
+
+                    $(".waiting").hide();
+                    $('#ok').removeClass("disabled");
+                    $('.modal').modal("hide");
+                    if(todo=="cursos"){
+                        $('#selectcourse').append("<span class='ui-select'><select></select></span><div class='btn btn-warning' id='btnselectcourse'>Seleccionar</div>")
+                        for(i in data.data){
+                            var item = data.data[i];
+                            $('#selectcourse select').append("<option value='"+item.id+"'>"+item.title+"</option>");
+                        }
+                        $('#btnselectcourse').append("<div class='btn btn-success sel'>Elegir</div>")
+                    }else{
+                        //location.reload();    
+                    }
+                    
+                },
+                error:function(data) {
+                    $(".waiting").hide();
+                    $('#ok').removeClass("disabled");
+                    $('.modal').modal("hide");
+                    alert(data);
+                }
+            });
+        }
+    });
+
+
+
+	/*$('#confcourse').on("click", function() {
 		var res=$('#passi').val();
         
 		if(res!=null && res!=""){
@@ -206,7 +198,7 @@ foreach($ltis as $lti){
                 data:datos,
                 ok:function(data) {
                     if(ok1==false){
-                    	$('#selectcourse').append("<span class='ui-select'><select></select></span>")
+                    	$('#selectcourse').append("<span class='ui-select'><select></select></span><div class='btn btn-warning' id='btnselectcourse'></div>")
                         for(i in data.data){
                         	var item = data.data[i];
                         	$('#selectcourse select').append("<option value='"+item.id+"'>"+item.title+"</option>");
@@ -228,7 +220,7 @@ foreach($ltis as $lti){
             $("#passi").focus();
         }
 
-	});
+	});*/
 
 	$("#btnselectcourse").on("click", ".sel", function() {
 		var id = $('#selectcourse select').val();

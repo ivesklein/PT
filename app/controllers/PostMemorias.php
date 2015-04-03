@@ -64,6 +64,9 @@ class PostMemorias{
 					//verificar si existen, 
 					//si no crearlos.
 
+				$temas = array();//guardar los temas para reconstruir info en gotera
+
+
 				$pos1 = strpos($res[1][$EMAIL1], "@");
 				$pos2 = strpos($res[1][$V2MPROFESOR], "@");
 
@@ -155,6 +158,9 @@ class PostMemorias{
 								$student->name = $name; 
 								$student->surname = $surname; 
 								$student->save();
+
+
+
 							}
 
 							//alumno 2
@@ -192,6 +198,12 @@ class PostMemorias{
 							//$subj->company_rut = $fila[$EMPRESARUT];
 
 							$subj->save();
+
+							$temas[$subj->id] = array(
+								"s1"=>$fila[$EMAIL1],
+								"s2"=>$fila[$EMAIL2],
+								"p"=>$fila[$MPROFESOR]
+							);
 
 						}
 					}
@@ -301,10 +313,17 @@ class PostMemorias{
 								$subj->periodo = $periodo;
 								$subj->defensa = 0;
 								$subj->save();
+
+								$temas[$subj->id] = array(
+									"s1"=>$fila[$V2EMAIL1],
+									"p"=>$fila[$V2MPROFESOR]
+								);
 							}else{
 								if(empty($subj->student2)){
 									$subj->student2 = $fila[$V2EMAIL1];
 									$subj->save();
+
+									$temas[$subj->id]["s2"] = $fila[$V2EMAIL1];
 								}else{
 									//error?
 								}
@@ -325,7 +344,18 @@ class PostMemorias{
 					//error
 				}
 
-				
+				foreach ($temas as $key => $tema) {
+					
+					$st1 = explode("@",$tema["s1"]);
+			    	$st2 = explode("@",$tema["s2"]);
+			    	$grupo = $st1[0]." & ".$st2[0]."(".$key.")";
+
+			    	$wc = WCtodo::add("newgroup", array('group'=>$grupo, 'subject_id'=>$key));
+			    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["s1"]));
+			    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["s2"]));
+			    	$wc = WCtodo::add("u2g", array('group'=>$grupo, 'subject_id'=>$key, 'user'=>$tema["p"]));
+
+				}
 
 			}else{
 				//error con el archivo

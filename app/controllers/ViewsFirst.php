@@ -480,13 +480,6 @@ class ViewsFirst extends BaseController
 		return View::make('views.comision.confirmar', array("table"=>$table));
 	}
 
-	public function getWebcursos()
-	{
-		
-		return View::make('views.webcursos.webcursos');
-	}
-
-
 }
 
 ?>

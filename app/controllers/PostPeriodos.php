@@ -48,6 +48,7 @@ class PostPeriodos{
 			        $event->save();
 			        $return["ok"] = $event->id;
 		        	$a = DID::action(Auth::user()->wc_id, "activar periodo", $_POST["id"], "periodo");
+		        	$wc = WCtodo::add("addlti", array());
 	        	}else{
 					$return["error"] = "Debe cerrar el periodo anterior.";
 				}

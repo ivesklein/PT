@@ -216,6 +216,8 @@ Route::controller('crons','ViewsCron');
 
 Route::controller('reg','ViewsReg');
 
+Route::controller('webcursos','ViewsWebcursos');
+
 Route::get('feedback/{id}', 'GetFile@feedback');
 
 

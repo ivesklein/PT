@@ -246,7 +246,7 @@ class PostHojaRuta{
 			                	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
 							}
 
-							if(!isset($_POST['disweb'])){
+							/*if(!isset($_POST['disweb'])){
 
 								if($ok==true){
 									$wc = new WCAPI;
@@ -273,12 +273,12 @@ class PostHojaRuta{
 									}
 								}
 
-							}
+							}*/
 
 
 							if($ok==true){
 
-								if(!isset($_POST['disweb'])){
+								/*if(!isset($_POST['disweb'])){
 								
 									if(isset($wcusers['users'][$staff->wc_id])){
 										//está en queso, está en curso
@@ -402,7 +402,7 @@ class PostHojaRuta{
 
 									}//else en curso
 									
-								}else{//sin wc
+								}else{//sin wc*/
 
 									if(isset($_POST["reasignar"])){
 										$revs = Revisor::whereSubject_id($_POST['id'])->get();
@@ -416,8 +416,17 @@ class PostHojaRuta{
 										$rev = new Revisor;
 										$rev->subject_id = $_POST['id'];
 									}
+
+									if(!empty($rev->staff_id)){
+										$ant = Staff::find($rev->staff_id);
+										$wc = WCtodo::add("u!2g", array('subject_id'=>$_POST['id'], 'user'=>$ant->wc_id));
+									}
+									$wc = WCtodo::add("u2g", array('subject_id'=>$_POST['id'], 'user'=>$staff->wc_id));
+
 									$rev->staff_id = $staff->id;
 									$rev->save();
+									
+
 
 									$hoja = $tema->firmas;
 									$hoja->status = "en-revision";
@@ -428,7 +437,7 @@ class PostHojaRuta{
 
 									$return["ok"]=1;
 
-								}
+								/*}*/
 
 							}//if ok
 
@@ -490,7 +499,7 @@ class PostHojaRuta{
 							}
 						}
 
-						if(!isset($_POST['disweb'])){
+						/*if(!isset($_POST['disweb'])){
 
 							if($ok==true){
 								$wc = new WCAPI;
@@ -517,12 +526,12 @@ class PostHojaRuta{
 								}
 							}
 
-						}
+						}*/
 						
 						//si no está en curso
 						if($ok==true){
 
-							if(!isset($_POST['disweb'])){
+							/*if(!isset($_POST['disweb'])){
 
 								if(isset($wcusers['users'][$staff->wc_id])){
 									//agregado a queso, está en curso
@@ -639,7 +648,7 @@ class PostHojaRuta{
 
 								}//else en curso
 
-							}else{//sin wc
+							}else{//sin wc*/
 
 								if(isset($_POST["reasignar"])){
 									$revs = Revisor::whereSubject_id($_POST['id'])->get();
@@ -653,9 +662,17 @@ class PostHojaRuta{
 									$rev = new Revisor;
 									$rev->subject_id = $_POST['id'];
 								}
+								
+
+								if(!empty($rev->staff_id)){
+									$ant = Staff::find($rev->staff_id);
+									$wc = WCtodo::add("u!2g", array('subject_id'=>$_POST['id'], 'user'=>$ant->wc_id));
+								}
+								$wc = WCtodo::add("u2g", array('subject_id'=>$_POST['id'], 'user'=>$staff->wc_id));
+
 								$rev->staff_id = $staff->id;
 								$rev->save();
-
+								
 								$hoja = $tema->firmas;
 								$hoja->status = "en-revision";
 								$hoja->save();
@@ -665,7 +682,7 @@ class PostHojaRuta{
 
 								$return["ok"]=1;
 
-							}
+							/*}*/
 
 
 						}//if ok

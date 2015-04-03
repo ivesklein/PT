@@ -28,6 +28,8 @@ class PostTareas{
 							$tarea->evaltime = $value->eval;
 							$tarea->save();
 
+							$wc = WCtodo::add("newtarea", array('tarea_id'=>$tarea->id));
+
 							if($tarea->tipo==1){
 								$tarea2 = new Tarea;
 								$tarea2->title = "Predefensa";
@@ -70,6 +72,8 @@ class PostTareas{
 							$tarea->uptime = $value->entrega;
 							$tarea->evaltime = $value->eval;
 							$tarea->save();
+
+							$wc = WCtodo::add("updatetarea", array('tarea_id'=>$tarea->id));
 
 							$eventos = CEvent::whereDetail($tarea->id)->get();
 							if(!$eventos->isEmpty()){
@@ -120,7 +124,8 @@ class PostTareas{
 								$evento = $eventos->first();
 								$evento->delete();
 							}
-
+							$wc = WCtodo::add("deletetarea", array('tarea_id'=>$tarea->id,'tarea_wcid'=>$tarea->wc_uid));
+							
 							$tarea->delete();
 						}
 					}

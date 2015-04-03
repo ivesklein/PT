@@ -19,15 +19,7 @@ class ViewsEntregas extends BaseController
 
 		$res = Periodo::active_obj();
 		if($res!="false"){
-			if(empty($res->resources)){
-				$dis = false;
-			}else{
-				if($res->resources==1){//???
-					$dis = true;
-				}else{
-					$dis = false;
-				}
-			}
+			$dis = false;
 		}else{
 			$dis = true;
 		}
