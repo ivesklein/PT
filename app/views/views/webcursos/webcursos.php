@@ -169,6 +169,8 @@
                     }else{
                         //location.reload();    
                     }
+
+                    $('.page').html(data['warning'][0][0]['error']['res']);
                     
                 },
                 error:function(data) {

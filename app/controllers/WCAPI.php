@@ -587,7 +587,9 @@ class WCAPI {
 				"teamsubmission"=>"1",
 				"teamsubmissiongroupingid"=>"0",
 				"sendnotifications"=>"1", //notificacion a ayudante
-				"grade"=>"0",
+				"sendstudentnotifications"=>1,
+				"grade[modgrade_type]"=>"point",
+				"grade[modgrade_point]"=>100,
 				"advancedgradingmethod_submissions"=>"",
 				"gradecat"=>"20828",
 				"blindmarking"=>"0",
@@ -604,6 +606,18 @@ class WCAPI {
 			if($idupdate!=0){
 				$data["coursemodule"] = $idupdate;
 				$data["update"]  = $idupdate;
+				$data["add"] = 0;
+				$data["groupingid"] = 0;
+
+				$resi = $this->getInstance($idupdate);
+				if(isset($resi['ok'])){
+					$data["instance"] = $resi['ok']['instance'];
+					$data["introeditor[itemid]"] = $resi['ok']['introeditor'];
+					$data["introattachments"] = $resi['ok']['introattachments'];
+				}else{
+					return array('error'=>$resi);
+				}
+
 			}
 
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
@@ -612,13 +626,32 @@ class WCAPI {
 			if(isset($contenido["ok"])){
 				try {
 
-					preg_match_all('|cmid-([0-9]+)|', $contenido["ok"], $matches);
+					if($idupdate!=0){
 
-					if(isset($matches[0][0])){
-						$return["ok"] = $matches[1][0];
+						//preg_match_all('|<a title=".+" href="http:..webcursos.uai.cl.mod.assign.view.php.id=([0-9]+])">.+<.a>|', $contenido["ok"], $matches);
+						preg_match_all('|cmid-([0-9]+)|', $contenido["ok"], $matches);
+						if(isset($matches[0][0])){
+							if($matches[1][0]==$idupdate){
+								$return["ok"] = $matches[1][0];
+							}else{
+								$return['error'] = array('post'=>$data,'res'=>$contenido["ok"]);
+							}
+						}else{
+							$return["error"] = array("no Matches"=>$data,'res'=>$contenido["ok"]);
+						}
+
 					}else{
-						$return["error"] = array("no Matches"=>$data);
+												
+						preg_match_all('|cmid-([0-9]+)|', $contenido["ok"], $matches);
+
+						if(isset($matches[0][0])){
+							$return["ok"] = $matches[1][0];
+						}else{
+							$return["error"] = array("no Matches"=>$data,'res'=>$contenido["ok"]);
+						}
 					}
+
+
 
 				} catch (Exception $e) {
 					$return["error"] = $e->getMessage();
@@ -753,8 +786,64 @@ class WCAPI {
 		return $return;
 	}
 
+	public function getInstance($idrecurso)
+	{
+	$return = array();
+		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
+			$url = "http://webcursos.uai.cl/course/modedit.php?update=".$idrecurso."&return=0&sr=0";//&perpage=5000";
+			$data = array();
+			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
+			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
+			
+			if(isset($contenido["ok"])){
+				try {
+
+					preg_match_all('|<input name="instance" type="hidden" value="([0-9]+)" .>|', $contenido["ok"], $matches);
+					preg_match_all('|<input value="([0-9]+)" name="introattachments" type="hidden" .>|', $contenido["ok"], $matches2);
+					preg_match_all('|<input type="hidden" name="introeditor.itemid." value="([0-9]+)" .>|', $contenido["ok"], $matches3);
+
+
+					if(isset($matches[0][0])){
+						$return["ok"] = array();
+						$return["ok"]['instance'] = $matches[1][0];
+					}else{
+						$return["error"] = array("no Matches"=>$contenido["ok"]);
+					}
+
+					if(isset($matches2[0][0])){
+						$return["ok"]['introattachments'] = $matches2[1][0];
+					}else{
+						$return["error"] = array("no Matches"=>$contenido["ok"]);
+					}
+
+					if(isset($matches3[0][0])){
+						$return["ok"]['introeditor'] = $matches3[1][0];
+					}else{
+						$return["error"] = array("no Matches"=>$contenido["ok"]);
+					}
+					
+
+				} catch (Exception $e) {
+					$return["error"] = $e->getMessage();
+				}
+			}else{
+				$return["error"] = $contenido["error"];
+			}
+		}else{
+			$return["error"]="not-logged:".$this->sesskey."-".$this->course;
+		}
+
+		return $return;
+	}
+
 
 /*
+
+GET INSTANCE
+	http://webcursos.uai.cl/course/modedit.php?update=624972&return=0&sr=0
+
+	<input name="instance" type="hidden" value="17490" />
+
 
 DELETE RESOURCE
 	http://webcursos.uai.cl/course/rest.php

@@ -125,7 +125,7 @@ class PostWebcursos{
 	public static function regtareas()
 	{
 		$return = array();
-		try {
+		//try {
 			
 			$time_start = microtime(true);
 
@@ -142,6 +142,7 @@ class PostWebcursos{
 									->get();*/
 
 						$t = WCtodo::wherePeriodo(Periodo::active())->
+						whereDid(0)->
 				        where(function ($query) {
 				            $query->where('action', '=', 'newtarea')
 				                  ->orWhere('action', '=', 'updatetarea')
@@ -198,50 +199,53 @@ class PostWebcursos{
 								$title = $tarea->title;
 								$date = Carbon::parse($tarea->date);
 
-								if($value['action']=='newtarea'){
-									$res2 = $wc->createTarea($title, $date, $tarea->uptime);
-									if(isset($res2["ok"])){
-										$tarea->wc_uid = $res2["ok"];
-										$tarea->save();
-									}else{
-										$return["warning"][] = array("tarea: ".$title=>$res2);
-										$asd[] = array("tarea: ".$title=>$res2);
-									}
-								}elseif($value['action']=='updatetarea'){
-									$res2 = $wc->createTarea($title, $date, $tarea->uptime, $tarea->wc_uid);
-									if(isset($res2["ok"])){
-										
-									}else{
-										$return["warning"][] = array("tarea: ".$title=>$res2);
-										$asd[] = array("tarea: ".$title=>$res2);
-									}
+							}
 
-								}elseif($value['action']=='deletetarea'){
-
-									$id = $value['uid'];
-									$res2 = $wc->deleteResource($id);
-									if(isset($res2["ok"])){
-										
-									}else{
-										$return["warning"][] = array("tarea: ".$title=>$res2);
-										$asd[] = array("tarea: ".$title=>$res2);
-									}
-
-								}elseif($value['action']=='nothing'){
-
+							if($value['action']=='newtarea'){
+								Log::info($value['action']);
+								$res2 = $wc->createTarea($title, $date, $tarea->uptime);
+								if(isset($res2["ok"])){
+									$tarea->wc_uid = $res2["ok"];
+									$tarea->save();
+								}else{
+									$return["warning"][] = array("tarea: ".$title=>$res2);
+									$asd[] = array("tarea: ".$title=>$res2);
+								}
+							}elseif($value['action']=='updatetarea'){
+								$res2 = $wc->createTarea($title, $date, $tarea->uptime, $tarea->wc_uid);
+								if(isset($res2["ok"])){
+									
+								}else{
+									$return["warning"][] = array($res2);
+									$asd[] = array("tarea: ".$title=>$res2);
 								}
 
-								foreach ($value['todos'] as $value2) {
-									$todos = WCtodo::find($value2);
-									if(!empty($todos)){
-										$todos->did = 1;
-										$todos->response = $value['action'];
-										$todos->save();
-									}
+							}elseif($value['action']=='deletetarea'){
+
+								$id = $value['uid'];
+								$res2 = $wc->deleteResource($id);
+								if(isset($res2["ok"])){
+									
+								}else{
+									$return["warning"][] = array("tarea: ".$key=>$res2);
+									$asd[] = array("tarea: ".$key=>$res2);
 								}
+
+							}elseif($value['action']=='nothing'){
+
+							}
+
+							foreach ($value['todos'] as $value2) {
+								$todos = WCtodo::find($value2);
+								if(!empty($todos)){
+									$todos->did = 1;
+									$todos->response = $value['action'];
+									$todos->save();
+								}
+							}
 
 								
-							}
+							
 						}
 
 
@@ -262,9 +266,9 @@ class PostWebcursos{
 				$return["error"] = "faltan variables";
 			}
 
-		} catch (Exception $e) {
-			$return["error"] = $e->getMessage();
-		}
+		//} catch (Exception $e) {
+		//	$return["error"] = $e->getMessage();
+		//}
 
 		return json_encode($return);
 	}

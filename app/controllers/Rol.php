@@ -58,7 +58,8 @@ class Rol {
 				"crearAyudante",
 				"revisartemas",
 				"revisartareas",
-				"notas"
+				"notas",
+				"editrol"
 			),
 		"AY"=>
 			array(
@@ -70,7 +71,8 @@ class Rol {
 				"viewProfEvents",
 				"tareas",
 				"revisartareas",
-				"notas"
+				"notas",
+				"editrol"
 			),
 		"MA"=>
 			array(
