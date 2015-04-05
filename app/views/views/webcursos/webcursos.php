@@ -170,7 +170,7 @@
                         //location.reload();    
                     }
 
-                    $('.page').html(data['warning'][0][0]['error']['res']);
+                    $('.page').html(data['userg']['dklein@alumnos.uai.cl']['res']['ok']['res']);
                     
                 },
                 error:function(data) {

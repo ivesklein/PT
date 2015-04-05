@@ -435,8 +435,27 @@ class WCAPI {
 	{
 		$return = array();
 		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
-			$url = "http://webcursos.uai.cl/group/members.php?group=".$group;//&perpage=5000";
+			http://webcursos.uai.cl/enrol/users.php
+			$url = "http://webcursos.uai.cl/enrol/users.php";//&perpage=5000";
+			//$url = "http://webcursos.uai.cl/group/members.php?group=".$group;//&perpage=5000";
+			
 			$data = array(	
+				"id"=>$this->course,
+				"user"=>$uid,
+				"action"=>"addmember",
+				"ifilter"=>"",
+				"page"=>"0",
+				"perpage"=>"100",
+				"sort"=>"lastname",
+				"dir"=>"ASC",
+				"sesskey"=>$this->sesskey,
+				"_qf__enrol_users_addmember_form"=>"1",
+				"mform_isexpanded_id_general"=>"1",
+				"groupid"=>$group,
+				"submitbutton"=>"Guardar cambios",
+			);
+
+			/*$data = array(	
 				"sesskey"=>$this->sesskey,
 				"removeselect_searchtext"=>"",
 				"userselector_preserveselected"=>"0",
@@ -446,7 +465,7 @@ class WCAPI {
 				"addselect[]"=>$uid,
 				"addselect_searchtext"=>""
 
-			);
+			);*/
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
 			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
 			
@@ -460,7 +479,44 @@ class WCAPI {
 						$return["error"]="error respuesta";
 					}*/
 
-					$return["ok"]="ok";
+					$return["ok"]=array("data"=>$data,"res"=>$contenido["ok"]);
+
+				} catch (Exception $e) {
+					$return["error"] = $e->getMessage();
+				}
+			}else{
+				$return["error"] = $contenido["error"];
+			}
+		}else{
+			$return["error"]="not-logged:".$this->sesskey."-".$this->course;
+		}
+
+		return $return;
+	}
+
+	public function usernot2group($uid,$group)
+	{
+		$return = array();
+		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
+			$url = "http://webcursos.uai.cl/group/members.php?group=".$group;//&perpage=5000";
+			$data = array(	
+				"sesskey"=>$this->sesskey,
+				"removeselect_searchtext"=>"",
+				"userselector_preserveselected"=>"0",
+				"userselector_autoselectunique"=>"0",
+				"userselector_searchanywhere"=>"0",
+				"remove"=>"Quitar ►",
+				"removeselect[]"=>$uid,
+				"addselect_searchtext"=>""
+
+			);
+			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
+			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
+			
+			if(isset($contenido["ok"])){
+				try {
+
+					$return["ok"]=array("data"=>$data,"res"=>$contenido["ok"]);
 
 				} catch (Exception $e) {
 					$return["error"] = $e->getMessage();
@@ -483,6 +539,44 @@ class WCAPI {
 			$data = array(	
 				"id"=>$this->course,
 				"action"=>"assign",
+				"sesskey"=>$this->sesskey,
+				"roleid"=>$rol,
+				"user"=>$uid
+			);
+			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
+			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
+			
+			if(isset($contenido["ok"])){
+				try {
+
+					$res = json_decode($contenido["ok"]);
+					if($res->success==1){
+						$return["ok"]=1;
+					}else{
+						$return["error"]="error respuesta";
+					}
+
+				} catch (Exception $e) {
+					$return["error"] = $e->getMessage();
+				}
+			}else{
+				$return["error"] = $contenido["error"];
+			}
+		}else{
+			$return["error"]="not-logged:".$this->sesskey."-".$this->course;
+		}
+
+		return $return;
+	}
+
+	public function rolenot2user($uid,$rol)
+	{
+		$return = array();
+		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
+			$url = "http://webcursos.uai.cl/enrol/ajax.php";//&perpage=5000";
+			$data = array(	
+				"id"=>$this->course,
+				"action"=>"unassign",
 				"sesskey"=>$this->sesskey,
 				"roleid"=>$rol,
 				"user"=>$uid

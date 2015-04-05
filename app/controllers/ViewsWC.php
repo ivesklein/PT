@@ -272,9 +272,11 @@ class ViewsWC extends BaseController
 				Session::put('wc.user', $lti['email']);
 				$tema = Subject::studentfind($lti['email'])->wherePeriodo(Periodo::active())->first();
 
-				$nstudent = $tema->student1==$lti['email']?"student1":"student2";
+				
 
 				if(!empty($tema)){
+
+					$nstudent = $tema->student1==$lti['email']?"student1":"student2";
 
 					$tarea = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->first();
 					if(!empty($tarea)){
