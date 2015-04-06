@@ -738,7 +738,7 @@ class PostMemorias{
 	{
 		$return = array();
 		if(isset($_POST['id'])){
-			if(Rol::hasPermission("revisartareas")){
+			if(Rol::hasPermission("revisartareas") || Rol::hasPermission("notas")){
 				$per = Periodo::active_obj();
 				if($per!="false"){
 					
@@ -771,7 +771,7 @@ class PostMemorias{
 									$date = CarbonLocale::parse($tarea->date);
 									$wc = $tarea->wc_uid;
 
-									
+									$file = 0;
 									$active = 0; //0 es futura, 1 es activa, 2 es pasado con eval.
 									$now = Carbon::now();
 									if($date>$now){//futura
@@ -792,6 +792,9 @@ class PostMemorias{
 											$notita = $notadb->first();
 											$nota = empty($notita->nota)?"":$notita->nota;
 											$feedback = $notita->feedback;
+											if(!empty($notita->file)){
+												$file=$notita->id;
+											}
 										}
 										$fecha = $date->diffParaHumanos();
 									}
@@ -807,6 +810,9 @@ class PostMemorias{
 											$notita = $notadb->first();
 											$nota = empty($notita->nota)?"":$notita->nota;
 											$feedback = $notita->feedback;
+											if(!empty($notita->file)){
+												$file=$notita->id;
+											}
 										}
 										$fecha = "";
 
@@ -821,13 +827,14 @@ class PostMemorias{
 									"url"=>$url,
 									"nota"=>$nota,
 									"feedback"=>$feedback,
-									"tipo"=>$tarea->tipo
+									"tipo"=>$tarea->tipo,
+									"file"=>$file
 								);
 
 							}
 
 						}else{
-							$return["error"] = "no tareas";
+							$return["error"] = "Aun no se han configurado las entregas.";
 						}
 
 					}else{

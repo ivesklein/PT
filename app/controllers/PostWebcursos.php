@@ -49,17 +49,23 @@ class PostWebcursos{
 
 					$perms = Permission::wherePermission("AY")->get();
         			foreach ($perms as $perm) {
-	                    $wc = WCtodo::add("newuser", array('user'=>$perm->staff->wc_id, 'rol'=>'PT'));
+        				if(!empty($perm->staff)){
+	                    	$wc = WCtodo::add("newuser", array('user'=>$perm->staff->wc_id, 'rol'=>'PT'));
+	                	}
 					}
             		
             		$perms = Permission::wherePermission("CA")->get();
         			foreach ($perms as $perm) {
-        				$wc = WCtodo::add("newuser", array('user'=>$perm->staff->wc_id, 'rol'=>'PT'));
+        				if(!empty($perm->staff)){
+        					$wc = WCtodo::add("newuser", array('user'=>$perm->staff->wc_id, 'rol'=>'PT'));
+						}
 					}
             		
             		$perms = Permission::wherePermission("SA")->get();
         			foreach ($perms as $perm) {
-        				$wc = WCtodo::add("newuser", array('user'=>$perm->staff->wc_id, 'rol'=>'PT'));
+        				if(!empty($perm->staff)){
+        					$wc = WCtodo::add("newuser", array('user'=>$perm->staff->wc_id, 'rol'=>'PT'));
+						}
 					}
             		
 					$a = DID::action(Auth::user()->wc_id, "elegir Curso", $per->id, "periodo");
@@ -293,6 +299,8 @@ class PostWebcursos{
 	{
 		$return = array("groups"=>array(),"users"=>array());
 		$time_start = microtime(true);
+		$stop = 0;
+		$count = 0;
 
 		if(isset($_POST['p'])){
 			if(Rol::hasPermission("webcursos")){
@@ -314,9 +322,21 @@ class PostWebcursos{
                 $u += WCtodo::wherePeriodo(Periodo::active())->whereAction('addrol')->whereDid(0)->count();
                 $u += WCtodo::wherePeriodo(Periodo::active())->whereAction('delrol')->whereDid(0)->count();
 
+
+ 
+
+
+
+
         		$newgroups = WCtodo::wherePeriodo(Periodo::active())->whereAction('newgroup')->whereDid(0)->get();
 
         		foreach ($newgroups as $group) {
+                	$time_for2 = microtime(true);
+	            	if($time_for2-$time_start>5){//tiempo limite
+	            		$stop = 1;
+	            		break;
+	            	}
+
         			$data = json_decode($group->data);
         			$name = $data->group;
         			$idsubj = $data->subject_id;
@@ -329,298 +349,325 @@ class PostWebcursos{
                 		//$wcgroups[$grupo] = $res["ok"];
                 		$group->did = 1;
                 		$group->save();
+                		$count++;
                 	}
 
                 	$return['groups'][] = $name;
 
+
+
         		}
 
-        		$newusers = WCtodo::wherePeriodo(Periodo::active())->whereAction('newuser')->whereDid(0)->get();
-        		$t = WCtodo::wherePeriodo(Periodo::active())->
-							whereDid(0)->
-					        where(function ($query) {
-					            $query->where('action', '=', 'addrol')
-					                  ->orWhere('action', '=', 'delrol');
-					        })->get();
+        		if($stop==0){
 
-				$users = array();
+	        		$newusers = WCtodo::wherePeriodo(Periodo::active())->whereAction('newuser')->whereDid(0)->get();
+	        		$t = WCtodo::wherePeriodo(Periodo::active())->
+								whereDid(0)->
+						        where(function ($query) {
+						            $query->where('action', '=', 'addrol')
+						                  ->orWhere('action', '=', 'delrol');
+						        })->get();
 
-				foreach ($newusers as $newuser) {
-					$data = json_decode($newuser->data);
-					$users[$data->user] = array("add"=>array($data->rol), "del"=>array());
-				}
+					$users = array();
 
-
-				foreach ($t as $role) {
-					$data = json_decode($role->data);
-					$user = Staff::find($data->user_id);
-					if(!isset($users[$user->wc_id])){
-						$users[$user->wc_id] = array("add"=>array(), "del"=>array());
+					foreach ($newusers as $newuser) {
+						$data = json_decode($newuser->data);
+						$users[$data->user] = array("add"=>array($data->rol), "del"=>array());
 					}
 
-					$permission = $data->permission;
-					if($permission=="AY" || $permission=="PT" || $permission=="CA" || $permission=="SA"){
-						$rol = "PT";
-					}
-					if($permission=="P"){
-						$rol = "P";
-					}
 
-					if($role->action=='addrol'){
-						$n = array_search($rol ,$users[$user->wc_id]['add']);
-						if($n===false){
-							$users[$user->wc_id]['add'][] = $rol;
+					foreach ($t as $role) {
+						$data = json_decode($role->data);
+						$user = Staff::find($data->user_id);
+						if(!isset($users[$user->wc_id])){
+							$users[$user->wc_id] = array("add"=>array(), "del"=>array());
 						}
-						$n = array_search($rol ,$users[$user->wc_id]['del']);
-						if($n!==false){
-							unset($users[$user->wc_id]['del'][$n]);
-						}
-					}elseif($role->action=='delrol'){
-						$n = array_search($rol ,$users[$user->wc_id]['del']);
-						if($n===false){
-							$users[$user->wc_id]['del'][] = $rol;
-						}
-						$n = array_search($rol ,$users[$user->wc_id]['add']);
-						if($n!==false){
-							unset($users[$user->wc_id]['add'][$n]);
-						}
-					}
-				}
 
-				$wcres1 = $wc->userList();
-        		if(!isset($wcres1["error"])){
-        			$wcusers = $wcres1["users"];
-        		}else{
-        			return json_encode($wcres1);
-        		}
+						$permission = $data->permission;
+						if($permission=="AY" || $permission=="PT" || $permission=="CA" || $permission=="SA"){
+							$rol = "PT";
+						}
+						if($permission=="P"){
+							$rol = "P";
+						}
 
-        		$r2n = array(
-        			"PT"=>3,
-        			"P"=>4,
-        			"ST"=>5,
-        			5=>"ST",
-        			4=>"P",
-        			3=>"PT"
-        			);
-
-				foreach ($users as $wc_id => $roles) {
-					$did = "";
-					$user = Staff::whereWc_id($wc_id)->first();
-					if(empty($user)){
-						$user = Student::whereWc_id($wc_id)->first();
-					}
-					//si se agrega
-					if(!empty($roles['add'])){
-						//si está registrado
-						if(isset($wcusers[$wc_id])){
-							//hacer cambios
-							$uid = $wcusers[$wc_id]['uid'];
-							
-							if(!empty($user)){
-								$user->wc_uid = $uid;
+						if($role->action=='addrol'){
+							$n = array_search($rol ,$users[$user->wc_id]['add']);
+							if($n===false){
+								$users[$user->wc_id]['add'][] = $rol;
 							}
+							$n = array_search($rol ,$users[$user->wc_id]['del']);
+							if($n!==false){
+								unset($users[$user->wc_id]['del'][$n]);
+							}
+						}elseif($role->action=='delrol'){
+							$n = array_search($rol ,$users[$user->wc_id]['del']);
+							if($n===false){
+								$users[$user->wc_id]['del'][] = $rol;
+							}
+							$n = array_search($rol ,$users[$user->wc_id]['add']);
+							if($n!==false){
+								unset($users[$user->wc_id]['add'][$n]);
+							}
+						}
+					}
 
-							foreach ($roles['add'] as $value) {
-								//si no lo tiene
-								if(!isset( $wcusers[$wc_id]['roles'][ $r2n[$value] ])){
-									//agregar
-									$rol = $r2n[$value];
-									$wcres1 = $wc->role2user($uid,$rol);
-					        		if(isset($wcres1["error"])){
-					        			return json_encode($wcres1);
-					        		}
-					        		$did .= "add ".$value;
+					$wcres1 = $wc->userList();
+	        		if(!isset($wcres1["error"])){
+	        			$wcusers = $wcres1["users"];
+	        		}else{
+	        			return json_encode($wcres1);
+	        		}
+
+	        		$r2n = array(
+	        			"PT"=>3,
+	        			"P"=>4,
+	        			"ST"=>5,
+	        			5=>"ST",
+	        			4=>"P",
+	        			3=>"PT"
+	        			);
+
+					foreach ($users as $wc_id => $roles) {
+
+						$time_for2 = microtime(true);
+		            	if($time_for2-$time_start>5){//tiempo limite
+		            		$stop = 1;
+		            		break;
+		            	}
+
+						$did = "";
+						$user = Staff::whereWc_id($wc_id)->first();
+						if(empty($user)){
+							$user = Student::whereWc_id($wc_id)->first();
+						}
+						//si se agrega
+						if(!empty($roles['add'])){
+							//si está registrado
+							if(isset($wcusers[$wc_id])){
+								//hacer cambios
+								$uid = $wcusers[$wc_id]['uid'];
+								
+								if(!empty($user)){
+									$user->wc_uid = $uid;
 								}
-							}
-							foreach ($roles['del'] as $value) {
-								//si lo tiene
-								if(isset( $wcusers[$wc_id]['roles'][ $r2n[$value] ])){
-									//quitar
-									$rol = $r2n[$value];
-									$wcres1 = $wc->rolenot2user($uid,$rol);
-					        		if(isset($wcres1["error"])){
-					        			return json_encode($wcres1);
-					        		}
-					        		$did .= "del ".$value;
-								}	
+
+								foreach ($roles['add'] as $value) {
+									//si no lo tiene
+									if(!isset( $wcusers[$wc_id]['roles'][ $r2n[$value] ])){
+										//agregar
+										$rol = $r2n[$value];
+										$wcres1 = $wc->role2user($uid,$rol);
+						        		if(isset($wcres1["error"])){
+						        			return json_encode($wcres1);
+						        		}
+						        		$did .= "add ".$value;
+									}
+								}
+								foreach ($roles['del'] as $value) {
+									//si lo tiene
+									if(isset( $wcusers[$wc_id]['roles'][ $r2n[$value] ])){
+										//quitar
+										$rol = $r2n[$value];
+										$wcres1 = $wc->rolenot2user($uid,$rol);
+						        		if(isset($wcres1["error"])){
+						        			return json_encode($wcres1);
+						        		}
+						        		$did .= "del ".$value;
+									}	
+								}
+							}else{
+							//si no está registrado
+								//registrar
+								$wcres3 = $wc->searchUser($wc_id);
+		                		if(isset($wcres3["ok"])){
+		                			$uid = $wcres3["ok"]->id;
+		                		}else{
+		                			return json_encode($wcres3);
+		                		}
+
+		                		foreach ($roles['add'] as $key => $value) {
+		                			$rol = $r2n[$value];
+		                			unset($roles['add'][$key]);
+		                			break;
+		                		}
+
+	                			$wcres4 = $wc->enrolUser($uid,$rol);
+	                			if(!isset($wcres3["ok"])){
+	                				return json_encode($wcres4);
+	                			}
+	                			$did .= "registrar como ".$r2n[$rol];
+								//hacer cambios
+								//$uid = //asdasdasdasdadasdasdasdasd;
+								
+								if(!empty($user)){
+									$user->wc_uid = $uid;
+								}
+
+								foreach ($roles['add'] as $value) {
+									//si no lo tiene
+									if(!isset( $wcusers[$wc_id]['roles'][ $r2n[$value] ])){
+										//agregar
+										$rol = $r2n[$value];
+										$wcres1 = $wc->role2user($uid,$rol);
+						        		if(isset($wcres1["error"])){
+						        			return json_encode($wcres1);
+						        		}
+						        		$did .= " add ".$value;
+									}
+								}
 							}
 						}else{
-						//si no está registrado
-							//registrar
-							$wcres3 = $wc->searchUser($wc_id);
-	                		if(isset($wcres3["ok"])){
-	                			$uid = $wcres3["ok"]->id;
-	                		}else{
-	                			return json_encode($wcres3);
-	                		}
+						//si no agrega
+							//si está registrado
+							if(isset($wcusers[$wc_id])){
+								//hacer cambios
+								$uid = $wcusers[$wc_id]['uid'];
+								
+								if(!empty($user)){
+									$user->wc_uid = $uid;
+								}
 
-	                		foreach ($roles['add'] as $key => $value) {
-	                			$rol = $r2n[$value];
-	                			unset($roles['add'][$key]);
-	                			break;
-	                		}
-
-                			$wcres4 = $wc->enrolUser($uid,$rol);
-                			if(!isset($wcres3["ok"])){
-                				return json_encode($wcres4);
-                			}
-                			$did .= "registrar como ".$r2n[$rol];
-							//hacer cambios
-							//$uid = //asdasdasdasdadasdasdasdasd;
-							
-							if(!empty($user)){
-								$user->wc_uid = $uid;
-							}
-
-							foreach ($roles['add'] as $value) {
-								//si no lo tiene
-								if(!isset( $wcusers[$wc_id]['roles'][ $r2n[$value] ])){
-									//agregar
-									$rol = $r2n[$value];
-									$wcres1 = $wc->role2user($uid,$rol);
-					        		if(isset($wcres1["error"])){
-					        			return json_encode($wcres1);
-					        		}
-					        		$did .= " add ".$value;
+								foreach ($roles['del'] as $value) {
+									//si lo tiene
+									if(isset( $wcusers[$wc_id]['roles'][ $r2n[$value] ])){
+										//quitar
+										$rol = $r2n[$value];
+										$wcres1 = $wc->rolenot2user($uid,$rol);
+						        		if(isset($wcres1["error"])){
+						        			return json_encode($wcres1);
+						        		}
+						        		$did .= "del ".$value;
+									}	
 								}
 							}
 						}
-					}else{
-					//si no agrega
-						//si está registrado
-						if(isset($wcusers[$wc_id])){
-							//hacer cambios
-							$uid = $wcusers[$wc_id]['uid'];
-							
-							if(!empty($user)){
-								$user->wc_uid = $uid;
-							}
 
-							foreach ($roles['del'] as $value) {
-								//si lo tiene
-								if(isset( $wcusers[$wc_id]['roles'][ $r2n[$value] ])){
-									//quitar
-									$rol = $r2n[$value];
-									$wcres1 = $wc->rolenot2user($uid,$rol);
-					        		if(isset($wcres1["error"])){
-					        			return json_encode($wcres1);
-					        		}
-					        		$did .= "del ".$value;
-								}	
-							}
+						$user->save();
+						//registrar que se hizo
+						$regs = WCtodo::wherePeriodo(Periodo::active())->
+								whereDid(0)->
+						        where(function ($query) use ($user) {
+						            $query->where("data","LIKE","%".$user->wc_id."%")
+						                  ->orWhere("data","LIKE",'%"user_id":"'.$user->id.'%'); 
+						        })->
+						        where(function ($query) {
+						            $query->where('action', '=', 'addrol')
+						                  ->orWhere('action', '=', 'delrol')
+						                  ->orWhere('action', '=', 'newuser');
+						        })->get();
+
+						foreach ($regs as $reg) {
+							$reg->did = 1;
+							$reg->response = $did;
+							$reg->save();
+							$count++;
 						}
-					}
 
-					$user->save();
-					//registrar que se hizo
-					$regs = WCtodo::wherePeriodo(Periodo::active())->
-							whereDid(0)->
-					        where(function ($query) use ($user) {
-					            $query->where("data","LIKE","%".$user->wc_id."%")
-					                  ->orWhere("data","LIKE",'%"user_id":"'.$user->id.'%'); 
-					        })->
-					        where(function ($query) {
-					            $query->where('action', '=', 'addrol')
-					                  ->orWhere('action', '=', 'delrol')
-					                  ->orWhere('action', '=', 'newuser');
-					        })->get();
-
-					foreach ($regs as $reg) {
-						$reg->did = 1;
-						$reg->response = $did;
-						$reg->save();
 					}
 
 				}
 
-				//grupos
-        		$g = WCtodo::wherePeriodo(Periodo::active())->
-							whereDid(0)->
-					        where(function ($query) {
-					            $query->where('action', '=', 'u2g')
-					                  ->orWhere('action', '=', 'u!2g');
-				})->get();
-
-				$userg = array();
-
-				foreach ($g as $asign) {
-					$data = json_decode($asign->data);
-					$userg[$data->user] = array("add"=>array(), "del"=>array());
-					$subj = Subject::find($data->subject_id);
-					if(!empty($subj)){
-						if(!empty($subj->wc_uid)){
-							$group = $subj->wc_uid;
-
-							if($asign->action="u2g"){
-								$n = array_search($group ,$userg[$data->user]['add']);
-								if($n===false){
-									$userg[$data->user]['add'][] = $group;
-								}
-								$n = array_search($group ,$userg[$data->user]['del']);
-								if($n!==false){
-									unset($userg[$data->user]['del'][$n]);
-								}
-							}elseif($asign->action="u!2g"){
-								$n = array_search($group ,$userg[$data->user]['del']);
-								if($n===false){
-									$userg[$data->user]['del'][] = $group;
-								}
-								$n = array_search($group ,$userg[$data->user]['add']);
-								if($n!==false){
-									unset($userg[$data->user]['add'][$n]);
-								}
-							}
-						}
-					}
-				}
-
-
-
-				foreach ($userg as $wc_id => $groups) {
-					$did ="";
-
-					$user = Staff::whereWc_id($wc_id)->first();
-					if(empty($user)){
-						$user = Student::whereWc_id($wc_id)->first();
-					}
-					if(!empty($user)){
-						$wc_uid = $user->wc_uid;
-					
-						foreach ($groups['add'] as $group) {
-							$wcres1 = $wc->user2group($wc_uid,$group);
-			        		if(isset($wcres1["error"])){
-			        			return json_encode($wcres1);
-			        		}
-			        		$did .= " added to ".$group;
-			        		$userg[$wc_id]['res']=$wcres1;
-						}
-						foreach ($groups['del'] as $group) {
-							$wcres1 = $wc->usernot2group($wc_uid,$group);
-			        		if(isset($wcres1["error"])){
-			        			return json_encode($wcres1);
-			        		}
-			        		$did .= " deleted from ".$group;
-			        		$userg[$wc_id]['res']=$wcres1;
-						}
-
-					}
-
-					$regs = WCtodo::wherePeriodo(Periodo::active())->
-							whereDid(0)->
-							where("data","LIKE","%".$user->wc_id."%")->
-					        where(function ($query) {
-					            $query->where('action', '=', 'u2g')
-					                  ->orWhere('action', '=', 'u!2g');
+				if($stop==0){
+					//grupos
+	        		$g = WCtodo::wherePeriodo(Periodo::active())->
+								whereDid(0)->
+						        where(function ($query) {
+						            $query->where('action', '=', 'u2g')
+						                  ->orWhere('action', '=', 'u!2g');
 					})->get();
 
-					foreach ($regs as $reg) {
-						$reg->did = 1;
-						$reg->response = $did;
-						$reg->save();
+					$userg = array();
+
+					foreach ($g as $asign) {
+						$data = json_decode($asign->data);
+						$userg[$data->user] = array("add"=>array(), "del"=>array());
+						$subj = Subject::find($data->subject_id);
+						if(!empty($subj)){
+							if(!empty($subj->wc_uid)){
+								$group = $subj->wc_uid;
+
+								if($asign->action="u2g"){
+									$n = array_search($group ,$userg[$data->user]['add']);
+									if($n===false){
+										$userg[$data->user]['add'][] = $group;
+									}
+									$n = array_search($group ,$userg[$data->user]['del']);
+									if($n!==false){
+										unset($userg[$data->user]['del'][$n]);
+									}
+								}elseif($asign->action="u!2g"){
+									$n = array_search($group ,$userg[$data->user]['del']);
+									if($n===false){
+										$userg[$data->user]['del'][] = $group;
+									}
+									$n = array_search($group ,$userg[$data->user]['add']);
+									if($n!==false){
+										unset($userg[$data->user]['add'][$n]);
+									}
+								}
+							}
+						}
 					}
 
 
+
+					foreach ($userg as $wc_id => $groups) {
+						$time_for2 = microtime(true);
+		            	if($time_for2-$time_start>5){//tiempo limite
+		            		$stop = 1;
+		            		break;
+		            	}
+
+						$did ="";
+
+						$user = Staff::whereWc_id($wc_id)->first();
+						if(empty($user)){
+							$user = Student::whereWc_id($wc_id)->first();
+						}
+						if(!empty($user)){
+							$wc_uid = $user->wc_uid;
+						
+							foreach ($groups['add'] as $group) {
+								$wcres1 = $wc->user2group($wc_uid,$group);
+				        		if(isset($wcres1["error"])){
+				        			return json_encode($wcres1);
+				        		}
+				        		$did .= " added to ".$group;
+				        		$userg[$wc_id]['res']=$wcres1;
+							}
+							foreach ($groups['del'] as $group) {
+								$wcres1 = $wc->usernot2group($wc_uid,$group);
+				        		if(isset($wcres1["error"])){
+				        			return json_encode($wcres1);
+				        		}
+				        		$did .= " deleted from ".$group;
+				        		$userg[$wc_id]['res']=$wcres1;
+							}
+
+						}
+
+						$regs = WCtodo::wherePeriodo(Periodo::active())->
+								whereDid(0)->
+								where("data","LIKE","%".$user->wc_id."%")->
+						        where(function ($query) {
+						            $query->where('action', '=', 'u2g')
+						                  ->orWhere('action', '=', 'u!2g');
+						})->get();
+
+						foreach ($regs as $reg) {
+							$reg->did = 1;
+							$reg->response = $did;
+							$reg->save();
+							$count++;
+						}
+
+
+					}
 				}
+
+				$return['n']=$u;
+				$return['done']=$count;
 				//$return['userg'] = $userg;
 				//$return['users'] = $users;
 				//$return['wcusers'] = $wcusers;

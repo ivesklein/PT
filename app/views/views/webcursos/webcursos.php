@@ -82,7 +82,7 @@
           <div class="container-fluid">
             <div class="form-group"><label>Contraseña Webcursos</label><input type="password" class="form-control" id="passi"></div>
             <div class="form-group">
-                <div class="btn btn-warning" id="ok">Realizar Cambios  <i style='display:none' class='fa fa-spin fa-refresh waiting'></i></div>
+                <div class="btn btn-warning" id="ok">Realizar Cambios  <i style='display:none' class='fa fa-spin fa-refresh waiting'></i><font id="percent"></font></div>
             </div>
           </div>
         </div>
@@ -141,6 +141,9 @@
         $('.modal').modal("show");
     });
 
+    var tot = 0;
+    var totdone = 0;
+
     $('#ok').on("click", function() {
         var res=$('#passi').val();
         
@@ -152,6 +155,9 @@
                 "f":"Webcursos_"+todo,
                 "p":res
             };
+            if(todo=="regusuarios"){
+                $('#percent').html("6%");
+            }
             ajx({
                 data:datos,
                 ok:function(data) {
@@ -166,11 +172,24 @@
                             $('#selectcourse select').append("<option value='"+item.id+"'>"+item.title+"</option>");
                         }
                         $('#btnselectcourse').append("<div class='btn btn-success sel'>Elegir</div>")
+                    }else if(todo=="regusuarios"){
+                        $(".waiting").show();
+                        $('#ok').addClass("disabled");
+
+                        var n = data['n'];
+                        var done = data['done'];
+                        tot = n;
+                        totdone = done;
+                        var perc = Math.floor((done*94/n)+6);
+                        $('#percent').html(perc+"%");
+                        if(n==done){
+                            //location.reload();
+                        }else{
+                            regusuarios(n,res);
+                        }
                     }else{
                         //location.reload();    
                     }
-
-                    $('.page').html(data['userg']['dklein@alumnos.uai.cl']['res']['ok']['res']);
                     
                 },
                 error:function(data) {
@@ -182,6 +201,35 @@
             });
         }
     });
+
+function regusuarios(n,res) {
+    var datos = {
+        "f":"Webcursos_regusuarios",
+        "p":res
+    }
+    ajx({
+        data:datos,
+        ok:function(data) {
+            var n = data['n'];
+            var done = data['done'];
+            //tot = n;
+            totdone += done;
+            var perc = Math.floor((totdone*94/tot)+6);
+            $('#percent').html(perc+"%");
+            if(n==done){
+                //location.reload();
+            }else{
+                regusuarios(n,res);
+            }
+        },
+        error:function(data) {
+            $(".waiting").hide();
+            $('#ok').removeClass("disabled");
+            $('.modal').modal("hide");
+            alert(data);
+        }
+    });
+}
 
 
 

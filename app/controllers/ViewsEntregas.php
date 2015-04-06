@@ -298,6 +298,30 @@ class ViewsEntregas extends BaseController
 										$ca2 = empty($notas[1])?'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>':$notas[1];
 										$a1content .= View::make("table.cell",array("content"=>$ca1));
 										$a2content .= View::make("table.cell",array("content"=>$ca2));
+									}else{
+										//buscar evento
+										if($tarea->tipo==3){//pre
+											$evento = CEvent::whereDetail($tema->id)->whereType('Predefensa')->first();
+											if(empty($evento)){
+												$a1content .= View::make("table.cell",array("content"=>"Sin fecha"));
+												$a2content .= View::make("table.cell",array("content"=>"Sin fecha"));
+											}else{
+												$fecha = CarbonLocale::parse($evento->start);
+												$a1content .= View::make("table.cell",array("content"=>$fecha->diffParaHumanos()));
+												$a2content .= View::make("table.cell",array("content"=>$fecha->diffParaHumanos()));
+											}
+
+										}elseif($tarea->tipo==4){//def
+											$evento = CEvent::whereDetail($tema->id)->whereType('Defensa')->first();
+											if(empty($evento)){
+												$a1content .= View::make("table.cell",array("content"=>"Sin fecha"));
+												$a2content .= View::make("table.cell",array("content"=>"Sin fecha"));
+											}else{
+												$fecha = CarbonLocale::parse($evento->start);
+												$a1content .= View::make("table.cell",array("content"=>$fecha->diffParaHumanos()));
+												$a2content .= View::make("table.cell",array("content"=>$fecha->diffParaHumanos()));
+											}
+										}
 									}
 
 								}

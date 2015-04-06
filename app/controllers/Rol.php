@@ -51,13 +51,15 @@ class Rol {
 			array(
 				"guiasConfirmation",
 				"profesores",
+				"guiasAsignar",
 				"ayudantes",
 				"alumnos",
+				"coordefensa",
+				"viewProfEvents",
 				"webcursos",
 				"tareas",
 				"crearAyudante",
 				"revisartemas",
-				"revisartareas",
 				"notas",
 				"editrol"
 			),
@@ -70,9 +72,13 @@ class Rol {
 				"coordefensa",
 				"viewProfEvents",
 				"tareas",
-				"revisartareas",
 				"notas",
 				"editrol"
+			),
+		"AA"=>
+			array(
+				"coordefensa",
+				"viewProfEvents"
 			),
 		"MA"=>
 			array(
@@ -153,7 +159,7 @@ class Rol {
 			if($temas->isEmpty()){
 				//ver si es secre o coord
 				$perm = Session::get('rol' ,"0");
-				if($perm=="CA" || $perm=="SA"){
+				if($perm=="CA" || $perm=="SA" || $perm=="AY" || $perm=="PT"){
 					return true;
 				}else{
 					return false;
