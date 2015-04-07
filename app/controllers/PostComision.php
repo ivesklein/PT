@@ -141,7 +141,7 @@ class PostComision{
 					$title="Exención de Comisión";
 					$view="emails.delete-from-comision";
 					$prof = Staff::find($delprof)->wc_id;
-
+					
 					$wc = WCtodo::add("u!2g", array('subject_id'=>$_POST['id'], 'user'=>$prof));
 
 					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);

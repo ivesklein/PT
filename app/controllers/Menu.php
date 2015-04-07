@@ -101,7 +101,7 @@ class Menu {
 		"listaAprobar"=>array(
 			"where"=>"hojaruta",
 			"place"=>"26",
-			"array"=>array("link"=>"#/aprobartemas", "title"=>"Aprobación Final", "n"=>0)
+			"array"=>array("link"=>"#/aprobartemas", "title"=>"Autorizar Defensas", "n"=>0)
 		),
 		"cronlist"=>array(
 			"where"=>"cron",
@@ -132,6 +132,11 @@ class Menu {
 			"where"=>"otros",
 			"place"=>"27",
 			"array"=>array("link"=>"#/texto", "title"=>"Textos Firmas", "n"=>0)
+		),
+		"rezagados"=>array(
+			"where"=>"reportes",
+			"place"=>"25",
+			"array"=>array("link"=>"#/listarezagados", "title"=>"Rezagados", "n"=>0)
 		)
 
 
@@ -175,6 +180,10 @@ class Menu {
 		"data" => array(
 			"place"=>"30",
 			"array"=>array("Registros", "#/menu", "calendar", "primary", 0)
+		),
+		"reportes" => array(
+			"place"=>"29",
+			"array"=>array("Reportes", "#/menu", "calendar", "primary", 0)
 		),
 		"otros" => array(
 			"place"=>"99",

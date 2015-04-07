@@ -80,6 +80,22 @@ class ViewsTypeahead extends BaseController
 		return json_encode($res);
 	}
 
+	public function getPeriodos()
+	{
+		
+		$res = array();	
+		$term = Input::get('term');
+		$pers = Periodo::where('name',"LIKE","%".$term."%")->get();
+
+		if(!$pers->isEmpty()){
+			foreach ($pers as $per) {
+				$res[] = array('value'=>$per->name);
+			}
+		}
+
+		return json_encode($res);
+	}
+
 }
 
 ?>

@@ -14,7 +14,7 @@
                                             <?=$periodo?>
                                 </div>
                             <div class="col-sm-4">
-                                <a href="#/vista3" id="addper" class="btn btn-warning">Agregar Periodo</a>
+                                <a href="#/periodos" id="addper" class="btn btn-warning">Agregar Semestre</a>
                             </div>
                         </div>
 	                	<div class="form-group">
@@ -50,6 +50,9 @@
         $(function(){
             if($('input[name="periodo"]').val()!=0){
                 $("#addper").hide();
+            }else{
+                $('form input').addClass('disabled');
+                $('form input').attr('disabled',1);
             }
 
 

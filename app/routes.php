@@ -218,6 +218,8 @@ Route::controller('reg','ViewsReg');
 
 Route::controller('webcursos','ViewsWebcursos');
 
+Route::controller('reportes','ViewsReportes');
+
 Route::get('feedback/{id}', 'GetFile@feedback');
 
 

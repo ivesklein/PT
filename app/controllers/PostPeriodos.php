@@ -68,9 +68,48 @@ class PostPeriodos{
 
 			if(Rol::hasPermission("periodosEdit")){
 
+				$per = Periodo::active();
+				$subjs = Subject::wherePeriodo($per)->get();
+				foreach ($subjs as $subj) {
+					$s1 = Student::whereWc_id($subj->student1)->first();
+					if(!empty($s1)){
+						if($s1->status!="titulado"){
+							$s1->status = "rezagado";
+							$s1->save();
+							$re1 = new Rezagado;
+							$re1->student_id = $s1->id;
+							$re1->periodo = $per;
+							$re1->status = "abierto";
+							$re1->subject_id = $subj->id;
+							$re1->registro = json_encode(array(0=>array("date"=>Carbon::now(),"Pasa a ser Rezagado.")));
+							$re1->save();
+
+						}
+					}
+					$s2 = Student::whereWc_id($subj->student2)->first();
+					if(!empty($s2)){
+						if($s2->status!="titulado"){
+							$s2->status = "rezagado";
+							$s2->save();
+							$re2 = new Rezagado;
+							$re2->student_id = $s2->id;
+							$re2->periodo = $per;
+							$re2->status = "abierto";
+							$re2->subject_id = $subj->id;
+							$re2->registro = json_encode(array(0=>array("date"=>Carbon::now(),"Pasa a ser Rezagado.")));
+							$re2->save();
+						}
+					}
+				}
+
 				$event = Periodo::find($_POST["id"]);
 		        $event->status = 'closed';
 		        $event->save();
+
+
+
+
+
 		        $return["ok"] = $event->id;
 	        	$a = DID::action(Auth::user()->wc_id, "cerrar periodo", $_POST["id"], "periodo");
 

@@ -101,6 +101,17 @@ angular.module("app.ui.ctrls",[])
 		)
 
 	.controller(
+		"Id",
+		//[
+		//	"$scope",
+			function($scope, $route, $routeParams){
+				var id = $routeParams.id+"";
+				$scope.id = id;
+				//console.log($routeParams);
+			}
+		//]
+	)
+	.controller(
 		"TareaController",
 		//[
 		//	"$scope",
@@ -209,6 +220,12 @@ angular.module("app",
 				.when("/reasignartema/:idtema",{templateUrl:"ruta/reasignartema",controller: 'HojaRuta'})
 				.when("/aprobartemas",{templateUrl:"ruta/aprobartemas",controller: 'Cleancache'})
 				.when("/aprobartema/:idtema",{templateUrl:"ruta/aprobartema",controller: 'HojaRuta'})
+				//reportes
+				.when("/listarezagados",{templateUrl:"reportes/listarezagados",controller: 'Cleancache'})
+				.when("/rezagado/:id",{templateUrl:"reportes/rezagado",controller: 'Id'})
+				
+				
+
 				//otros
 				.when("/webcursos",	{templateUrl:"webcursos/webcursos",controller: 'Cleancache'})
 

@@ -67,7 +67,7 @@ class ViewsFirst extends BaseController
 			$item = $per->first();
 			$periodo = $item->name."<input type='hidden' value='".$item->name."' name='periodo'>";
 		}else{
-			$periodo = "No hay periodo Activo<input type='hidden' value='0' name='periodo'>";
+			$periodo = "<div class='alert alert-danger'>No hay Semestre Activo<input type='hidden' value='0' name='periodo'></div>";
 		}
 
 		return View::make('views.periodos.agregartemas',array("periodo"=>$periodo));

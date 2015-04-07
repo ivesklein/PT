@@ -11,7 +11,7 @@ class Rol {
 				"guiasAsignar",
 				"profesores",
 				"ayudantes",
-				"alumnos",
+				//"alumnos",
 				"coordefensa",
 				"viewProfEvents",
 				"editrol",
@@ -27,13 +27,14 @@ class Rol {
 				"periodosEdit",
 				"profesores",
 				"ayudantes",
-				"alumnos",
+				//"alumnos",
 				"editrol",
 				"rutaaleatorio",
 				"revisartemas",
 				"listaReasignar",
 				"listaAprobar",
-				"textos"
+				"textos",
+				"rezagados"
 			),
 		"P"=>
 			array(
@@ -53,7 +54,7 @@ class Rol {
 				"profesores",
 				"guiasAsignar",
 				"ayudantes",
-				"alumnos",
+				//"alumnos",
 				"coordefensa",
 				"viewProfEvents",
 				"webcursos",
@@ -68,7 +69,7 @@ class Rol {
 				"guiasConfirmation",
 				"guiasAsignar",
 				"profesores",
-				"alumnos",
+				//"alumnos",
 				"coordefensa",
 				"viewProfEvents",
 				"tareas",

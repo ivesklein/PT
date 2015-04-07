@@ -143,30 +143,6 @@
                 }
             });
 
-            /*function enviar() {
-
-                var id = $(this).attr("n");
-                var top = $(this).parent().parent().parent();
-                var nota = JSON.stringify([ top.find(".nota.nota1").val() , top.find(".nota.nota2").val() ]);
-                var feed = JSON.stringify([ top.find(".feedback.feedback1").val() , top.find(".feedback.feedback2").val() ]);
-                $(this).addClass("waiting");
-
-                var datos = {
-                    f:"Tareas_setnota",
-                    id:angular.element($('.page')).scope().tema,
-                    tarea:id,
-                    nota:nota,
-                    feedback:feed
-                }
-                ajx({
-                    data:datos,
-                    ok:function(data) {
-                        console.log(data);
-                        location.reload();
-                    }//ok
-                });//ajx
-            }*/
-
             function modify() {
                 console.log(0)
                 if($(this).find(".savelabel").html()=="Guardar"){
