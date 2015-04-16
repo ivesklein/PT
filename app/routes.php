@@ -144,7 +144,8 @@ Route::get('rol', array( "before"=>'auth' ,function()
 		"PT"=>"Profesor de Taller",
 		"AY"=>"Ayudante de Taller",
 		"MA"=>"CronJobs Supervisor",
-		"DA"=>"Analista de datos"
+		"DA"=>"Analista de datos",
+		"AA"=>"Ayudante Académico"
 	);
 	$array = array();
 	$id = Auth::user()->id; //id user

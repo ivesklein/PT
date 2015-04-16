@@ -20,6 +20,26 @@ class PostReportes{
 				}
 			}
 
+			if(isset($_POST['name'])){
+				if(!empty($_POST['name'])){
+					$name = $_POST['name'];
+					if(empty($q)){
+						$q = Rezagado::join('students', 'students.id', '=', 'rezagados.student_id')
+									->where(function ($query) use ($name) {
+						            $query->where('students.name','LIKE','%'.$name.'%')
+						                  ->orWhere('students.surname','LIKE','%'.$name.'%'); 
+						        });
+					}else{
+						$q = $q->join('students', 'students.id', '=', 'rezagados.student_id')
+									->where(function ($query) use ($name) {
+						            $query->where('students.name','LIKE','%'.$name.'%')
+						                  ->orWhere('students.surname','LIKE','%'.$name.'%'); 
+						        });
+					}
+				}
+			}
+
+
 			if(empty($q)){
 				$q = Rezagado::all();
 			}else{

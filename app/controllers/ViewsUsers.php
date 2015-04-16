@@ -34,9 +34,10 @@ class ViewsUsers extends BaseController
 			"Mail", 
 			"Cordinador Académico", 
 			"Secretario Académico", 
-			"Profesor Guía o Comisión", 
+			"Profesor Planta", 
 			"Profesor Taller", 
-			"Ayudante Taller"
+			"Ayudante Taller",
+			"Ayudante Académico"
 		);
 		$head = "";
 		foreach ($ahead as $value) {
@@ -59,9 +60,10 @@ class ViewsUsers extends BaseController
 					$array = array("items"=>array(
 						"CA"=>array("title"=>"Cordinador Académico", "value"=>"CA","n"=>$id),
 						"SA"=>array("title"=>"Secretario Académico", "value"=>"SA","n"=>$id),
-						"P"=>array("title"=>"Profesor Guía o Comisión", "value"=>"P","n"=>$id),
+						"P"=>array("title"=>"Profesor Planta", "value"=>"P","n"=>$id),
 						"PT"=>array("title"=>"Profesor Taller", "value"=>"PT","n"=>$id),
-						"AY"=>array("title"=>"Ayudante Taller", "value"=>"AY","n"=>$id)
+						"AY"=>array("title"=>"Ayudante Taller", "value"=>"AY","n"=>$id),
+						"AA"=>array("title"=>"Ayudante Académico", "value"=>"AA","n"=>$id)
 					));
 
 					$mirol = Rol::actual();
@@ -73,12 +75,14 @@ class ViewsUsers extends BaseController
 						case 'PT':
 							$array["items"]["SA"]["dis"]=1;
 							$array["items"]["CA"]["dis"]=1;
+							$array["items"]["AA"]["dis"]=1;
 							# code...
 							break;
 						case 'AY':
 							$array["items"]["SA"]["dis"]=1;
 							$array["items"]["CA"]["dis"]=1;
 							$array["items"]["PT"]["dis"]=1;
+							$array["items"]["AA"]["dis"]=1;
 							break;
 						default:
 							$array["items"]["SA"]["dis"]=1;
@@ -86,6 +90,7 @@ class ViewsUsers extends BaseController
 							$array["items"]["PT"]["dis"]=1;
 							$array["items"]["AY"]["dis"]=1;
 							$array["items"]["P"]["dis"]=1;
+							$array["items"]["AA"]["dis"]=1;
 							break;
 					}
 

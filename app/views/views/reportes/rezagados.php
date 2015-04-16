@@ -59,8 +59,12 @@
     	$('.finders').on("click",".find",function() {
     		var find = $(this).parents('.form-group').attr("id");
     		//alert(find);
+    		var per = $('#fper input').val();
+    		var name = $('#fname input').val();
             datos = {
                 f:"Reportes_rezagados",
+                per:per,
+                name:name
             }
             ajx({
                 data:datos,

@@ -137,6 +137,11 @@ class Menu {
 			"where"=>"reportes",
 			"place"=>"25",
 			"array"=>array("link"=>"#/listarezagados", "title"=>"Rezagados", "n"=>0)
+		),
+		"defensas"=>array(
+			"where"=>"temas",
+			"place"=>"40",
+			"array"=>array("link"=>"#/defensas", "title"=>"Evaluar Defensas", "n"=>0)
 		)
 
 
@@ -158,7 +163,7 @@ class Menu {
 			"array"=>array("Semestre", "#/menu", "calendar", "orange", 0)
 		),
 		"usuarios" => array(
-			"place"=>"31",
+			"place"=>"32",
 			"array"=>array("Usuarios", "#/menu", "user", "primary", 0)
 		),
 		"calendario" => array(
@@ -178,7 +183,7 @@ class Menu {
 			"array"=>array("CronJobs", "#/menu", "calendar", "primary", 0)
 		),
 		"data" => array(
-			"place"=>"30",
+			"place"=>"31",
 			"array"=>array("Registros", "#/menu", "calendar", "primary", 0)
 		),
 		"reportes" => array(

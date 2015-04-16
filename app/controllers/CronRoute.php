@@ -71,7 +71,7 @@ class CronRoute {
 	{
 		$tarea = Tarea::find($array1->id);
 		$name = $tarea->title;
-		$wc = $tarea->wc_uid;
+		$wc = "http://webcursos.uai.cl/mod/assign/view.php?id=".$tarea->wc_uid;
 		$fecha = $tarea->date;
 
 		$logs = true;
@@ -82,15 +82,13 @@ class CronRoute {
 
 		if($array1->type=="sub7"){
 
-			if($logs){
-				Log::info("ejecutando tarea tipo sub7");
-			}
+			Log::info("ejecutando tarea tipo sub7");
 
 			$array = array(
 				"to"=>"",
 				"title"=>$name,
 				"view"=>"emails.sub7",
-				"parameters"=>array("title"=>$name, "wc"=>$wc, "fecha"=>$fecha),
+				"parameters"=>array("tarea"=>$name, "wc"=>$wc, "dias"=>$dias),
 			);
 		
 
@@ -98,18 +96,28 @@ class CronRoute {
 			if(!$subjs->isEmpty()){
 				foreach ($subjs as $subj) {
 					# code...
+					
 					$array["to"] = $subj->student1;
-					$id = Cron::addafter("mail", $array, Carbon::now());
+					if(!empty($array["to"])){
+						$a1 = Student::whereWc_id($subj->student1)->first();
+						$alumno = $a1->name." ".$a1->surname;
+						$array["parameters"]['alumno'] = $alumno;
 
-					if($logs){
-						Log::info("ejecutando tarea tipo sub7 add cron:".$id);
+						$id = Cron::addafter("mail", $array, Carbon::now());
+						if($logs){
+							Log::info("ejecutando tarea tipo sub7 add cron:".$id);
+						}
 					}
-
+					
 					$array["to"] = $subj->student2;
-					$id = Cron::addafter("mail", $array, Carbon::now());
-
-					if($logs){
-						Log::info("ejecutando tarea tipo sub7 add cron:".$id);
+					if(!empty($array["to"])){
+						$a2 = Student::whereWc_id($subj->student2)->first();
+						$alumno = $a2->name." ".$a2->surname;
+						$array["parameters"]['alumno'] = $alumno;
+						$id = Cron::addafter("mail", $array, Carbon::now());
+						if($logs){
+							Log::info("ejecutando tarea tipo sub7 add cron:".$id);
+						}
 					}
 
 				}
@@ -117,11 +125,12 @@ class CronRoute {
 
 		}elseif($array1->type=="sub1"){
 			Log::info("ejecutando tarea tipo sub1");
+
 			$array = array(
 				"to"=>"",
 				"title"=>$name,
 				"view"=>"emails.sub1",
-				"parameters"=>array("title"=>$name, "wc"=>$wc, "fecha"=>$fecha),
+				"parameters"=>array("tarea"=>$name, "wc"=>$wc, "dias"=>$dias),
 			);
 		
 
@@ -131,15 +140,26 @@ class CronRoute {
 					# code...
 					
 					$array["to"] = $subj->student1;
-					$id = Cron::addafter("mail", $array, Carbon::now());
-					if($logs){
-						Log::info("ejecutando tarea tipo sub1 add cron:".$id);
+					if(!empty($array["to"])){
+						$a1 = Student::whereWc_id($subj->student1)->first();
+						$alumno = $a1->name." ".$a1->surname;
+						$array["parameters"]['alumno'] = $alumno;
+
+						$id = Cron::addafter("mail", $array, Carbon::now());
+						if($logs){
+							Log::info("ejecutando tarea tipo sub1 add cron:".$id);
+						}
 					}
 					
 					$array["to"] = $subj->student2;
-					$id = Cron::addafter("mail", $array, Carbon::now());
-					if($logs){
-						Log::info("ejecutando tarea tipo sub1 add cron:".$id);
+					if(!empty($array["to"])){
+						$a2 = Student::whereWc_id($subj->student2)->first();
+						$alumno = $a2->name." ".$a2->surname;
+						$array["parameters"]['alumno'] = $alumno;
+						$id = Cron::addafter("mail", $array, Carbon::now());
+						if($logs){
+							Log::info("ejecutando tarea tipo sub1 add cron:".$id);
+						}
 					}
 
 				}
@@ -151,7 +171,7 @@ class CronRoute {
 				"to"=>"",
 				"title"=>$name,
 				"view"=>"emails.fechatarea",
-				"parameters"=>array("title"=>$name, "wc"=>$wc, "fecha"=>$fecha),
+				"parameters"=>array("tarea"=>$name, "wc"=>$wc, "fecha"=>$fecha),
 			);
 		
 
@@ -173,7 +193,7 @@ class CronRoute {
 				"to"=>"",
 				"title"=>$name,
 				"view"=>"emails.add7",
-				"parameters"=>array("title"=>$name, "wc"=>$wc, "fecha"=>$fecha),
+				"parameters"=>array("tarea"=>$name, "wc"=>$wc, "fecha"=>$fecha),
 			);
 		
 
@@ -199,7 +219,7 @@ class CronRoute {
 				"to"=>"",
 				"title"=>$name,
 				"view"=>"emails.add12",
-				"parameters"=>array("title"=>$name, "wc"=>$wc, "fecha"=>$fecha),
+				"parameters"=>array("tarea"=>$name, "wc"=>$wc, "fecha"=>$fecha),
 			);
 
 			$subjs = Subject::active()->get();
@@ -241,6 +261,11 @@ class CronRoute {
 		$subjs = Subject::active()->get();
 		if(!$subjs->isEmpty()){
 			foreach ($subjs as $subj) {
+				$st1 = explode("@",$subj->student1);
+		    	$st2 = explode("@",$subj->student2);
+		    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+				$array["parameters"]['grupo'] = $grupo;
+				$array["parameters"]['tema'] = $subj->subject;
 
 				$array["to"] = $subj->adviser;
 				$id = Cron::addafter("mail", $array, Carbon::now());

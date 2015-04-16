@@ -18,7 +18,8 @@ class PostUsuarios{
 			            "SA"=>1,
 			            "P"=>1,
 			            "PT"=>1,
-			            "AY"=>1
+			            "AY"=>1,
+			            "AA"=>1
 			        );
 			    }elseif($role == "PT"){
 			        $array = array(
