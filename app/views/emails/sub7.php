@@ -1,10 +1,9 @@
-<?php public function ex($value){return isset($$value)?$$value:"";} ?>
-Estimado <?=ex("alumno")?>, se le recuerda que la fecha límite para enviar el avance <?=ex("tarea")?> es en una semana.<br>
+Estimado <?=isset($alumno)?$alumno:"*";?>, se encuentra disponible el link para enviar el avance <?=isset($tarea)?$tarea:"*";?>.<br>
 <br>
-link: <?=ex("wc")?><br>
+link: <?=isset($wc)?$wc:"*";?><br>
 <br>
 Atte,<br>
 <br>
 Equipo de titulación de la FIC<br>
 <br>
-Favor no reenviar este mail. 
+Favor no reenviar este mail.  

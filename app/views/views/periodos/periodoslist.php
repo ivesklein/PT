@@ -40,6 +40,10 @@
         
         });
 
+        $(function(){
+            $('.periodos tbody tr').each(function(){$('.periodos tbody').prepend(this)})
+        })
+
     </script>
 
     <section class="panel panel-default">

@@ -1,7 +1,6 @@
-<?php public function ex($value){return isset($$value)?$$value:"";} ?>
-Se ha registrado su guía en el proyecto de título del grupo <?=ex("grupo")?> con tema "<?=ex("tema")?>".<br>
+Se ha registrado su guía en el proyecto de título del grupo <?=isset($grupo)?$grupo:"*";?> con tema "<?=isset($tema)?$tema:"*";?>".<br>
 <br>
-Ingrese a <?php echo url("#/confirmarguia"); ?> para confirmar.<br>
+Ingrese a http://titulacion-fic-uai.cl/#/confirmarguia para confirmar.<br>
 <br>
 Atte,<br>
 <br>

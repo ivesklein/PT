@@ -1,9 +1,8 @@
-<?php public function ex($value){return isset($$value)?$$value:"";} ?>
-EL plazo de la entrega "<?=ex("tarea")?>" ha concluido, porfavor proceda a revisar.<br>
+El plazo de la entrega "<?=isset($tarea)?$tarea:"*";?>" ha concluido, porfavor proceda a revisar.<br>
 <br>
 links:<br>
-<?=ex("wc")?><br>
-<?php echo url("#/listanotas"); ?><br>
+<?=isset($wc)?$wc:"*";?><br>
+http://titulacion-fic-uai.cl/#/listanotas<br>
 <br>
 Atte,<br>
 <br>

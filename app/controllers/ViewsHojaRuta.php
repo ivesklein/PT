@@ -29,7 +29,7 @@ class ViewsHojaRuta extends BaseController
 
 		//if($temas)
 
-		$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->get();
+		$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->where("status","!=","not-confirmed")->get();
 
 		if(!$temas->isEmpty()){
 

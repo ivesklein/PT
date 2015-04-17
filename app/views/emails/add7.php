@@ -1,9 +1,8 @@
-<?php public function ex($value){return isset($$value)?$$value:"";} ?>
-Se le recuerda que la fecha límite para revisar los avances de "<?=ex("tarea")?>" vence en una semana.<br>
+Se le recuerda que la fecha límite para revisar los avances de "<?=isset($tarea)?$tarea:"*";?>" vence en una semana.<br>
 <br>
 links:<br>
-<?=ex("wc")?><br>
-<?php echo url("#/listanotas"); ?><br>
+<?=isset($wc)?$wc:"*";?><br>
+<?php echo "http://titulacion-fic-uai.cl/#/listanotas"); ?><br>
 <br>
 Atte,<br>
 <br>

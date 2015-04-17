@@ -1,8 +1,7 @@
-<?php public function ex($value){return isset($$value)?$$value:"";} ?>
-El grupo <?=ex("grupo")?> solicita la autorización para poder defender.<br>
+El grupo <?=isset($grupo)?$grupo:"*";?> solicita la autorización para poder defender.<br>
 <br>
 Para firmar la autorización ir a:<br>
-<?php echo url("#/listahojasruta"); ?>
+http://titulacion-fic-uai.cl/#/listahojasruta<br>
 <br>
 Atte,<br>
 <br>

@@ -1,7 +1,6 @@
-<?php public function ex($value){return isset($$value)?$$value:"";} ?>
-Estimado <?=ex("alumno")?>, se le recuerda que la fecha límite para enviar el avance <?=ex("tarea")?> es mañana a las 23:55.<br>
+Estimado <?=isset($alumno)?$alumno:"*";?>, se le recuerda que la fecha límite para enviar el avance <?=isset($tarea)?$tarea:"*";?> es mañana a las 23:55.<br>
 <br>
-link: <?=ex("wc")?><br>
+link: <?=isset($wc)?$wc:"*";?><br>
 <br>
 Atte,<br>
 <br>

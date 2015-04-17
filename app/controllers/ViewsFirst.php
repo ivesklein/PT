@@ -243,7 +243,7 @@ class ViewsFirst extends BaseController
 			}
 
 		}else{
-			$message = "No hay temas pendientes de confirmación";
+			$message = "No hay guías pendientes de confirmación";
 			$content = View::make("table.cell",array("content"=>$message));
 			$body .= View::make("table.row",array("content"=>$content));
 
@@ -253,7 +253,48 @@ class ViewsFirst extends BaseController
 
 		//print_r($res);
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
-		return View::make('views.guias.view6', array("table"=>$table));
+
+
+		$ahead = array("Tema","Alumno 1","Alumno 2");
+		$head = "";
+		foreach ($ahead as $value) {
+			$head .= View::make('table.head',array('title'=>$value));
+		}
+
+		$body="";
+
+
+
+		$subjs = Staff::find(Auth::user()->id)->guias()->active()->where("status","!=","confirm")->where("status","!=","not-confirmed")->get();
+
+		if(!$subjs->isEmpty()){
+			$buttons = View::make("table.yesno");
+			
+			foreach ($subjs as $subj) {
+
+				$tema = $subj->subject;
+				$alumno1 = $subj->student1;
+				$alumno2 = $subj->student2;
+				$id = $subj->id;
+
+				$content = View::make("table.cell",array("content"=>$tema));
+				$content .= View::make("table.cell",array("content"=>$alumno1));
+				$content .= View::make("table.cell",array("content"=>$alumno2));
+				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
+			
+				
+			}
+
+		}else{
+			$message = "No hay guías confirmadas";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
+
+		}
+
+		$table2 = View::make('table.table', array("head"=>$head,"body"=>$body));
+
+		return View::make('views.guias.confirmar', array("table"=>$table, "table2"=>$table2));
 	}
 
 	public function getAsignarguia()

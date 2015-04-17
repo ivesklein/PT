@@ -72,7 +72,7 @@ class ViewsEntregas extends BaseController
 
 					//->where('date', '>', Carbon::now()->subDays(14))
 
-					$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->get();
+					$temas = Staff::find(Auth::user()->id)->guias()->wherePeriodo(Periodo::active())->where("status","!=","not-confirmed")->get();
 				//}else{
 				//	$temas = Staff::find(Auth::user()->id)->comision()->wherePeriodo(Periodo::active())->get();
 				//}
