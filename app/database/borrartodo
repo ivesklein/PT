@@ -13,3 +13,11 @@ DELETE FROM students;
 DELETE FROM subjects;
 DELETE FROM tareas;
 DELETE FROM textos;
+
+DELETE FROM actions;
+DELETE FROM failed_jobs;
+DELETE FROM firmas;
+DELETE FROM o2cs;
+DELETE FROM rezagados;
+DELETE FROM sponsors;
+DELETE FROM wctodos;
