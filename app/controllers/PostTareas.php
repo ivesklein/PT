@@ -164,8 +164,18 @@ class PostTareas{
 					$return['grupo'] = $grupo." ".$tema->subject;
 					$al1 = Student::whereWc_id($tema->student1)->first();
 					$al2 = Student::whereWc_id($tema->student2)->first();
-					$return['alumno1'] = $al1->name." ".$al1->surname;
-					$return['alumno2'] = $al2->name." ".$al2->surname;
+
+					if(!empty($al1)){
+						$return['alumno1'] = $al1->name." ".$al1->surname;
+					}else{
+						$return['alumno1'] = "Sin Memorista";
+					}
+
+					if(!empty($al2)){
+						$return['alumno2'] = $al2->name." ".$al2->surname;
+					}else{
+						$return['alumno2'] = "Sin Memorista";
+					}
 
 					//verificar que hayan tareas
 					$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->where("tipo","<",3)->get();

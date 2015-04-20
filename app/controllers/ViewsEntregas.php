@@ -248,9 +248,17 @@ class ViewsEntregas extends BaseController
 							$a1content .= View::make("table.cell",array("content"=>$tema->adviser, "span"=>2));
 
 					    	$a1 = Student::whereWc_id($tema->student1)->first();
-					    	$a1content .= View::make("table.cell",array("content"=>$a1->name." ".$a1->surname));
-					    	$a2 = Student::whereWc_id($tema->student2)->first();
-					    	$a2content = View::make("table.cell",array("content"=>$a2->name." ".$a2->surname));
+					    	if(!empty($a1)){
+					    		$a1content .= View::make("table.cell",array("content"=>$a1->name." ".$a1->surname));
+					    	}else{
+					    		$a1content .= View::make("table.cell",array("content"=>'Sin Memorista'));
+					    	}
+					    	
+					    	if(!empty($a2)){
+					    		$a2content .= View::make("table.cell",array("content"=>$a2->name." ".$a2->surname));
+					    	}else{
+					    		$a2content .= View::make("table.cell",array("content"=>'Sin Memorista'));
+					    	}
 					    	
 					    	foreach ($tareas as $tarea) {
 								$id = $tarea->id;

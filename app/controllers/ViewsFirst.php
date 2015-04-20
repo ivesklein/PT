@@ -307,92 +307,32 @@ class ViewsFirst extends BaseController
 
 		$body="";
 
-		if(false){//con pm
+		$subjs = Subject::wherePeriodo(Periodo::active())->whereStatus("not-confirmed")->get();
 
-			$soap = new PMsoap;	
-			$soap->login();
-			$res = $soap->caseList();
+		if(!$subjs->isEmpty()){
 
-			if(isset($res['ok'])){
+			$drop = View::make("table.profesor-drop");
+			$save = View::make("table.btn-agregar");
 
-				$drop = View::make("table.profesor-drop");
-				$save = View::make("table.btn-agregar");
+			foreach ($subjs as $subj) {
+				
+				$tema = $subj->subject;
+				$alumno1 = $subj->student1;
+				$alumno2 = $subj->student2;
+				$id = $subj->id;
 
-				foreach ($res['ok'] as $case) {
-
-					//$res2 = $soap->taskCase($case->guid);
-
-					$subjs = Subject::wherePeriodo(Periodo::active())->wherePm_uid($case->guid)->get();
-					
-					if(!$subjs->isEmpty()){
-
-						$subj = $subjs->first();
-					
-						if($subj->status=="not-confirmed"){
-							$tema = $subj->subject;
-							$alumno1 = $subj->student1;
-							$alumno2 = $subj->student2;
-							$id = $case->guid;
-
-
-							$content = View::make("table.cell",array("content"=>$tema));
-							$content .= View::make("table.cell",array("content"=>$alumno1));
-							$content .= View::make("table.cell",array("content"=>$alumno2));
-							$content .= View::make("table.cell",array("content"=>$drop));
-							$content .= View::make("table.cell",array("content"=>$save));
-							$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-						}else{
-
-							$content = View::make("table.cell",array("content"=>$case->delIndex));
-							$content .= View::make("table.cell",array("content"=>$case->guid));
-							$content .= View::make("table.cell",array("content"=>$subj->status));
-							$body .= View::make("table.row",array("content"=>$content));
-						}
-					}else{
-						$message = "Tema no registrado";
-						$content = View::make("table.cell",array("content"=>$message));
-						$body .= View::make("table.row",array("content"=>$content));
-					}
-				}
-
-			}else{
-				$message = "No hay temas rechazados";
-				$content = View::make("table.cell",array("content"=>$message));
-				$body .= View::make("table.row",array("content"=>$content));
-
+				$content = View::make("table.cell",array("content"=>$tema));
+				$content .= View::make("table.cell",array("content"=>$alumno1));
+				$content .= View::make("table.cell",array("content"=>$alumno2));
+				$content .= View::make("table.cell",array("content"=>$drop));
+				$content .= View::make("table.cell",array("content"=>$save));
+				$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
 			}
 
-
-		}else{//sin pm
-
-			$subjs = Subject::wherePeriodo(Periodo::active())->whereStatus("not-confirmed")->get();
-
-			if(!$subjs->isEmpty()){
-
-				$drop = View::make("table.profesor-drop");
-				$save = View::make("table.btn-agregar");
-
-				foreach ($subjs as $subj) {
-					
-					$tema = $subj->subject;
-					$alumno1 = $subj->student1;
-					$alumno2 = $subj->student2;
-					$id = $subj->id;
-
-					$content = View::make("table.cell",array("content"=>$tema));
-					$content .= View::make("table.cell",array("content"=>$alumno1));
-					$content .= View::make("table.cell",array("content"=>$alumno2));
-					$content .= View::make("table.cell",array("content"=>$drop));
-					$content .= View::make("table.cell",array("content"=>$save));
-					$body .= View::make("table.row",array("content"=>$content, "id"=>$id));
-				}
-
-			}else{
-				$message = "No hay temas rechazados";
-				$content = View::make("table.cell",array("content"=>$message));
-				$body .= View::make("table.row",array("content"=>$content));
-
-			}
+		}else{
+			$message = "No hay temas rechazados";
+			$content = View::make("table.cell",array("content"=>$message));
+			$body .= View::make("table.row",array("content"=>$content));
 
 		}
 

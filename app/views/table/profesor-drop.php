@@ -6,13 +6,13 @@
 	$users = Permission::wherePermission("P");
 	
 	foreach ($users->with("staff")->get() as $value) {
-		
-		$name = $value->staff->name." ".$value->staff->surname;
+		if(!empty($value->staff)){
+			$name = $value->staff->name." ".$value->staff->surname;
 
-		$value = $value->staff->pm_uid;
+			$value = $value->staff->wc_id;
 
-		echo "<option value='$value'>$name</option>";
-	
+			echo "<option value='$value'>$name</option>";
+		}
 	}
 
 

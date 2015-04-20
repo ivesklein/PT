@@ -608,17 +608,14 @@ class PostMemorias{
 					$prof = $_POST['prof'];
 					$id = $_POST['id'];
 
-					$subjs = Subject::whereId($id)->get();
+					$subj = Subject::find($id);
 
-					if(!$subjs->isEmpty()){
-						$subj = $subjs->first();
+					if(!empty($subj)){
 						$ant = $subj->adviser;
 						$subj->adviser = $prof;
 						$return["ok"]="ok0";
 						$subj->status = "confirm";
 						$subj->save();
-
-
 
 						$wc = WCtodo::add("newuser", array('user'=>$prof, 'rol'=>'P'));
 						$wc = WCtodo::add("u!2g", array('subject_id'=>$subj->id, 'user'=>$ant));

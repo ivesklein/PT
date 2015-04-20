@@ -11,151 +11,167 @@ class PostHojaRuta{
 				$tema = Subject::find($_POST['id']);
 				if(!empty($tema)){
 
-							$estado = array(
-								"alumno1"=>array("status"=>1)
-								,"alumno2"=>array("status"=>1)
-								,"profesor"=>array("status"=>0)
-								,"aleatorio"=>array("status"=>0)
-								,"secretaria1"=>array("status"=>0)
-								,"secretaria2"=>array("status"=>0)
-							);
+					$estado = array(
+						"alumno1"=>array("status"=>1)
+						,"alumno2"=>array("status"=>1)
+						,"profesor"=>array("status"=>0)
+						,"aleatorio"=>array("status"=>0)
+						,"secretaria1"=>array("status"=>0)
+						,"secretaria2"=>array("status"=>0)
+					);
 
-							$a1 = Student::whereWc_id($tema->student1)->first();
-							$a2 = Student::whereWc_id($tema->student2)->first();
-							$prof = Staff::whereWc_id($tema->adviser)->first();
+					$a1 = Student::whereWc_id($tema->student1)->first();
+					$a2 = Student::whereWc_id($tema->student2)->first();
+					$prof = Staff::whereWc_id($tema->adviser)->first();
 
-							$estado["profesor"]["name"]=$prof->name." ".$prof->surname;
-							$estado["alumno1"]["name"]=$a1->name." ".$a1->surname;
-							$estado["alumno2"]["name"]=$a2->name." ".$a2->surname;
+					if(!empty($prof)){
+						$estado["profesor"]["name"]=$prof->name." ".$prof->surname;
+					}
 
+					$estado["alumno1"]["declaracion"] = Texto::texto("declaracion-alumno","Declaro ante mi que el trabajo \"".$tema->subject."\" es obra mía.");
+					$estado["alumno2"]["declaracion"] = $estado["alumno1"]["declaracion"];
+					$estado["profesor"]["declaracion"] = Texto::texto("declaracion-profesor","Declaro ante mi que el trabajo es digno de llamar memoria de Ingeniería.");
+					$estado["aleatorio"]["declaracion"] = Texto::texto("declaracion-revisor","Declaro ante mi que el trabajo tiene un formato acorde a los estandares de la UAI.");
+					$estado["secretaria1"]["declaracion"] = Texto::texto("declaracion-secretaria","Declaro ante mi que el trabajo cumple con todos los requisitos para presentarse a defensa.");
+					$estado["secretaria2"]["declaracion"] = $estado["secretaria1"]["declaracion"];
 
-							$estado["alumno1"]["declaracion"] = Texto::texto("declaracion-alumno","Declaro ante mi que el trabajo \"".$tema->subject."\" es obra mía.");
-							$estado["alumno2"]["declaracion"] = $estado["alumno1"]["declaracion"];
-							$estado["profesor"]["declaracion"] = Texto::texto("declaracion-profesor","Declaro ante mi que el trabajo es digno de llamar memoria de Ingeniería.");
-							$estado["aleatorio"]["declaracion"] = Texto::texto("declaracion-revisor","Declaro ante mi que el trabajo tiene un formato acorde a los estandares de la UAI.");
-							$estado["secretaria1"]["declaracion"] = Texto::texto("declaracion-secretaria","Declaro ante mi que el trabajo cumple con todos los requisitos para presentarse a defensa.");
-							$estado["secretaria2"]["declaracion"] = $estado["secretaria1"]["declaracion"];
+					if(empty($a1)){
+						$estado["alumno1"]['status'] = 0;
+						$estado["alumno1"]['declaracion'] = "";
+						$estado["secretaria1"]['status'] = 0;
+						$estado["secretaria1"]['declaracion'] = "";
+					}else{
+						$estado["alumno1"]["name"]=$a1->name." ".$a1->surname;
+					}
+					if(empty($a2)){
+						$estado["alumno2"]['status'] = 0;
+						$estado["alumno2"]['declaracion'] = "";
+						$estado["secretaria2"]['status'] = 0;
+						$estado["secretaria2"]['declaracion'] = "";
+					}else{
+						$estado["alumno2"]["name"]=$a2->name." ".$a2->surname;
+					}
 
-							$hoja = $tema->firmas;
-							if(!empty($hoja)){
-								//if($hoja->$nstudent=="firmado"){
-									//ya firmó
+					$hoja = $tema->firmas;
+					if(!empty($hoja)){
+						//if($hoja->$nstudent=="firmado"){
+							//ya firmó
 
-								if($hoja->student1=="firmado"){
-									$estado["alumno1"]["status"]=2;
-									$estado["profesor"]["status"]=1;
-								}
-								if($hoja->student2=="firmado"){
-									$estado["alumno2"]["status"]=2;
-									$estado["profesor"]["status"]=1;
-								}
-								if($hoja->adviser=="firmado"){
-									$estado["profesor"]["status"]=2;
-									$estado["aleatorio"]["status"]=1;
-								}
-								if($hoja->revisor=="firmado"){
-									$estado["aleatorio"]["status"]=2;
-									if($hoja->student1=="firmado"){
-										$estado["secretaria1"]["status"]=1;
-									}
-									if($hoja->student2=="firmado"){
-										$estado["secretaria2"]["status"]=1;
-									}
-								}
-								if($hoja->secre1=="firmado"){
-									$estado["secretaria1"]["status"]=2;
-								}
-								if($hoja->secre2=="firmado"){
-									$estado["secretaria2"]["status"]=2;
-								}
-
-								//RECHAZADO//
-
-								if($hoja->adviser=="rechazado"){
-									$estado["profesor"]["status"]=-1;
-
-									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
-									if(!empty($tareas)){
-										$notas = $tareas->notas()->first();
-										if(!empty($notas)){
-											$estado["profesor"]["feedback"] = $notas->first()->feedback;
-										}else{
-											$estado["profesor"]["feedback"] = "1";
-										}
-									}else{
-										$estado["profesor"]["feedback"] = "2";
-									}
-								}
-
-								if($hoja->revisor=="rechazado"){
-									$estado["aleatorio"]["status"]=-1;
-
-									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
-									if(!empty($tareas)){
-										$notas = $tareas->notas()->first();
-										if(!empty($notas)){
-											$estado["profesor"]["feedback"] = $notas->first()->feedback;
-										}else{
-											$estado["profesor"]["feedback"] = "3";
-										}
-									}else{
-										$estado["profesor"]["feedback"] = "4";
-									}
-								}
-
-								if($hoja->secre1=="rechazado"){
-									$estado["secretaria1"]["status"]=-1;
-
-									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
-									if(!empty($tareas)){
-										$notas = $tareas->notas()->first();
-										if(!empty($notas)){
-											$estado["profesor"]["feedback"] = $notas->first()->feedback;
-										}else{
-											$estado["profesor"]["feedback"] = "5";
-										}
-									}else{
-										$estado["profesor"]["feedback"] = "6";
-									}
-								}
-
-								if($hoja->secre2=="rechazado"){
-									$estado["secretaria2"]["status"]=-1;
-
-									$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
-									if(!empty($tareas)){
-										$notas = $tareas->notas()->first();
-										if(!empty($notas)){
-											$estado["profesor"]["feedback"] = $notas->first()->feedback;
-										}else{
-											$estado["profesor"]["feedback"] = "7";
-										}
-									}else{
-										$estado["profesor"]["feedback"] = "8";
-									}
-								}
+						if($hoja->student1=="firmado"){
+							$estado["alumno1"]["status"]=2;
+							$estado["profesor"]["status"]=1;
+						}
+						if($hoja->student2=="firmado"){
+							$estado["alumno2"]["status"]=2;
+							$estado["profesor"]["status"]=1;
+						}
+						if($hoja->adviser=="firmado"){
+							$estado["profesor"]["status"]=2;
+							$estado["aleatorio"]["status"]=1;
+						}
+						if($hoja->revisor=="firmado"){
+							$estado["aleatorio"]["status"]=2;
+							if($hoja->student1=="firmado"){
+								$estado["secretaria1"]["status"]=1;
 							}
-
-							$return['hoja'] = $estado;
-
-							$st1 = explode("@",$tema->student1);
-		                	$st2 = explode("@",$tema->student2);
-		                	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
-							$return["data"] = array("id"=>$tema->id,"grupo"=>$grupo, "titulo"=>$tema->subject, "guia"=>$tema->adviser);
-
-
-							$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->get();
-							if(!$tareas->isEmpty()){
-								$tarea = $tareas->first();
-								$return["data"]["url"] = $tarea->wc_uid;
+							if($hoja->student2=="firmado"){
+								$estado["secretaria2"]["status"]=1;
 							}
+						}
+						if($hoja->secre1=="firmado"){
+							$estado["secretaria1"]["status"]=2;
+						}
+						if($hoja->secre2=="firmado"){
+							$estado["secretaria2"]["status"]=2;
+						}
 
-							$revs = $tema->revisor()->get();
-							if(!$revs->isEmpty()){
-								$rev = $revs->first();
+						//RECHAZADO//
 
-								$return["data"]["revisor"] = $rev->wc_id;
+						if($hoja->adviser=="rechazado"){
+							$estado["profesor"]["status"]=-1;
+
+							$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
+							if(!empty($tareas)){
+								$notas = $tareas->notas()->first();
+								if(!empty($notas)){
+									$estado["profesor"]["feedback"] = $notas->first()->feedback;
+								}else{
+									$estado["profesor"]["feedback"] = "1";
+								}
+							}else{
+								$estado["profesor"]["feedback"] = "2";
 							}
+						}
+
+						if($hoja->revisor=="rechazado"){
+							$estado["aleatorio"]["status"]=-1;
+
+							$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
+							if(!empty($tareas)){
+								$notas = $tareas->notas()->first();
+								if(!empty($notas)){
+									$estado["profesor"]["feedback"] = $notas->first()->feedback;
+								}else{
+									$estado["profesor"]["feedback"] = "3";
+								}
+							}else{
+								$estado["profesor"]["feedback"] = "4";
+							}
+						}
+
+						if($hoja->secre1=="rechazado"){
+							$estado["secretaria1"]["status"]=-1;
+
+							$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
+							if(!empty($tareas)){
+								$notas = $tareas->notas()->first();
+								if(!empty($notas)){
+									$estado["profesor"]["feedback"] = $notas->first()->feedback;
+								}else{
+									$estado["profesor"]["feedback"] = "5";
+								}
+							}else{
+								$estado["profesor"]["feedback"] = "6";
+							}
+						}
+
+						if($hoja->secre2=="rechazado"){
+							$estado["secretaria2"]["status"]=-1;
+
+							$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(5)->first();
+							if(!empty($tareas)){
+								$notas = $tareas->notas()->first();
+								if(!empty($notas)){
+									$estado["profesor"]["feedback"] = $notas->first()->feedback;
+								}else{
+									$estado["profesor"]["feedback"] = "7";
+								}
+							}else{
+								$estado["profesor"]["feedback"] = "8";
+							}
+						}
+					}
+
+					$return['hoja'] = $estado;
+
+					$st1 = explode("@",$tema->student1);
+                	$st2 = explode("@",$tema->student2);
+                	$grupo = $st1[0]." & ".$st2[0]."(".$tema->id.")";
+					$return["data"] = array("id"=>$tema->id,"grupo"=>$grupo, "titulo"=>$tema->subject, "guia"=>$tema->adviser);
+
+
+					$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->get();
+					if(!$tareas->isEmpty()){
+						$tarea = $tareas->first();
+						$return["data"]["url"] = $tarea->wc_uid;
+					}
+
+					$revs = $tema->revisor()->get();
+					if(!$revs->isEmpty()){
+						$rev = $revs->first();
+
+						$return["data"]["revisor"] = $rev->wc_id;
+					}
 
 
 
@@ -456,12 +472,17 @@ class PostHojaRuta{
 								$vista = "emails.rechazo-revisor";
 								$feedback = isset($_POST['feedback'])?$_POST['feedback']:"";
 
-								Correo::enviar( $tema->student1, $titulo ,$vista, 
-									array("id"=>$tema->id,"tema"=>$tema->subject,"feedback"=>$feedback)
-								);
-								Correo::enviar( $tema->student2, $titulo ,$vista, 
-									array("id"=>$tema->id,"tema"=>$tema->subject,"feedback"=>$feedback)
-								);
+								if(!empty($tema->student1)){
+									Correo::enviar( $tema->student1, $titulo ,$vista, 
+										array("id"=>$tema->id,"tema"=>$tema->subject,"feedback"=>$feedback)
+									);
+								}
+								
+								if(!empty($tema->student1)){
+									Correo::enviar( $tema->student2, $titulo ,$vista, 
+										array("id"=>$tema->id,"tema"=>$tema->subject,"feedback"=>$feedback)
+									);
+								}
 
 							}else{
 								$return["error"] = "Respuesta desconocida";
