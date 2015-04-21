@@ -241,7 +241,7 @@ class PostComision{
 			        $e2s->save();
 				}
 
-				$return['ok'] = 1;
+				$return['ok'] = array($event->id, $tipo.": ".$title);
 				if($tipo=="Defensa"){
 					$a = DID::action(Auth::user()->wc_id, "crear fecha defensa", $subj->guia, "memoria", $_POST['start']);
 				}else{
@@ -257,7 +257,5 @@ class PostComision{
 		}
 		return json_encode($return);
 	}
-
-
 
 }

@@ -1,18 +1,19 @@
 <div class="page page-table">
-
-    <link rel="stylesheet" href="fullcalendar/fullcalendar.css" />
     <link rel="stylesheet" href="jui/jquery-ui.min.css" />
+    <link rel="stylesheet" href="fullcalendar/fullcalendar.css" />
+    
     <style>
     #comisionbox .panel-heading, #fechasbox .panel-heading{
         cursor:pointer;
     }
     </style>
+    <script src="jui/jquery-ui.min.js"></script>
     <script src="fullcalendar/lib/moment.min.js"></script>
     <script src="fullcalendar/fullcalendar.js"></script>
     <script src="fullcalendar/lang/es.js"></script>
     <!--script src="js/bloodhound.min.js"></script>
     <script src="js/typeahead.jquery.min.js"></script-->
-    <script src="jui/jquery-ui.min.js"></script>
+    
     <div class="row">
         <div class="col-md-4">
             <div class="panel panel-default">
@@ -508,16 +509,14 @@
 
             <script type="text/javascript">
 
+
+
             var eventcolor = "";
 
             var add = function(start, end) {
-
                 var id = $('#temas').val();
-                var title = "";
-                
                 //verificar que se sepa que tipo de evento es
                 if(id!="sel" && eventcolor!=""){
-
                     //guardarlo
                     var eventData;
                     ajx({
@@ -528,18 +527,19 @@
                             end: end.format(),
                             color: eventcolor
                         },
-                        ok:function(id, title) {
+
+                        ok:function(data) {
                             eventData = {
-                                //id: id.ok,
-                                title: title,
-                                detail: "",
+                                id: data.ok[0],
+                                title: data.ok[1],
+                                detail: id,
                                 start: start,
                                 end: end,
                                 color: eventcolor
                             };
                             console.log(eventData);
                             $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-                        
+            
                             $('#calendar').fullCalendar('unselect');
 
                             if(eventdes=="Predefensa"){
@@ -558,6 +558,7 @@
             }
 
             var edit = function(event, delta, error){
+                console.log("a");
 
                 var start = event.start;
                 var end = event.end;
@@ -588,19 +589,20 @@
             }
 
             var click = function(event){
-                var del = confirm("¿Borrar "+event.detail+"?");
-                if(del==true){
-                    /*ajx({
-                        data:{
-                            f:'ajxdelevent',
-                            id: event.id
-                        },
-                        ok:function(data){
-                            $('#calendar').fullCalendar('removeEvents',event.id);
-                        }
-                    });*/
+                if(event.detail==idtema){
+                    var del = confirm("¿Borrar "+event.detail+"?");
+                    if(del==true){
+                        ajx({
+                            data:{
+                                f:'Eventos_borrar',
+                                id: event.id
+                            },
+                            ok:function(data){
+                                $('#calendar').fullCalendar('removeEvents',event.id);
+                            }
+                        });
+                    }
                 }
-
             }
 
             var load = function() {
@@ -619,8 +621,8 @@
                 });*/
             }
 
-
             $(document).ready(function() {
+            
                 $("#calendar").fullCalendar({
                     aspectRatio:1.70,
                     'header':{
@@ -641,20 +643,19 @@
                     'slotDuration':'00:15:00',
                     'snapDuration':'00:05:00',
                     'lang':'es',
-                    'defaultView':'agendaWeek',
+                    //'defaultView':'agendaWeek',
 
                     'timezone':"-3:00",
                     selectable: true,
                     //selectHelper: true,
-                    
                     select: add,
                     eventResize: edit,
                     eventDrop: edit,
                     eventClick: click,
-                    editable: true
+                    editable: true,
                 });
 
-                load();
+                
 
             });
 

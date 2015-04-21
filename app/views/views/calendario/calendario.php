@@ -20,8 +20,10 @@
 
             var add = function(start, end) {
                 var title = prompt('Event Title:');
-                var eventData;
+
                 if(title){
+                    
+                    var eventData;
                     ajx({
                         data:{
                             f:'Eventos_nuevo',
@@ -33,7 +35,7 @@
                         },
                         ok:function(id) {
                             eventData = {
-                                //id: id.ok,
+                                id: id.ok,
                                 title: eventdes,
                                 detail: title,
                                 start: start,
