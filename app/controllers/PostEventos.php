@@ -52,6 +52,9 @@ class PostEventos{
 				        $event->start = $_POST["start"];
 				        $event->end = $_POST["end"];
 				        $event->save();
+
+				        CronHelper::modDefensa($event);
+				    
 				        $return["ok"] = $event->id;
 
 					}else{
@@ -204,7 +207,10 @@ class PostEventos{
 				if(Rol::hasPermission("coordefensa")){
 
 					$e2s = E2S::whereEvent_id($_POST["id"])->delete();
-					$event = CEvent::find($_POST["id"])->delete();
+					$event = CEvent::find($_POST["id"])
+					CronHelper::delDefensa($event);
+					$event->delete();
+
 			        $return["ok"] = "ok";
 
 				}else{

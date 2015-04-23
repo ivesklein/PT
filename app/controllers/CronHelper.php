@@ -148,6 +148,113 @@ class CronHelper {
 
 	}
 
+	public static function addDefensa($evento)
+	{
+		/*
+			$event->title = $tipo.": ".$title;
+			$event->start = $_POST['start'];
+			$event->end = $_POST['end'];
+			$event->type = "Defensa" / "Predefensa"
+			$event->detail = $subj->id;
+		*/
+
+		if(!empty($evento)){
+			if(!empty($evento->start)){
+				$fecha = Carbon::parse($evento->start);
+				$id = $evento->id;
+				//definir fechas de aviso
+				$sub1 = $fecha->copy()->subDay();
+				$sub5 = $fecha->copy()->subDays(5);
+
+				//crear avisos
+
+				$now = Carbon::now();
+
+				if($now<$sub1){
+					$osub1 = new O2C;
+					$osub1->type="defsub1";
+					$osub1->other="defensa";
+					$osub1->other_id=$id;
+					$vars = array("id"=>$id, "type"=>"defsub1");
+					$cron = Cron::add("defensa", $vars, $sub1);
+					$osub1->cron_id = $cron;
+					$osub1->save();
+				}
+
+				if($now<$sub5){
+					$osub5 = new O2C;
+					$osub5->type="defsub5";
+					$osub5->other="defensa";
+					$osub5->other_id=$id;
+					$vars = array("id"=>$id, "type"=>"defsub5");
+					$cron = Cron::add("defensa", $vars, $sub5);
+					$osub5->cron_id = $cron;
+					$osub5->save();
+				}
+				//linkear los avisos a los eventos
+
+
+			}
+		}
+
+	}
+
+	public static function modDefensa($evento)
+	{
+		/*
+			$event->title = $tipo.": ".$title;
+			$event->start = $_POST['start'];
+			$event->end = $_POST['end'];
+			$event->type = "Defensa" / "Predefensa"
+			$event->detail = $subj->id;
+		*/
+
+
+		if(!empty($evento)){
+			if(!empty($evento->start)){
+
+				$fecha = Carbon::parse($evento->start);
+				$id = $evento->id;
+				//definir fechas de aviso
+				$sub1 = $fecha->copy()->subDay();
+				$sub5 = $fecha->copy()->subDays(5);
+
+				$o2cs = O2C::whereOther_id($id)->whereOther("defensa")->get();
+				
+				foreach ($o2cs as $o2c) {
+					$cron = Cron::find($o2c->cron_id):
+					if(!empty($cron)){
+						if($o2c->type="defsub1"){
+							$cron->triggertime = $sub1;
+						}
+						if($o2c->type="defsub5"){
+							$cron->triggertime = $sub5;
+						}	
+						$cron->save();
+					}
+				}
+
+			}
+		}
+	}
+
+	public static function delDefensa($evento)
+	{
+
+		if(!empty($evento)){
+
+				$id = $evento->id;
+
+				$o2cs = O2C::whereOther_id($id)->whereOther("defensa")->get();
+				
+				foreach ($o2cs as $o2c) {
+					$o2c->delete();
+				}
+
+			
+		}
+	}
+
 
 }
 ?>

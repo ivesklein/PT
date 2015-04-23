@@ -209,45 +209,56 @@ class PostComision{
 				if($_POST['color']=="darkcyan"){
 					$tipo = "Predefensa";
 				}
-				$subj = Subject::find($_POST['id']);
-				$title = $subj->subject;
 
-				//crear evento
-				$event = new CEvent;
-				$event->title = $tipo.": ".$title;
-				$event->start = $_POST['start'];
-				$event->end = $_POST['end'];
+				$exist = CEvent::whereDetail($_POST['id'])->whereType($tipo)->first();
 
-				$event->type = $tipo;
+				if(empty($exist)){
 
-		        $event->detail = $subj->id;
-		        $event->color = $_POST["color"];
-		        $event->save();
+					$subj = Subject::find($_POST['id']);
+					$title = $subj->subject;
 
-				//tomar los participantes
+					//crear evento
+					$event = new CEvent;
+					$event->title = $tipo.": ".$title;
+					$event->start = $_POST['start'];
+					$event->end = $_POST['end'];
 
-				$guia = $subj->guia;
-				//asignar evento a participantes
-				$e2s = new E2S;
-		        $e2s->event_id = $event->id;
-		        $e2s->staff_id = $guia->id;
-		        $e2s->save();
+					$event->type = $tipo;
 
-				$otros = $subj->comision;
-				foreach ($otros as $comision) {
+			        $event->detail = $subj->id;
+			        $event->color = $_POST["color"];
+			        $event->save();
+
+			        CronHelper::addDefensa($event);
+
+					//tomar los participantes
+
+					$guia = $subj->guia;
+					//asignar evento a participantes
 					$e2s = new E2S;
 			        $e2s->event_id = $event->id;
-			        $e2s->staff_id = $comision->id;
+			        $e2s->staff_id = $guia->id;
 			        $e2s->save();
-				}
 
-				$return['ok'] = array($event->id, $tipo.": ".$title);
-				if($tipo=="Defensa"){
-					$a = DID::action(Auth::user()->wc_id, "crear fecha defensa", $subj->guia, "memoria", $_POST['start']);
+					$otros = $subj->comision;
+					foreach ($otros as $comision) {
+						$e2s = new E2S;
+				        $e2s->event_id = $event->id;
+				        $e2s->staff_id = $comision->id;
+				        $e2s->save();
+					}
+
+
+
+					$return['ok'] = array($event->id, $tipo.": ".$title);
+					if($tipo=="Defensa"){
+						$a = DID::action(Auth::user()->wc_id, "crear fecha defensa", $subj->guia, "memoria", $_POST['start']);
+					}else{
+						$a = DID::action(Auth::user()->wc_id, "crear fecha predefensa", $subj->guia, "memoria", $_POST['start']);
+					}
 				}else{
-					$a = DID::action(Auth::user()->wc_id, "crear fecha predefensa", $subj->guia, "memoria", $_POST['start']);
+					$return["error"] = "Evento ya existe";
 				}
-
 
 			}else{
 				$return["error"] = "not permission";

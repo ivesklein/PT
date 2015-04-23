@@ -550,6 +550,10 @@
                                 $("#eventdetdef .inicio").html(start.format());
                                 $("#eventdetdef .fin").html(end.format());
                             }
+                        },
+                        error:function(data){
+                            alert(data)
+                            $('#calendar').fullCalendar('unselect');
                         }
                     });
 

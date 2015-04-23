@@ -275,8 +275,79 @@ class CronRoute {
 
 		return array("ok"=>1);
 
+	}
 
-		Cron::addafter("mail", $array, Carbon::now());
+	public static function defensa($a)
+	{
+
+		Log::info("ejecutando defensa cron");
+
+		$id = $a->id;
+		$event = CEvent::find($id);
+		if(!empty($event)){
+			/*
+				$event->title = $tipo.": ".$title;
+				$event->start = $_POST['start'];
+				$event->end = $_POST['end'];
+				$event->type = "Defensa" / "Predefensa"
+				$event->detail = $subj->id;
+			*/
+			$type = $event->type;
+			$subj = Subject::find($event->detail);
+			if(!empty($subj)){
+				//recolectar participantes
+				$part = array();
+				if(!empty($subj->student1)){
+					$part[] = $subj->student1;
+				}
+				if(!empty($subj->student2)){
+					$part[] = $subj->student2;
+				}
+				if(!empty($subj->adviser)){
+					$part[] = $subj->adviser;
+				}
+				$comi = $subj->comision;
+				foreach ($comi as $prof) {
+					if($prof->pivot->status=="confirmado"){
+						$part[] = $prof->wc_id;
+					}
+				}
+
+
+				$array = array(
+					"to"=>"",
+					"title"=>"Recordatorio ".$type,
+					"view"=>"emails.recordatorio-defensa",
+					"parameters"=>array(),
+				);
+
+				$st1 = explode("@",$subj->student1);
+		    	$st2 = explode("@",$subj->student2);
+		    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+		    	
+		    	$array["parameters"]['grupo'] = $grupo;
+		    	$array["parameters"]['tipo'] = $type;
+				$array["parameters"]['tema'] = $subj->subject;
+				$array["parameters"]['time'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%m'));
+				$array["parameters"]['place'] = "";
+				foreach ($part as $to) {
+
+					$array["to"] = $to;
+					$id = Cron::addafter("mail", $array, Carbon::now());
+					Log::info("agregando defensa mail cron :".$id);
+				}
+				
+
+
+
+			}
+
+		}else{
+			//error
+		}
+
+		return array("ok"=>1);
+
 	}
 
 	public static function objectToArray($d) {

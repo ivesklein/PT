@@ -88,4 +88,55 @@ class CarbonLocale extends Carbon {
 
         return Lang::choice("$txt.past.$unit", $delta, compact('delta'));
     }
+
+    public static function spanish($str)
+    {
+        $timewords = array(
+            "from"=>array(
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December"
+            ),
+            "to"=>array(
+                "Domingo",
+                "Lunes",
+                "Martes",
+                "Miercoles",
+                "Jueves",
+                "Viernes",
+                "Sábado",
+                "Enero",
+                "Febrero",
+                "Marzo",
+                "Abril",
+                "Mayo",
+                "Junio",
+                "Julio",
+                "Agosto",
+                "Septiembre",
+                "Octubre",
+                "Noviembre",
+                "Diciembre"
+            )
+        );
+
+        return str_replace($timewords["from"], $timewords["to"], $str);
+    }
+
 } 
