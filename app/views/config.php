@@ -47,7 +47,7 @@
 		        <div class="form-group">
 		            <label for="" class="col-sm-4">Contraseña nueva</label>
 		            <div class="col-sm-8">
-		                <input class="form-control" type="text" name="passu">
+		                <input class="form-control" type="password" name="passu">
 		            </div>
 		        </div>
 		        <div class="form-group">
