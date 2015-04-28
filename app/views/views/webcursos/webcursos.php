@@ -59,7 +59,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-offset-3 col-lg-6 .col-xsm-6" id="todo">
+                    <!--div class="col-lg-offset-3 col-lg-6 .col-xsm-6" id="todo">
                         <div class="panel mini-box">
                             <span class="box-icon bg-success"><i class="fa fa-cubes"></i></span>
                             <div class="box-info">
@@ -67,7 +67,7 @@
                                 <div class='btn btn-warning todo' id='ctodo'>Actualizar todo </div>
                             </div>
                         </div>
-                    </div>
+                    </div-->
 
                 </div>
 
