@@ -77,7 +77,7 @@ class CSV {
 
             //print_r($rows);
 
-            Log::info();
+            //Log::info();
             return $rows;
 
             /*while($data = fgetcsv($encode,0,$delimiter)){
