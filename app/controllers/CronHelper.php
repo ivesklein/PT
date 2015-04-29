@@ -222,7 +222,7 @@ class CronHelper {
 				$o2cs = O2C::whereOther_id($id)->whereOther("defensa")->get();
 				
 				foreach ($o2cs as $o2c) {
-					$cron = Cron::find($o2c->cron_id):
+					$cron = Cron::find($o2c->cron_id);
 					if(!empty($cron)){
 						if($o2c->type="defsub1"){
 							$cron->triggertime = $sub1;

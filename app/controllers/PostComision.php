@@ -54,6 +54,26 @@ class PostComision{
 					}
 				}
 
+				$return['pre'] = array();
+				$return['def'] = array();
+				$defensas = CEvent::whereDetail($subj->id)->get();
+				if(!$defensas->isEmpty()){
+
+					foreach ($defensas as $event) {
+						if($event->color=="blue"){
+							$tipo = "Defensa";
+							$return['def']['start'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
+							$return['def']['end'] = CarbonLocale::spanish(Carbon::parse($event->end)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
+						}elseif($event->color=="darkcyan"){
+							$tipo = "Predefensa";
+							$return['pre']['start'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
+							$return['pre']['end'] = CarbonLocale::spanish(Carbon::parse($event->end)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
+						}
+					}
+				}
+
+
+
 				$return["ok"]=1;
 				//datos otros
 

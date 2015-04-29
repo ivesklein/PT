@@ -409,6 +409,23 @@
                                     }
                                 }
 
+                                if("pre" in data1){
+                                    if("start" in data1["pre"]){
+                                        $("#eventdetpre .inicio").html(data1["pre"]['start'])
+                                    }
+                                    if("end" in data1["pre"]){
+                                        $("#eventdetpre .fin").html(data1["pre"]['end'])   
+                                    }
+                                }
+                                if("def" in data1){
+                                    if("start" in data1["def"]){
+                                        $("#eventdetdef .inicio").html(data1["def"]['start'])
+                                    }
+                                    if("end" in data1["def"]){
+                                        $("#eventdetdef .fin").html(data1["def"]['end'])   
+                                    }      
+                                }
+
                             }
                         });
                     } 
