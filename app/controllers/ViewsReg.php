@@ -11,6 +11,11 @@ class ViewsReg extends BaseController
 		});
 	}
 
+	public static function test()
+    {
+        return true;
+    }	
+
 	public function getActions()
 	{
 		$ahead = array("Quien","Que","Donde","Relacionado con", "Extra", "IP","UA", "Cuando");

@@ -13,6 +13,11 @@ class ViewsFirst extends BaseController
 			}
 		});
 	}
+	
+	public static function test()
+    {
+        return true;
+    }	
 
 	public function getIndex()
 	{

@@ -22,6 +22,11 @@ class ViewsWC extends BaseController
 		//return "hola";
 	}
 
+	public static function test()
+    {
+        return true;
+    }	
+
 	public function postNotas()
 	{	
 		//return View::make("hello");

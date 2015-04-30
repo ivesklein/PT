@@ -14,7 +14,10 @@ class ViewsHojaRuta extends BaseController
 		});
 	}
 
-
+	public static function test()
+    {
+        return true;
+    }
 
 	// HOJA DE RUTA //
 	public function getListahojasruta()

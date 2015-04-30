@@ -8,6 +8,11 @@ class WCAPI {
 	var $count=0;
 	var $times=array();
 
+	public static function test()
+    {
+        return true;
+    }	
+
 	function wget($url,$ref_url,$data,$cookie="",$proxy = "null" ,$proxystatus = "false"){
 
 		$time_start = microtime(true);

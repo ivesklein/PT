@@ -1,6 +1,11 @@
 <?php
 class CSV {
 
+    public static function test()
+    {
+        return true;
+    }
+
 	public static function toArrayX($file)
 	{
 		$return = array();

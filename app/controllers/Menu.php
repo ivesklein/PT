@@ -1,6 +1,10 @@
 <?php
 class Menu {
 
+    public static function test()
+    {
+        return true;
+    }
 	//public static $colors = array("danger","orange", "warning", "success", "info", "primary-light", "primary", "violet");
 	static $vistaPermiso = array(
 		"temasCreate"=>array(

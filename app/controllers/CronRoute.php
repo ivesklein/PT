@@ -1,5 +1,10 @@
 <?php
 class CronRoute {
+
+	public static function test()
+    {
+        return true;
+    }
 	
 
 	public static function recordar_confirmar_guia($value)

@@ -1,6 +1,11 @@
 <?php
 class Rol {
 
+	public static function test()
+    {
+        return true;
+    }
+
 	static $roles = array(
 		"CA"=>
 			array(

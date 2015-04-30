@@ -7,6 +7,11 @@ class Pendientes{
 		return 0;
     }
 
+    public static function test()
+    {
+        return true;
+    }
+
     public static function guiaConfirmation()
     {
     	$subjs = Subject::wherePeriodo(Periodo::active())->whereAdviser(Auth::user()->wc_id)->whereStatus("confirm")->count();

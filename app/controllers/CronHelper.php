@@ -1,5 +1,10 @@
 <?php
 class CronHelper {
+
+	public static function test()
+    {
+        return true;
+    }
 	
 	public static function tarea($id, $fecha)
 	{

@@ -1,5 +1,10 @@
 <?php
 class UserCreation {
+
+	public static function test()
+    {
+        return true;
+    }
 	
 	public static function add($email, $name, $surname, $rol, $pass = null, $pm = null)
 	{	

@@ -2,6 +2,11 @@
 class GetFile  extends BaseController
 {
 
+public static function test()
+{
+    return true;
+}
+
 public function feedback($id)
 {
 	$nota = Nota::find($id);

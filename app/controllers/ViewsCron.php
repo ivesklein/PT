@@ -11,6 +11,11 @@ class ViewsCron extends BaseController
 		});
 	}
 
+	public static function test()
+    {
+        return true;
+    }
+
 	public function getCronlist()
 	{
 		$ahead = array("id","Funcion","Cuando","Contenido");
