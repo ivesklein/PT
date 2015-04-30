@@ -6,6 +6,7 @@ class WCAPI {
 	var $course=0;
 	var $sesskey="";
 	var $count=0;
+	var $enrolid=-1;
 	var $times=array();
 
 	public static function test()
@@ -173,6 +174,9 @@ class WCAPI {
 				"enrolid"=>81020 //matriculacion manual
 			);
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
+
+			Log::info("WCAPI find:".$query);
+
 			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
 			if(isset($contenido["ok"])){
 				try {
@@ -230,7 +234,7 @@ class WCAPI {
 					//print_r($matches);
 					//$return["url"] = $url;
 					//$return["ok"] = $matches;
-
+					Log::info("WCAPI userlist");
 
 
 				} catch (Exception $e) {
@@ -358,7 +362,9 @@ class WCAPI {
 			);
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
 			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
-			
+				
+			Log::info("WCAPI find:".$query);
+
 			if(isset($contenido["ok"])){
 				try {
 
@@ -396,11 +402,46 @@ class WCAPI {
 	{
 		$return = array();
 		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
+			if($this->enrolid==-1){
+
+				$url = "http://webcursos.uai.cl/enrol/users.php?id=".$this->course;//&perpage=5000";
+				$data = array();
+				//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
+				$contenido = $this->wget($url , $this->ref , $data , $this->cookie);				
+				if(isset($contenido["ok"])){
+					try {
+
+						preg_match_all('|<input type="hidden" name="enrolid" value="([0-9]+)" .>|Uus', $contenido["ok"], $matches);
+
+						if(isset($matches[0][0])){
+							$this->enrolid = $matches[1][0];
+							Log::info("WCAPI pre1:".$uid);
+							return $this->enrolUserOk($uid,$rol);
+						}else{
+							$return["error"] = "Error, enrolid no encontrado";
+						}
+					} catch (Exception $e) {
+						$return["error"] = $e->getMessage();
+					}
+				}
+			}else{
+				Log::info("WCAPI pre0:".$uid);
+				return $this->enrolUserOk($uid,$rol);
+			}
+		}
+
+	}
+
+	public function enrolUserOk($uid,$rol)
+	{
+		$return = array();
+		if($this->cookie!="" && $this->course!=0 && $this->sesskey!=""){
+
 			$url = "http://webcursos.uai.cl/enrol/manual/ajax.php";//&perpage=5000";
 			$data = array(	
 				"id"=>$this->course, //id curso
 				"userid"=>$uid, //userid
-				"enrolid"=>"81020", //manual
+				"enrolid"=>$this->enrolid, //manual
 				"sesskey"=>$this->sesskey,
 				"action"=>"enrol",
 				"role"=>$rol,  // 
@@ -411,10 +452,15 @@ class WCAPI {
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
 			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
 			
+			Log::info("WCAPI registrar:".$uid);
+
 			if(isset($contenido["ok"])){
 				try {
 
 					$res = json_decode($contenido["ok"]);
+					
+					Log::info("WCAPI registrar:".$contenido["ok"]);
+
 					if($res->success==1){
 						$return["ok"]=1;
 					}else{
@@ -460,6 +506,7 @@ class WCAPI {
 				"submitbutton"=>"Guardar cambios",
 			);
 
+
 			/*$data = array(	
 				"sesskey"=>$this->sesskey,
 				"removeselect_searchtext"=>"",
@@ -474,6 +521,8 @@ class WCAPI {
 			//$this->cookie = "../app/storage/cookies/".$user.".txt";//Staff::whereWc_id($user)->first()->id.".txt";
 			$contenido = $this->wget($url , $this->ref , $data , $this->cookie);
 			
+			Log::info("WCAPI u2g:".$uid);
+
 			if(isset($contenido["ok"])){
 				try {
 
@@ -937,6 +986,12 @@ class WCAPI {
 
 
 /*
+
+GET ENROL METHOD
+
+http://webcursos.uai.cl/enrol/users.php?id=28371
+<input type="hidden" name="enrolid" value="91330" />
+
 
 GET INSTANCE
 	http://webcursos.uai.cl/course/modedit.php?update=624972&return=0&sr=0

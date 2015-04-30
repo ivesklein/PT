@@ -224,7 +224,7 @@ class PostWebcursos{
 							}
 
 							if($value['action']=='newtarea'){
-								Log::info($value['action']);
+								Log::info("wc:".$value['action']);
 								$res2 = $wc->createTarea($title, $date, $tarea->uptime);
 								if(isset($res2["ok"])){
 									$tarea->wc_uid = $res2["ok"];
@@ -373,6 +373,7 @@ class PostWebcursos{
 					foreach ($newusers as $newuser) {
 						$data = json_decode($newuser->data);
 						$users[$data->user] = array("add"=>array($data->rol), "del"=>array());
+						Log::info("foruseradd:".$data->user);
 					}
 
 
@@ -430,6 +431,8 @@ class PostWebcursos{
 
 					foreach ($users as $wc_id => $roles) {
 
+						Log::info("foruser:".$wc_id);
+
 						$time_for2 = microtime(true);
 		            	if($time_for2-$time_start>5){//tiempo limite
 		            		$stop = 1;
@@ -443,9 +446,12 @@ class PostWebcursos{
 						}
 						//si se agrega
 						if(!empty($roles['add'])){
+							Log::info("if rol:".$wc_id);
 							//si está registrado
 							if(isset($wcusers[$wc_id])){
 								//hacer cambios
+								Log::info("in wc:".$wc_id);
+
 								$uid = $wcusers[$wc_id]['uid'];
 								
 								if(!empty($user)){
@@ -478,6 +484,7 @@ class PostWebcursos{
 								}
 							}else{
 							//si no está registrado
+								Log::info("not in wc:".$wc_id);
 								//registrar
 								$wcres3 = $wc->searchUser($wc_id);
 		                		if(isset($wcres3["ok"])){
@@ -493,7 +500,7 @@ class PostWebcursos{
 		                		}
 
 	                			$wcres4 = $wc->enrolUser($uid,$rol);
-	                			if(!isset($wcres3["ok"])){
+	                			if(!isset($wcres4["ok"])){
 	                				return json_encode($wcres4);
 	                			}
 	                			$did .= "registrar como ".$r2n[$rol];
@@ -519,8 +526,10 @@ class PostWebcursos{
 							}
 						}else{
 						//si no agrega
+							Log::info("if no rol:".$wc_id);
 							//si está registrado
 							if(isset($wcusers[$wc_id])){
+								Log::info("if in wc:".$wc_id);
 								//hacer cambios
 								$uid = $wcusers[$wc_id]['uid'];
 								
