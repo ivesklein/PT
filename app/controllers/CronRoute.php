@@ -328,7 +328,7 @@ class CronRoute {
 		    	$array["parameters"]['grupo'] = $grupo;
 		    	$array["parameters"]['tipo'] = $type;
 				$array["parameters"]['tema'] = $subj->subject;
-				$array["parameters"]['time'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%m'));
+				$array["parameters"]['time'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
 				$array["parameters"]['place'] = "";
 				foreach ($part as $to) {
 

@@ -243,10 +243,12 @@ class ViewsEntregas extends BaseController
 					    	$buttons = View::make("html.buttonlink",array("title"=>"Ingresar","color"=>"cyan","url"=>$evallink));
 
 					    	$a1content = View::make("table.cell",array("content"=>$grupo, "span"=>2));
+					    	$a2content = "";
 					    	$tool = View::make("html.tooltip",array("title"=>$tema->subject));
 							$a1content .= View::make("table.cell",array("content"=>$tool, "span"=>2));
 							$a1content .= View::make("table.cell",array("content"=>$tema->adviser, "span"=>2));
 
+							
 					    	$a1 = Student::whereWc_id($tema->student1)->first();
 					    	if(!empty($a1)){
 					    		$a1content .= View::make("table.cell",array("content"=>$a1->name." ".$a1->surname));
@@ -259,6 +261,8 @@ class ViewsEntregas extends BaseController
 					    	}else{
 					    		$a2content .= View::make("table.cell",array("content"=>'Sin Memorista'));
 					    	}
+					    	
+					    	
 					    	
 					    	foreach ($tareas as $tarea) {
 								$id = $tarea->id;
@@ -334,7 +338,8 @@ class ViewsEntregas extends BaseController
 
 								}
 							}
-
+							
+							
 							$id = $tema->id;
 
 							$a1content .= View::make("table.cell",array("content"=>$buttons, "span"=>2));
