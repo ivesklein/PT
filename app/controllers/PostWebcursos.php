@@ -332,7 +332,7 @@ class PostWebcursos{
 
         		foreach ($newgroups as $group) {
                 	$time_for2 = microtime(true);
-	            	if($time_for2-$time_start>5){//tiempo limite
+	            	if($time_for2-$time_start>60){//tiempo limite
 	            		$stop = 1;
 	            		break;
 	            	}
@@ -434,7 +434,7 @@ class PostWebcursos{
 						Log::info("foruser:".$wc_id);
 
 						$time_for2 = microtime(true);
-		            	if($time_for2-$time_start>5){//tiempo limite
+		            	if($time_for2-$time_start>60){//tiempo limite
 		            		$stop = 1;
 		            		break;
 		            	}
@@ -623,7 +623,7 @@ class PostWebcursos{
 
 					foreach ($userg as $wc_id => $groups) {
 						$time_for2 = microtime(true);
-		            	if($time_for2-$time_start>5){//tiempo limite
+		            	if($time_for2-$time_start>60){//tiempo limite
 		            		$stop = 1;
 		            		break;
 		            	}
