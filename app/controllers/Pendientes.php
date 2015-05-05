@@ -44,7 +44,7 @@ class Pendientes{
     public static function listanotas()
     {
         $return = 0;
-        $entregas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",3)->get();
+        $entregas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",3)->where('date', '<', Carbon::now())->get();
         
         $temas = Staff::find(Auth::user()->id)->guias()->confirmed()->wherePeriodo(Periodo::active())->get();
 

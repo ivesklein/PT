@@ -48,7 +48,7 @@ class ViewsEntregas extends BaseController
 
 	public function getListanotas()
 	{
-		$ahead = array("Grupo","Tema","Evaluar", "Pendiente");
+		$ahead = array("Grupo","Tema","", "");
 		$head = "";
 		foreach ($ahead as $value) {
 			$head .= View::make('table.head',array('title'=>$value));
@@ -98,7 +98,7 @@ class ViewsEntregas extends BaseController
 					    	$evallink = url("#/evaluartarea/".$tema->id);
 
 
-					    	$buttons = View::make("html.buttonlink",array("title"=>"Ingresar","color"=>"cyan","url"=>$evallink));
+					    	
 					    	//buscar en tabla notas
 					    	//$notaarray = array();
 					    	//if(!empty())
@@ -120,6 +120,10 @@ class ViewsEntregas extends BaseController
 				                }
 				                if($pendiente>0){
 				                	$pendiente = '<span class="badge badge-danger main-badge">'.$pendiente.'</span>';
+				                	$buttons = View::make("html.buttonlink",array("title"=>"Evaluar","color"=>"cyan","url"=>$evallink));
+					    		}else{
+					    			$pendiente = "";
+					    			$buttons = View::make("html.buttonlink",array("title"=>"Ver","color"=>"green","url"=>$evallink));
 					    		}
 					    	}
 
