@@ -145,7 +145,7 @@
 
             function modify() {
                 console.log(0)
-                if($(this).find(".savelabel").html()=="Guardar"){
+                if($(this).find(".savelabel").html()=="Evaluar"){
                     console.log(2);
                     $(this).addClass("waiting");
                     var id = $(this).attr("n");
@@ -224,7 +224,7 @@
                     console.log(1);
                     $(this).parents(".caja").find(".nota").attr("disabled",false);
                     $(this).parents(".caja").find(".feedback").attr("disabled",false);
-                    $(this).addClass("btn-success").removeClass("btn-warning").find(".savelabel").html("Guardar");
+                    $(this).addClass("btn-success").removeClass("btn-warning").find(".savelabel").html("Evaluar");
                     if($(this).parents(".caja").find(".equal").attr("data-val")=="1"){
                         $(this).parents(".caja").find(".feedback2").attr("disabled",1);
                         $(this).parents(".caja").find(".nota2").attr("disabled",1);

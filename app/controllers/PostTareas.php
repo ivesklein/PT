@@ -20,7 +20,7 @@ class PostTareas{
 						if($tarea->isEmpty()){
 							$tarea = new Tarea;
 							$tarea->title = $value->title;
-							$tarea->date = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date);
+							$tarea->date = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date)->hour(23)->minute(55);
 							$tarea->tipo = $value->tipo;
 							$tarea->periodo_name = $per->name;
 							$tarea->n = $key;
@@ -54,12 +54,12 @@ class PostTareas{
 							$evento = new CEvent;
 							$evento->color = "orange";
 							$evento->title = $value->title;
-							$evento->start = Carbon::createFromFormat('m/d/Y', $value->date);
+							$evento->start = Carbon::createFromFormat('m/d/Y', $value->date)->hour(23)->minute(55);
 							$evento->type = "tarea";
 							$evento->detail = $tarea->id;
 							$evento->save();
 
-							CronHelper::tarea($tarea->id, Carbon::createFromFormat('m/d/Y', $value->date));
+							CronHelper::tarea($tarea->id, Carbon::createFromFormat('m/d/Y', $value->date)->hour(23)->minute(55));
 
 							$news[$tarea->id] = $tarea->tipo;
 							
@@ -67,7 +67,7 @@ class PostTareas{
 						}else{
 							$tarea = $tarea->first();
 							$tarea->title = $value->title;
-							$tarea->date = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date);
+							$tarea->date = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date)->hour(23)->minute(55);
 							$tarea->tipo = $value->tipo;
 							$tarea->uptime = $value->entrega;
 							$tarea->evaltime = $value->eval;
@@ -79,19 +79,19 @@ class PostTareas{
 							if(!$eventos->isEmpty()){
 								$evento = $eventos->first();
 								$evento->title = $value->title;
-								$evento->start = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date);
+								$evento->start = empty($value->date)?"":Carbon::createFromFormat('m/d/Y', $value->date)->hour(23)->minute(55);
 								$evento->save();
 							}else{
 								$evento = new CEvent;
 								$evento->color = "orange";
 								$evento->title = $value->title;
-								$evento->start = Carbon::createFromFormat('m/d/Y', $value->date);
+								$evento->start = Carbon::createFromFormat('m/d/Y', $value->date)->hour(23)->minute(55);
 								$evento->type = "tarea";
 								$evento->detail = $tarea->id;
 								$evento->save();
 							}
 
-							CronHelper::tarea($tarea->id, Carbon::createFromFormat('m/d/Y', $value->date));
+							CronHelper::tarea($tarea->id, Carbon::createFromFormat('m/d/Y', $value->date)->hour(23)->minute(55));
 
 							if($tarea->tipo==1){
 								$tarea2 = Tarea::whereTitle("Predefensa")->first();
