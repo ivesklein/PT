@@ -145,7 +145,7 @@ class Menu {
 		"defensas"=>array(
 			"where"=>"temas",
 			"place"=>"40",
-			"array"=>array("link"=>"#/defensas", "title"=>"Evaluar Defensas", "n"=>0)
+			"array"=>array("link"=>"#/notas", "title"=>"Evaluar Defensas", "n"=>0)
 		)
 
 

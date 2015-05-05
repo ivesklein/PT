@@ -58,7 +58,7 @@ class PostMemorias{
 				$res = CSV::toArray($ruta);
 				if(isset($res['error'])){
 					Session::put('alert', 'No se puede leer el archivo (1), compruebe que tenga formato \'.csv\' <div style=\'display:none;\'>'.$res['error'].'</div>');
-					
+					Log::warning('Carga temas error1: '.$res['error']);
 					return Redirect::to("#/itemas");
 				}
 				//for profesores, 
@@ -112,7 +112,7 @@ class PostMemorias{
 
 										//crear
 										$res2 = UserCreation::add(
-											$fila[$MPROFESOR],
+											strtolower($fila[$MPROFESOR]),
 											$fila[$NPROFESOR],
 											$fila[$APROFESOR],
 											"P");
@@ -133,7 +133,8 @@ class PostMemorias{
 
 							} catch (Exception $e) {
 								
-								Session::put('alert', 'No se puede leer el archivo (2), compruebe que sea \'.csv\', y siga el formato del ejemplo.');
+								Session::put('alert', 'No se puede leer el archivo (2), compruebe que sea \'.csv\', y siga el formato del ejemplo.<div style=\'display:none;\'>'.$e->getMessage().'</div>');
+								Log::warning('Carga temas error2: '.$e->getMessage());
 								return Redirect::to("#/itemas");
 
 							}
@@ -150,7 +151,7 @@ class PostMemorias{
 							$run = $fila[$RUN1];
 							$name = $fila[$NOMBRE1];
 							$surname = $fila[$APELLIDO1];
-							$mail = $fila[$EMAIL1];
+							$mail = strtolower($fila[$EMAIL1]);
 							$studentdb = Student::whereWc_id($mail)->get();
 							if($studentdb->isEmpty()){
 								$student = new Student;
@@ -168,7 +169,7 @@ class PostMemorias{
 							$run = $fila[$RUN2];
 							$name = $fila[$NOMBRE2];
 							$surname = $fila[$APELLIDO2];
-							$mail = $fila[$EMAIL2];
+							$mail = strtolower($fila[$EMAIL2]);
 							$studentdb = Student::whereWc_id($mail)->get();
 							if($studentdb->isEmpty()){
 								$student = new Student;
@@ -268,7 +269,7 @@ class PostMemorias{
 									//sino
 										//crear
 										$res2 = UserCreation::add(
-											$fila[$V2MPROFESOR],
+											strtolower($fila[$V2MPROFESOR]),
 											$fila[$V2NPROFESOR],
 											$fila[$V2APROFESOR],
 											"P");
@@ -285,8 +286,9 @@ class PostMemorias{
 								}//if está
 
 							} catch (Exception $e) {
-								
-								Session::put('alert', 'No se puede leer el archivo (2), compruebe que sea \'.csv\', y siga el formato del ejemplo.');
+
+								Session::put('alert', 'No se puede leer el archivo (2), compruebe que sea \'.csv\', y siga el formato del ejemplo.<div style=\'display:none;\'>'.$e->getMessage().'</div>');
+								Log::warning('Carga temas error2: '.$e->getMessage());
 								return Redirect::to("#/itemas");
 
 							}
@@ -302,7 +304,7 @@ class PostMemorias{
 							$run = $fila[$V2RUN1];
 							$name = $fila[$V2NOMBRE1];
 							$surname = $fila[$V2APELLIDO1];
-							$mail = $fila[$V2EMAIL1];
+							$mail = strtolower($fila[$V2EMAIL1]);
 							$studentdb = Student::whereWc_id($mail)->get();
 							if($studentdb->isEmpty()){
 								$student = new Student;
@@ -324,7 +326,7 @@ class PostMemorias{
 							if(empty($subj)){
 								$subj = new Subject;
 								$subj->subject = $fila[$V2TEMA];
-								$subj->student1 = $fila[$V2EMAIL1];
+								$subj->student1 = strtolower($fila[$V2EMAIL1]);
 								$subj->adviser = $fila[$V2MPROFESOR];
 								$subj->status = "confirm";
 								$subj->pm_uid = $fila[$V2GRUPO];
@@ -338,10 +340,10 @@ class PostMemorias{
 								);
 							}else{
 								if(empty($subj->student2)){
-									$subj->student2 = $fila[$V2EMAIL1];
+									$subj->student2 = strtolower($fila[$V2EMAIL1]);
 									$subj->save();
 
-									$temas[$subj->id]["s2"] = $fila[$V2EMAIL1];
+									$temas[$subj->id]["s2"] = strtolower($fila[$V2EMAIL1]);
 								}else{
 									//error?
 								}
@@ -753,8 +755,13 @@ class PostMemorias{
 						$return['alumno2'] = $al2->name." ".$al2->surname;
 
 						//verificar que hayan tareas
-						$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->where("tipo","<",5)->get();
+						if(Rol::actual()=="AA"){
+							$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->where("tipo","=",4)->get();
+						}else{
+							$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->where("tipo","<",5)->get();
 
+						}
+						
 						//$entregas = Tarea::where('date', '<', Carbon::now())->where('date', '>', Carbon::now()->subDays(14))->get();
 
 						if(!$tareas->isEmpty()){
@@ -797,11 +804,13 @@ class PostMemorias{
 										$fecha = $date->diffParaHumanos();
 									}
 								}else{
+
 										$title = "Evento ".$tarea->title;
 										$active = 1;
-										$url="";
+										$url="#";
 										$nota="";
 										$feedback="";
+										$file = 0;
 										//get notas de tarea para el grupo
 										$notadb = Nota::whereSubject_id($_POST['id'])->whereTarea_id($tarea->id)->get();
 										if(!$notadb->isEmpty()){

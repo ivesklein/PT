@@ -93,7 +93,7 @@ class CronRoute {
 				"to"=>"",
 				"title"=>$name,
 				"view"=>"emails.sub7",
-				"parameters"=>array("tarea"=>$name, "wc"=>$wc, "dias"=>$dias),
+				"parameters"=>array("tarea"=>$name, "wc"=>$wc, "dias"=>""),
 			);
 		
 
@@ -135,7 +135,7 @@ class CronRoute {
 				"to"=>"",
 				"title"=>$name,
 				"view"=>"emails.sub1",
-				"parameters"=>array("tarea"=>$name, "wc"=>$wc, "dias"=>$dias),
+				"parameters"=>array("tarea"=>$name, "wc"=>$wc, "dias"=>1),
 			);
 		
 

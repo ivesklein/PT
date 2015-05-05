@@ -85,7 +85,8 @@ class Rol {
 			array(
 				"coordefensa",
 				"viewProfEvents",
-				"defensas"
+				"defensas",
+				"revisartareas"
 			),
 		"MA"=>
 			array(

@@ -266,7 +266,7 @@ class PostTareas{
 	{
 		$return = array();
 		if(isset($_POST['id']) && isset($_POST['nota']) && isset($_POST['tarea'])){
-			if(Rol::setNota($_POST['id']) || Rol::hasPermission("revisartareas")){
+			if(Rol::setNota($_POST['id']) || Rol::hasPermission("revisartareas") || Rol::hasPermission("defensas")){
 				
 				try {
 					$tarea = Tarea::find($_POST['tarea']);
