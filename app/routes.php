@@ -221,6 +221,8 @@ Route::controller('webcursos','ViewsWebcursos');
 
 Route::controller('reportes','ViewsReportes');
 
+Route::controller('comision','ViewsComision');
+
 Route::get('feedback/{id}', 'GetFile@feedback');
 
 
@@ -236,8 +238,83 @@ Route::get('/dynamic' ,function()
 	return View::make("dynamic");
 });
 
+Route::get('/ut' ,function()
+{
+
+	$res = UnitTest::run();
+
+	return $res;
+
+});
+
+Route::post('/test' ,function()
+{
+	$file = Files::post("file");
+
+	if(isset($file["ok"])){
+
+		$ruta = $file["ok"]["tmp_name"];
+					
+		//return $file["ok"]["type"];
+
+
+		$res = CSV::toArray2($ruta);     
+
+
+		var_dump($res);
+
+		/*$iso8859 = array(chr(225),chr(233),chr(237),chr(250),chr(193),chr(201),chr(205),chr(211),chr(218),chr(241),chr(209));
+		$eeapple = array(chr(135),chr(142),chr(146),chr(151),chr(156),chr(231),chr(131),chr(234),chr(238),chr(242),chr(150),chr(132));
+
+		$isiso = false;
+		foreach ($iso8859 as $value => $char) {
+			if(strpos($data,$char)){echo"!isooo!".$value;$isiso=true;}
+		}
+		$isapple = false;
+		foreach ($eeapple as $char) {
+			if(strpos($data,$char)){echo"!apple!";$isapple=true;}
+		}
+		if($isiso==true){
+			$enc="ISO-8859-3";
+		}
+		if($isapple==true){
+			$enc="ISO-8859-3";
+		}
+		*/
+		//$res = CSV::toArray($ruta);
+
+		//print_r($res);
+		//if(isset($res['error'])){
+		//	return 'No se puede leer el archivo (1), compruebe que tenga formato \'.csv\'';
+		//}
+		//áéíóúÁÉÍÓÚñÑ		//á			é		í		ó		ú			Á		É		Í		Ó			Ú		ñ		Ñ
+		
+
+		//print_r($res);
+	}else{
+
+		return 'No se puede leer el archivo';
+	}
+});
+
 Route::get('/test' ,function()
 {
+
+	$dt = Carbon::now();
+
+	//setlocale(LC_TIME, 'spanish');
+	//$dt->setLocale('es');
+	//$str = $dt->formatLocalized('%A %d de %B de %Y a las %H:%m'); 
+
+	//echo CarbonLocale::spanish($str);
+	//echo "<br>";
+	//echo $str;
+	echo "<form method='POST' enctype='multipart/form-data'><input type='file' name='file'><input type='submit' ></form>";
+	//setlocale (LC_TIME,"spanish");
+	//$long_date = str_replace("De","de",ucwords(strftime("%A, %d de %B de %Y")));
+	//echo $long_date;
+
+
 
 	//$array = array("hola"=>"Variablee!!!");
 	//$a = Correo::enviar('divaldivia@alumnos.uai.cl', "Prueba mail", 'emails.welcome', $array);
@@ -245,7 +322,7 @@ Route::get('/test' ,function()
 	//echo "hola";
 	//print_r($a);
 
-
+	/*
 
 	$res = Staff::whereWc_id("dkleinas@alumnos.uai.cl")->get();
 
@@ -254,7 +331,7 @@ Route::get('/test' ,function()
 	}
 
 	echo "ok";
-
+	*/
 
 	//$a = Carbon::parse("03-07-2015");
 	//echo $a->timestamp;

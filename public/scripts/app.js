@@ -224,7 +224,9 @@ angular.module("app",
 				.when("/listarezagados",{templateUrl:"reportes/listarezagados",controller: 'Cleancache'})
 				.when("/rezagado/:id",{templateUrl:"reportes/rezagado",controller: 'Id'})
 				
-				
+				//comision
+				.when("/listacomisiones",{templateUrl:"comision/listacomisiones",controller: 'Cleancache'})
+				.when("/editarcomision/:id",{templateUrl:"comision/editarcomision",controller: 'Id'})
 
 				//otros
 				.when("/webcursos",	{templateUrl:"webcursos/webcursos",controller: 'Cleancache'})

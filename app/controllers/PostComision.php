@@ -289,4 +289,181 @@ class PostComision{
 		return json_encode($return);
 	}
 
+	public static function lista()
+	{
+		$return = array();
+		
+
+		if(Rol::hasPermission("coordefensa")){
+
+			$subjs = Subject::active();
+
+			if(isset($_POST['tema'])){
+				$subjs = $subjs->where("subject","LIKE","%".$_POST['tema']."%");
+			}
+
+			$block = false;
+			if(isset($_POST['a1'])){
+				if(!empty($_POST['a1'])){
+					$alumno = $_POST['a1'];
+					$subjs = $subjs->select('subjects.*')->join('students', 'students.wc_id', '=', 'subjects.student1')
+									->where(function ($query) use ($alumno) {
+						            $query->where('students.name','LIKE','%'.$alumno.'%')
+						                  ->orWhere('students.surname','LIKE','%'.$alumno.'%')
+						                  ->orWhere('students.wc_id','LIKE','%'.$alumno.'%')
+						                  ->orWhere('students.run','LIKE','%'.$alumno.'%'); 
+						        });
+					$block = true;
+				}
+			}
+
+			if($block == false){
+				if(isset($_POST['a2'])){
+					if(!empty($_POST['a2'])){
+						$alumno = $_POST['a2'];
+						$subjs = $subjs->select('subjects.*')->join('students', 'students.wc_id', '=', 'subjects.student2')
+										->where(function ($query) use ($alumno) {
+							            $query->where('students.name','LIKE','%'.$alumno.'%')
+							                  ->orWhere('students.surname','LIKE','%'.$alumno.'%')
+							                  ->orWhere('students.wc_id','LIKE','%'.$alumno.'%')
+							                  ->orWhere('students.run','LIKE','%'.$alumno.'%'); 
+							        });
+					}
+				}
+			}
+
+			if(isset($_POST['pg'])){
+				if(!empty($_POST['pg'])){
+					$pguia = $_POST['pg'];
+					$subjs = $subjs->select('subjects.*')->join('staffs', 'staffs.wc_id', '=', 'subjects.adviser')
+									->where(function ($query) use ($pguia) {
+						            $query->where('staffs.name','LIKE','%'.$pguia.'%')
+						                  ->orWhere('staffs.surname','LIKE','%'.$pguia.'%')
+						                  ->orWhere('staffs.wc_id','LIKE','%'.$pguia.'%'); 
+						        });
+				}
+			}
+
+			$subjs = $subjs->with('ostudent1');
+			$subjs = $subjs->with('ostudent2');
+			$subjs = $subjs->with('guia');
+			//$subjs = $subjs->with('predefensa');
+			//$subjs = $subjs->with('defensa');
+			
+
+			$subjs = $subjs->get();
+
+			
+
+
+			if(!$subjs->isEmpty()){
+				$return["temas"] = array();
+
+				foreach ($subjs as $subj) {
+
+					//Log::info("sub".$subj->id." ".$subj->subject);
+					$row = array();
+
+					$row['id'] = $subj->id;
+					$row['tema'] = $subj->subject;
+
+					$st1 = explode("@",$subj->student1);
+			    	$st2 = explode("@",$subj->student2);
+			    	$row["grupo"] = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+
+					$row['s1name'] = "";
+					$row['s1surname'] = "";
+					$row['s1wc_id'] = "";
+					$row['s1run'] = "";
+					$row['s1nc'] = "";
+
+					$row['s2name'] = "";
+					$row['s2surname'] = "";
+					$row['s2wc_id'] = "";
+					$row['s2run'] = "";
+					$row['s2nc'] = "";
+
+					$row['pgname'] = "";
+					$row['pgsurname'] = "";
+					$row['pgwc_id'] = "";
+					$row['pgnc'] = "";
+
+					$row['prname'] = "";
+					$row['prsurname'] = "";
+					$row['prwc_id'] = "";
+					$row['prnc'] = "";
+
+					$row['inname'] = "";
+					$row['insurname'] = "";
+					$row['inwc_id'] = "";
+					$row['innc'] = "";
+
+					$row['pre'] = "";
+					$row['def'] = "";
+
+					if(!empty($subj->ostudent1)){
+						$row['s1name'] = $subj->ostudent1->name;
+						$row['s1surname'] = $subj->ostudent1->surname;
+						$row['s1wc_id'] = $subj->ostudent1->wc_id;
+						$row['s1run'] = $subj->ostudent1->run;
+						$row['s1nc'] = $subj->ostudent1->name." ".$subj->ostudent1->surname;
+					}
+					if(!empty($subj->ostudent2)){
+						$row['s2name'] = $subj->ostudent2->name;
+						$row['s2surname'] = $subj->ostudent2->surname;
+						$row['s2wc_id'] = $subj->ostudent2->wc_id;
+						$row['s2run'] = $subj->ostudent2->run;
+						$row['s2nc'] = $subj->ostudent2->name." ".$subj->ostudent2->surname;
+					}
+					if(!empty($subj->guia)){
+						$row['pgname'] = $subj->guia->name;
+						$row['pgsurname'] = $subj->guia->surname;
+						$row['pgwc_id'] = $subj->guia->wc_id;
+						$row['pgnc'] = $subj->guia->name." ".$subj->guia->surname;
+					}
+					$pre = $subj->eventos()->where("type","Predefensa")->first();//->first()->predefensa();
+					if(!empty($pre)){
+						$row['pre'] = Carbon::parse($pre->start)->toDateTimeString();
+					}
+					$def = $subj->eventos()->where("type","Defensa")->first();
+					if(!empty($def)){
+						$row['def'] = Carbon::parse($def->start)->toDateTimeString();
+					}
+
+					$pres = $subj->comision()->where("comisions.type","1")->first();
+					if(!empty($pres)){
+						$row['prname'] = $pres->name;
+						$row['prsurname'] = $pres->surname;
+						$row['prwc_id'] = $pres->wc_id;
+						$row['prnc'] = $pres->name." ".$pres->surname;
+						$row['prstatus'] = $pres->pivot->status;
+					}
+					$inv = $subj->comision()->where("comisions.type","2")->first();
+					if(!empty($inv)){
+						$row['inname'] = $inv->name;
+						$row['insurname'] = $inv->surname;
+						$row['inwc_id'] = $inv->wc_id;
+						$row['innc'] = $inv->name." ".$inv->surname;
+						$row['instatus'] = $pres->pivot->status;
+					}
+
+
+					//$row['comision'] = DB::getQueryLog();
+				
+
+					$return['temas'][$subj->id] = $row;
+
+				}
+
+			}
+
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+
+	}
+
 }

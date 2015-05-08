@@ -24,6 +24,21 @@ Class Subject extends Eloquent{
 		return $this->hasOne('Student', "wc_id", "student2");
 	}
 
+	public function eventos()
+	{
+		return $this->hasMany('CEvent', "detail", "id");
+	}
+
+	public function scopePredefensa($query)
+	{
+		return $query->eventos()->where("type","Predefensa")->first();
+	}
+
+	public function scopeDefensa($query)
+	{
+		return $query->eventos()->where("type","Defensa")->first();
+	}
+
 	public function firmas()
 	{
 		return $this->hasOne('Firma');
