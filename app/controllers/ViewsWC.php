@@ -130,7 +130,7 @@ class ViewsWC extends BaseController
 									$nota="";
 									$feedback="";
 								}else{
-									$active = 1;
+									$active = 0;
 									$nota="Aún no evaluada";
 									$feedback="";
 									//get notas de tarea para el grupo
@@ -142,6 +142,7 @@ class ViewsWC extends BaseController
 										if(!empty($notita->nota)){
 											$nota = json_decode($notita->nota);
 											$nota = $nota[$nstudent];
+											$active = 1;
 										}else{
 											$nota = "Aún no evaluada";	
 										}
