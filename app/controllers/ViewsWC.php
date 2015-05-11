@@ -77,7 +77,7 @@ class ViewsWC extends BaseController
 								$feedback="";
 							}else{
 								$active = 1;
-								$nota="";
+								$nota="Aún no evaluada";
 								$feedback="";
 								//get notas de tarea para el grupo
 								$notat = Nota::whereSubject_id($tema->id)->whereTarea_id($tarea->id)->get();
@@ -89,7 +89,7 @@ class ViewsWC extends BaseController
 										$nota = json_decode($notita->nota);
 										$nota = $nota[$nstudent];
 									}else{
-										$nota = "";	
+										$nota = "Aún no evaluada";	
 									}
 									
 									if(!empty($notita->feedback)){
@@ -223,16 +223,23 @@ class ViewsWC extends BaseController
 						foreach ($defensas as $defensa) {
 							if($defensa->color=="blue"){
 								$tipo = "Defensa";
+								$date = CarbonLocale::parse($defensa->start);
+
+								$array["content"] = View::make("table.cell",array("content"=>$tipo));
+								$array["content"] .= View::make("table.cell",array("content"=>$date->format("d/m/Y h:i")));
+								$array["content"] .= View::make("table.cell",array("content"=>$date->diffParaHumanos()));
+								$body .= View::make("table.row",$array);
 							}elseif($defensa->color=="darkcyan"){
 								$tipo = "Predefensa";
+								$date = CarbonLocale::parse($defensa->start);
+
+								$array["content"] = View::make("table.cell",array("content"=>$tipo));
+								$array["content"] .= View::make("table.cell",array("content"=>$date->format("d/m/Y h:i")));
+								$array["content"] .= View::make("table.cell",array("content"=>$date->diffParaHumanos()));
+								$body .= View::make("table.row",$array);
 							}
 
-							$date = CarbonLocale::parse($defensa->start);
-
-							$array["content"] = View::make("table.cell",array("content"=>$tipo));
-							$array["content"] .= View::make("table.cell",array("content"=>$date->format("d/m/Y h:i")));
-							$array["content"] .= View::make("table.cell",array("content"=>$date->diffParaHumanos()));
-							$body .= View::make("table.row",$array);
+							
 
 						}
 					}

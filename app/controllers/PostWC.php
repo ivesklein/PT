@@ -38,7 +38,7 @@ class PostWC {
 						}else{
 							$active = 1;
 							//$url=$wc;
-							$notaa="";
+							$notaa="Aún no evaluada";
 							$feedback="";
 							//get notas de tarea para el grupo
 							$nota = Nota::whereSubject_id($tema->id)->whereTarea_id($tarea->id)->get();
