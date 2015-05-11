@@ -172,7 +172,7 @@
                     var formData = new FormData();
 
                     formData.append("f", "Tareas_setnota");
-                    formData.append("id", angular.element($('.page')).scope().tema); 
+                    formData.append("id", angular.element($('.page')).scope().idtema); 
                     formData.append("tarea", id);
                     formData.append("nota", nota);
                     formData.append("feedback", feed);

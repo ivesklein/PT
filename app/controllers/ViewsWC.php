@@ -61,7 +61,7 @@ class ViewsWC extends BaseController
 
 					$nstudent = $tema->student1==$user?0:1;;
 					
-					$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->get();
+					$tareas = Tarea::wherePeriodo_name(Periodo::active())->orderBy('n', 'ASC')->where("tipo","<",5)->get();
 
 					if(!$tareas->isEmpty()){
 
@@ -71,23 +71,25 @@ class ViewsWC extends BaseController
 
 							$active = 0; //0 es futura, 1 es activa, 2 es pasado con eval.
 							$now = Carbon::now();
-							if($date>$now){//futura
-								$active = 0;
-								$nota="";
-								$feedback="";
-							}else{
-								$active = 1;
-								$nota="Aún no evaluada";
-								$feedback="";
-								//get notas de tarea para el grupo
-								$notat = Nota::whereSubject_id($tema->id)->whereTarea_id($tarea->id)->get();
-								
 
-								if(!$notat->isEmpty()){
-									$notita = $notat->first();
+							Log::info("T:".$title);
+
+							if($tarea->tipo>=3){
+								Log::info("T>=:3");
+								$tipo="";
+								if($tarea->tipo==3){
+									$tipo="Predefensa";
+								}elseif($tarea->tipo==4){
+									$tipo="Defensa";
+								}
+								$evento = CEvent::whereDetail($tema->id)->whereType($tipo)->first();
+								$notita = Nota::whereSubject_id($tema->id)->whereTarea_id($tarea->id)->first();
+								
+								if(!empty($notita)){
 									if(!empty($notita->nota)){
 										$nota = json_decode($notita->nota);
 										$nota = $nota[$nstudent];
+										$active = 1;
 									}else{
 										$nota = "Aún no evaluada";	
 									}
@@ -98,8 +100,61 @@ class ViewsWC extends BaseController
 									}else{
 										$feedback = "";	
 									}
+								}else{
+
+									if(!empty($evento)){
+										$date = CarbonLocale::parse($evento->start);
+										if($date>$now){//futuro
+											$active = 0;
+											$nota=$date->diffParaHumanos();
+											$feedback="";
+										}else{//pasado
+											$active = 0;
+											$nota="Aún no evaluada";
+											$feedback="";
+										}
+									}else{//no hay fecha
+										$active = 0;
+										$nota="Sin Fecha";
+										$feedback="";
+									}
+
 								}
-								
+
+
+
+							}else{
+								Log::info("!T>=:3");
+								if($date>$now){//futura
+									$active = 0;
+									$nota="";
+									$feedback="";
+								}else{
+									$active = 1;
+									$nota="Aún no evaluada";
+									$feedback="";
+									//get notas de tarea para el grupo
+									$notat = Nota::whereSubject_id($tema->id)->whereTarea_id($tarea->id)->get();
+									
+
+									if(!$notat->isEmpty()){
+										$notita = $notat->first();
+										if(!empty($notita->nota)){
+											$nota = json_decode($notita->nota);
+											$nota = $nota[$nstudent];
+										}else{
+											$nota = "Aún no evaluada";	
+										}
+										
+										if(!empty($notita->feedback)){
+											$feedback = json_decode($notita->feedback);
+											$feedback = $feedback[$nstudent];
+										}else{
+											$feedback = "";	
+										}
+									}
+									
+								}
 							}
 
 							$notas .= View::make('lti.nota',array("active"=>$active,"title"=>$title,"tarea"=>$tarea->id,"nota"=>$nota));

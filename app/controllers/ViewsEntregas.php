@@ -259,6 +259,7 @@ class ViewsEntregas extends BaseController
 
 							
 					    	$a1 = Student::whereWc_id($tema->student1)->first();
+					    	$a2 = Student::whereWc_id($tema->student2)->first();
 					    	if(!empty($a1)){
 					    		$a1content .= View::make("table.cell",array("content"=>$a1->name." ".$a1->surname));
 					    	}else{

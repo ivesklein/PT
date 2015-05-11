@@ -94,15 +94,35 @@ class PostTareas{
 							CronHelper::tarea($tarea->id, Carbon::createFromFormat('m/d/Y', $value->date)->hour(23)->minute(55));
 
 							if($tarea->tipo==1){
-								$tarea2 = Tarea::whereTitle("Predefensa")->first();
-								if(!empty($tarea2)){
+								$tarea2 = Tarea::whereTipo(3)->wherePeriodo_name($per->name)->first();
+								if(!empty($tarea2)){//
+									$news[$tarea2->id] = $tarea2->tipo;//agregar para que no lo borre despues
+								}else{
+									//crear
+									$tarea2 = new Tarea;
+									$tarea2->title = "Predefensa";
+									$tarea2->date = "";
+									$tarea2->tipo = 3;
+									$tarea2->periodo_name = $per->name;
+									$tarea2->n = $key;
+									$tarea2->save();
 									$news[$tarea2->id] = $tarea2->tipo;
-								}							
+								}
 							}elseif($tarea->tipo==2){
-								$tarea2 = Tarea::whereTitle("Defensa")->first();
+								$tarea2 = Tarea::whereTipo(4)->wherePeriodo_name($per->name)->first();
 								if(!empty($tarea2)){
-									$news[$tarea2->id] = $tarea2->tipo;
-								}							
+									$news[$tarea2->id] = $tarea2->tipo;//agregar para que no lo borre despues
+								}else{
+									//crear
+									$tarea2 = new Tarea;
+									$tarea2->title = "Defensa";
+									$tarea2->date = "";
+									$tarea2->tipo = 4;
+									$tarea2->periodo_name = $per->name;
+									$tarea2->n = $key;
+									$tarea2->save();
+									$news[$tarea2->id] = $tarea2->tipo;	
+								}
 							}
 
 							$news[$tarea->id] = $tarea->tipo;
@@ -114,19 +134,21 @@ class PostTareas{
 					foreach ($tareas as $tarea) {//borrar los que no van
 						$id = $tarea->id;
 						$tipo = $tarea->tipo;
+						if($tipo!=5){
+							if(!isset($news[$id])){
+								if($tipo<3){
+									CronHelper::deleteTarea($id);
+								}
+								$eventos = CEvent::whereDetail($id)->get();
+								if(!$eventos->isEmpty()){
+									$evento = $eventos->first();
+									$evento->delete();
+								}
+								$wc = WCtodo::add("deletetarea", array('tarea_id'=>$tarea->id,'tarea_wcid'=>$tarea->wc_uid));
+								
+								$tarea->delete();
 
-						if(!isset($news[$id])){
-							if($tipo<3){
-								CronHelper::deleteTarea($id);
 							}
-							$eventos = CEvent::whereDetail($id)->get();
-							if(!$eventos->isEmpty()){
-								$evento = $eventos->first();
-								$evento->delete();
-							}
-							$wc = WCtodo::add("deletetarea", array('tarea_id'=>$tarea->id,'tarea_wcid'=>$tarea->wc_uid));
-							
-							$tarea->delete();
 						}
 					}
 
@@ -266,15 +288,15 @@ class PostTareas{
 	{
 		$return = array();
 		if(isset($_POST['id']) && isset($_POST['nota']) && isset($_POST['tarea'])){
-			if(Rol::setNota($_POST['id']) || Rol::hasPermission("revisartareas") || Rol::hasPermission("defensas")){
+			if(Rol::setNota($_POST['id']) || Rol::hasPermission("tallerGM") || Rol::hasPermission("defensas")){
 				
 				try {
 					$tarea = Tarea::find($_POST['tarea']);
 					$date = Carbon::parse( $tarea->date );
 					
 					$modify=isset($_POST['modify']);
-					
-					if( ($date<Carbon::now() || $tarea->tipo>=3) && ($date>Carbon::now()->subDays($tarea->evaltime) || Rol::hasPermission("revisartareas") ) ){
+							//pasado		o		defensas     y         tiempo de evaluacion                     o        rol  revisar tareas
+					if( ($date<Carbon::now() || $tarea->tipo>=3) && ($date>Carbon::now()->subDays($tarea->evaltime) || Rol::hasPermission("tallerGM") ) ){
 
 						$feedback = isset($_POST['feedback'])? $_POST['feedback']:"";
 			
