@@ -11,9 +11,67 @@ class PostComision{
 
 				$return["data"]=array();
 
-				$subj = Subject::find($_POST['id']);
+				$subj = Subject::whereId($_POST['id'])->with('ostudent2','ostudent1')->first();
 				//datos prof guia
+				$return["data"]['tema'] = $subj->subject;
+				$return["data"]['s1'] = array();
+				if(!empty($subj->ostudent1)){
+					//$return["data"]['s1']['name'] = $subj->ostudent1->name;
+					//$return["data"]['s1']['surname'] = $subj->ostudent1->surname;
+					//$return["data"]['s1']['wc_id'] = $subj->ostudent1->wc_id;
+					//$return["data"]['s1']['run'] = $subj->ostudent1->run;
+					$return["data"]['s1']['nc'] = $subj->ostudent1->name." ".$subj->ostudent1->surname;
+				}
+				$return["data"]['s2'] = array();
+				if(!empty($subj->ostudent2)){
+					//$return["data"]['s2']['name'] = $subj->ostudent2->name;
+					//$return["data"]['s2']['surname'] = $subj->ostudent2->surname;
+					//$return["data"]['s2']['wc_id'] = $subj->ostudent2->wc_id;
+					//$return["data"]['s2']['run'] = $subj->ostudent2->run;
+					$return["data"]['s2']['nc'] = $subj->ostudent2->name." ".$subj->ostudent2->surname;
+				}
+
 				$guia = $subj->guia;
+
+				if(!empty($subj->guia)){
+					//$return["data"]['pg']['name'] = $subj->guia->name;
+					//$return["data"]['pg']['surname'] = $subj->guia->surname;
+					//$return["data"]['pg']['wc_id'] = $subj->guia->wc_id;
+					//$return["data"]['pg']['run'] = $subj->guia->run;
+					$return["data"]['pg']['nc'] = $subj->guia->name." ".$subj->guia->surname;
+				}
+				//$subj->ostudent1;
+
+				$pres = $subj->comision()->where("comisions.type","1")->first();
+				if(!empty($pres)){
+					$return["data"]['pr']['name'] = $pres->name;
+					$return["data"]['pr']['surname'] = $pres->surname;
+					$return["data"]['pr']['wc_id'] = $pres->wc_id;
+					$return["data"]['pr']['nc'] = $pres->name." ".$pres->surname;
+					$return["data"]['pr']['status'] = $pres->pivot->status;
+				}
+				$inv = $subj->comision()->where("comisions.type","2")->first();
+				if(!empty($inv)){
+					$return["data"]['in']['name'] = $inv->name;
+					$return["data"]['in']['surname'] = $inv->surname;
+					$return["data"]['in']['wc_id'] = $inv->wc_id;
+					$return["data"]['in']['nc'] = $inv->name." ".$inv->surname;
+					$return["data"]['in']['status'] = $pres->pivot->status;
+				}
+				$cat = $subj->categorias()->get();
+				if(!$cat->isEmpty()){
+					$return["data"]['cat'] = "";
+					$i=0;	
+					foreach ($cat as $value) {
+						if($i==0){
+							$return["data"]['cat'] .= $value->categoria;
+						}else{
+							$return["data"]['cat'] .= ", ".$value->categoria;
+						}
+						$i++;
+					}
+				}
+
 				$return["data"]['guia']=array(
 						"id"=>$guia->id,
 						"name"=>$guia->name." ".$guia->surname
@@ -456,6 +514,71 @@ class PostComision{
 				}
 
 			}
+
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+
+	}
+
+	public static function usuarios()
+	{
+		$return = array();
+		
+
+		if(Rol::hasPermission("coordefensa")){
+
+			
+
+			if(isset($_POST['name'])){
+				Log::info("is name");
+				$name = $_POST['name'];
+				$users = Staff::where('staffs.name','LIKE','%'.$name.'%')
+			                  ->orWhere('staffs.surname','LIKE','%'.$name.'%')
+			                  ->orWhere('staffs.wc_id','LIKE','%'.$name.'%');
+			
+			}
+
+			if(isset($_POST['esp'])){
+				Log::info("is esp");
+				$esp = $_POST['esp'];
+				$users = Staff::where("1","1");
+			}
+
+			if(!isset($_POST['name']) && !isset($_POST['esp'])){
+				Log::info("is nothing");
+				$users = Staff::all();
+			}else{
+				Log::info("is something");
+				$users = $users->get();
+			}
+
+			
+
+			$return["users"] = array();
+			if(!$users->isEmpty()){
+				
+
+				foreach ($users as $user) {
+					$row = array();
+					$row['name'] = $user->name;
+					$row['surname'] = $user->surname;
+					$row['wc_id'] = $user->wc_id;
+					$row['nc'] = $user->name." ".$user->surname;
+
+					$row['esp'] = "";
+
+					$row['guias'] = $user->guias()->wherePeriodo(Periodo::active())->count();
+					$row['comisiones'] = $row['guias'];
+					$row['comisiones'] += $user->comision()->wherePeriodo(Periodo::active())->count();
+					$return['users'][$user->id] = $row;
+				}
+			}
+
+			//$return["error"] = "empty";
 
 
 		}else{

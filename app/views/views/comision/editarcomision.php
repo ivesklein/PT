@@ -1,5 +1,5 @@
 <?php //editar comision ?>
-<div class="page page-table" data-ng-controller="TabsDemoCtrl">
+<div class="page page-table">
 
 	<style>
 	.nav-tabs a{
@@ -20,6 +20,29 @@
 
 	.ui-tab-container .nav-tabs {
    		border-bottom: none;
+	}
+
+	.p30{
+		width: 30%;
+	}
+	.p10{
+		width: 10%;
+	}
+	.p15{
+		width: 15%;
+	}
+	.p1-8{
+		width: 12.5%;
+	}
+	.p1-16{
+		width: 6.25%;
+	}
+	.checkbox{
+		margin-left: 15px;
+	}
+
+	.table{
+		margin-bottom: 0px;
 	}
 	</style>
 
@@ -54,14 +77,19 @@
 			                                    <font class="tema"></font>
 			                                </li>
 			                                <li>
+			                                    <span class="icon glyphicon glyphicon-list"></span>
+			                                    <label>Categoría</label>
+			                                    <font class="cat"></font>
+			                                </li>
+			                                <li>
 			                                    <span class="icon glyphicon glyphicon-user"></span>
 			                                    <label>Alumno 1</label>
-			                                    <font class="a1"></font>
+			                                    <font class="s1"></font>
 			                                </li>
 			                                <li>
 			                                    <span class="icon glyphicon glyphicon-user"></span>
 			                                    <label>Alumno 2</label>
-			                                    <font class="a2"></font>
+			                                    <font class="s2"></font>
 			                                </li>
 			                                <li>
 			                                    <span class="icon fa fa-graduation-cap"></span>
@@ -74,9 +102,9 @@
 			                                    <font class="pr"></font>
 			                                </li>
 			                                <li>
-			                                    <span class="icon glyphicon glyphicon-list"></span>
-			                                    <label>Categoría</label>
-			                                    <font class="cat"></font>
+			                                    <span class="icon glyphicon glyphicon-user"></span>
+			                                    <label>Invitado Comisión</label>
+			                                    <font class="in"></font>
 			                                </li>
 			                            </ul>
 			                            
@@ -92,7 +120,9 @@
 			                    <h3 class="panel-title">Funcionarios</h3>
 			                </div>
 			                <div class="panel-body">
-			                    Panel content
+			                    <?=View::make('table.table',array('body'=>'','head'=>''))?>
+						        <?=View::make('table.table',array('body'=>'','head'=>''))?>
+						        <?=View::make('table.table',array('body'=>'','head'=>''))?>
 			                </div>
 			            </div>
             		</div>
@@ -117,9 +147,179 @@
 		  $(this).tab('show')
 		})
 
-    	$(function () {
-			//$('#myTab a:last').tab('show')
-		})
+    	var dataj = "";
+
+
+    	var jcall = function(idtema) {
+    		
+    		$(function () {
+			
+				//console.log("view "+angular.element($('.page')).scope().idtema);
+				var datos = {
+	                f:"Comision_data",
+	                id:idtema
+	            }
+	            ajx({
+	                data:datos,
+	                ok:function(data) {
+	                    console.log(data);
+	                    dataj = data;
+	                    $(".tema").html(data.data.tema);
+	                    $(".s1").html(data.data.s1.nc);
+	                    $(".s2").html(data.data.s2.nc);
+	                    $(".pg").html(data.data.pg.nc);
+
+	                    if('pr' in data.data){
+	                    var message ="";
+		                    if(data.data.pr.status=="confirmar")
+	                            message = ' <span class="badge badge-warning">no confirmado</span>';
+	                        if(data.data.pr.status=="confirmado")
+	                            message = ' <span class="badge badge-success">confirmado</span>';
+	                        if(data.data.pr.status=="rechazado")
+	                            message = ' <span class="badge badge-danger">rechazado</span>';
+		                    $(".pr").html(data.data.pr.nc+message);
+	                    }
+
+	                    if('in' in data.data){
+		                    message ="";
+		                    if(data.data.in.status=="confirmar")
+	                            message = ' <span class="badge badge-warning">no confirmado</span>';
+	                        if(data.data.in.status=="confirmado")
+	                            message = ' <span class="badge badge-success">confirmado</span>';
+	                        if(data.data.in.status=="rechazado")
+	                            message = ' <span class="badge badge-danger">rechazado</span>';
+		                    $(".in").html(data.data.in.nc+message);
+	                	}
+	                	if('cat' in data.data){
+	                		$(".cat").html(data.data.cat);
+	                	}
+	                }//ok
+	            });//ajx
+			})
+
+			
+
+			// TAB PRESIDENTE //
+			var finder = $('<input type="text" class="form-control find" placeholder="Buscar...">');
+    	
+	    	var selector = '<select class="user form-control"><option value="nc">Nombre Completo</option><option value="name">Nombre</option><option value="surname">Apellido</option><option value="wc_id">Email</option><option value="run">RUN</option></select>';
+			var selector2 = '<select class="user form-control"><option value="nc">Nombre Completo</option><option value="name">Nombre</option><option value="surname">Apellido</option><option value="wc_id">Email</option></select>';
+
+	    	$('#tab1 .table:nth-child(1)').addClass('titulos');
+	    	$('.titulos thead tr').append('<th class="p1-8 cname" data-who="name">Profesores<br>'+selector2+'</th>');
+	    	$('.titulos thead tr').append('<th class="p1-8 cesp" data-who="esp">Especialidad</th>');
+	    	$('.titulos thead tr').append('<th class="p1-8 cguia" data-who="guia">Guias</th>');
+	    	$('.titulos thead tr').append('<th class="p1-8">Comisiones</th>');
+	    	$('.titulos thead tr').append('<th class="p1-8">Asignar</th>');
+
+	    	$('#tab1 .table:nth-child(2)').addClass('finders');
+	    	$('.finders thead tr').append('<th class="p1-8 cname" id="fname"></th>');
+	    	$('.finders thead tr').append('<th class="p1-8 cesp" id="fesp"></th>');
+	    	$('.finders thead tr').append('<th class="p1-8"></th>');
+	    	$('.finders thead tr').append('<th class="p1-8"></th>');
+	    	$('.finders thead tr').append('<th class="p1-8"></th>');
+
+	    	$('#fname, #fesp').append(finder);
+
+
+	    	$('select.user').on('change', function() {
+
+		    	//var who = $(this).parent().attr('data-who');
+		    	var toshow = $(this).val();
+		    	var tab = $(this).parents(".tab-pane");
+
+		    	tab.find('.rowlista').each( function() {
+		    		var id = $(this).attr("id");
+		    		var val = datostabla[id][toshow];
+		    		$(this).find(".dname").html(val);
+		    	});
+
+		    });
+
+			datostabla = {};
+
+		        
+	        var typewatch = function(callback,ms){
+			    var timer = 0;
+			    return function(callback, ms){
+			        clearTimeout (timer);
+			        timer = setTimeout(callback, ms);
+			    }  
+			}();
+
+		
+			function findfun (target) {
+				var name = $('#fname input').val();
+	    		var esp = $('#fesp input').val();
+
+	            datos = {
+	                f:"Comision_usuarios"
+	            }
+
+	            if(name!=""){datos['name']=name}
+	            if(esp!=""){datos['esp']=esp}
+
+	            ajx({
+	                data:datos,
+	                ok:function(data) {
+	                    console.log(data);
+
+	                    
+
+	                    $(target+' .table:nth-child(3) tbody').html("");
+
+	                    datostabla = data['users'];
+	                    var color = {"confirmar":"text-warning","confirmado":"text-success","rechazado":"text-danger","":""};
+
+	                    for(n in data['users']){
+	                    	var user = data['users'][n];
+	                    	var tr = $("<tr id='"+n+"' class='rowlista'></tr>");
+
+	                    	var button = "<div data-user='"+n+"' class='btn btn-info ver'>Agregar</a>";
+
+	                    	//tr.append("<td class='p1-8'>"+tema.grupo+"</td>");
+	                    	//tr.append("<td class='p1-8'>"+'<button type="button" class="btn btn-default" data-placement="top" data-toggle="popover" data-content="'+tema.tema+'"><div class="fa fa-eye"></div></button>'+"</td>");
+	                    	//tr.append("<td class='p1-8'>"+tema.tema.substring(0,20)+'... <button type="button" class="btn btn-default" data-placement="top" data-toggle="popover" data-content="'+tema.tema+'"><div class="fa fa-eye"></div></button></td>');
+	                    	//abbr
+
+	                    	//tr.append("<td class='p1-8'><abbr title='"+tema.tema+"'>"+tema.tema.substring(0,20)+'...</abbr></td>');
+	                    	
+	                    	//what to show
+	                    	var toshow = $(target+' .cname select').val();
+	                    	tr.append("<td class='p1-8 cname dname'>"+user[toshow]+"</td>");
+
+	                    	tr.append("<td class='p1-8'>"+user.esp+"</td>");
+	                    	tr.append("<td class='p1-8'>"+user.guias+"</td>");
+	                    	tr.append("<td class='p1-8'>"+user.comisiones+"</td>");
+	                    	tr.append("<td class='p1-8'>"+button+"</td>");
+
+	                    	$(target+' .table:nth-child(3) tbody').append(tr);
+
+	                    }
+
+
+	                }
+	            });//ajx
+			}
+
+	    	$('.finders').on("keyup",".find",function() {
+	    		typewatch(findfun('#tab1'),200);
+	    	})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    	}
 
     
     </script>
