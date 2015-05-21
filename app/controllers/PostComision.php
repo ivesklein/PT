@@ -36,7 +36,7 @@ class PostComision{
 				if(!empty($subj->guia)){
 					//$return["data"]['pg']['name'] = $subj->guia->name;
 					//$return["data"]['pg']['surname'] = $subj->guia->surname;
-					//$return["data"]['pg']['wc_id'] = $subj->guia->wc_id;
+					$return["data"]['pg']['wc_id'] = $subj->guia->wc_id;
 					//$return["data"]['pg']['run'] = $subj->guia->run;
 					$return["data"]['pg']['nc'] = $subj->guia->name." ".$subj->guia->surname;
 				}
@@ -56,7 +56,7 @@ class PostComision{
 					$return["data"]['in']['surname'] = $inv->surname;
 					$return["data"]['in']['wc_id'] = $inv->wc_id;
 					$return["data"]['in']['nc'] = $inv->name." ".$inv->surname;
-					$return["data"]['in']['status'] = $pres->pivot->status;
+					$return["data"]['in']['status'] = $inv->pivot->status;
 				}
 				$cat = $subj->categorias()->get();
 				if(!$cat->isEmpty()){
@@ -86,7 +86,8 @@ class PostComision{
 						$return['data'][$i] = array(
 							"id"=>$comision->id,
 							"name"=>$comision->name." ".$comision->surname,
-							"status"=>$comision->pivot->status
+							"status"=>$comision->pivot->status,
+							"rol"=>$comision->pivot->type
 						);
 					//}
 					$i++;
@@ -149,86 +150,103 @@ class PostComision{
 	public static function guardar()
 	{
 		$return = array();
-		if(isset($_POST['id']) && isset($_POST['news']) && isset($_POST['dels'])){
+		if(isset($_POST['id']) && isset($_POST['news']) && isset($_POST['dels']) && isset($_POST['rols'])){
 
 			if(Rol::hasPermission("coordefensa")){
 
 				$news = explode("," , $_POST['news']);
 				$dels = explode("," , $_POST['dels']);
+				$rols = explode("," , $_POST['rols']);
+
 
 				$pre = CEvent::whereColor('darkcyan')->whereDetail($_POST['id'])->get();
 				$def = CEvent::whereColor('blue')->whereDetail($_POST['id'])->get();
 
 				$subj = Subject::find($_POST['id']);
 
-				for ($i=0; $i < sizeof($news)-1 ; $i++) { //for news
-					$newprof = $news[$i];
+				Log::info("comision guardar ".$_POST['news']);
+				//print_r($news);
+
+				foreach ($news as $n=>$newprof) { //for news
+				
 					//agregar profesor a comision
-					$com = new Comision;
-					$com->staff_id = $newprof;
-					$com->subject_id = $_POST['id'];
-					$com->status = "confirmar";
-					$com->save();
+					if(!empty($newprof)){
 
-					//agreagr evento si existe;
-					if(!$pre->isEmpty()){
-						$event = $pre->first();
-						$e2s = new E2S;
-				        $e2s->event_id = $event->id;
-				        $e2s->staff_id = $newprof;
-				        $e2s->save();
+						Log::info("new comisionado ".$newprof);
+
+						$com = new Comision;
+						$com->staff_id = $newprof;
+						$com->subject_id = $_POST['id'];
+						$com->status = "confirmar";
+						if($rols[$n]=="pr"){
+							$com->type= 1;
+						}elseif($rols[$n]=="in"){
+							$com->type= 2;
+						}
+
+						$com->save();
+
+						//agreagr evento si existe;
+						if(!$pre->isEmpty()){
+							$event = $pre->first();
+							$e2s = new E2S;
+					        $e2s->event_id = $event->id;
+					        $e2s->staff_id = $newprof;
+					        $e2s->save();
+						}
+						if(!$def->isEmpty()){
+							$event = $def->first();
+							$e2s = new E2S;
+					        $e2s->event_id = $event->id;
+					        $e2s->staff_id = $newprof;
+					        $e2s->save();
+						}
+
+						//AVISAR POR MAIL
+						$title="Confirmar ingreso a comisión";
+						$view="emails.confirmar-comision";
+						$prof = Staff::find($newprof)->wc_id;
+
+						$wc = WCtodo::add("newuser", array('user'=>$prof, 'rol'=>'P'));
+						$wc = WCtodo::add("u2g", array('subject_id'=>$_POST['id'], 'user'=>$prof));
+
+						$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
+						Correo::enviar($prof, $title, $view, $parameters);
 					}
-					if(!$def->isEmpty()){
-						$event = $def->first();
-						$e2s = new E2S;
-				        $e2s->event_id = $event->id;
-				        $e2s->staff_id = $newprof;
-				        $e2s->save();
-					}
-
-					//AVISAR POR MAIL
-					$title="Confirmar ingreso a comisión";
-					$view="emails.confirmar-comision";
-					$prof = Staff::find($newprof)->wc_id;
-
-					$wc = WCtodo::add("newuser", array('user'=>$prof, 'rol'=>'P'));
-					$wc = WCtodo::add("u2g", array('subject_id'=>$_POST['id'], 'user'=>$prof));
-
-					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
-					Correo::enviar($prof, $title, $view, $parameters);
-
 
 				}
 
-				for ($i=0; $i < sizeof($dels)-1 ; $i++) { //for deleted
-					$delprof = $dels[$i];
+				foreach ($dels as $delprof) { //for news
 					//agregar profesor a comision
-					$com = Comision::whereStaff_id($delprof)->whereSubject_id($_POST['id'])->delete();
+					if(!empty($delprof)){
+						$com = Comision::whereStaff_id($delprof)->whereSubject_id($_POST['id'])->delete();
 
-					//remover evento si existe;
-					if(!$pre->isEmpty()){
-						$event = $pre->first();
-						$e2s = E2S::whereEvent_id($event->id)->whereStaff_id($delprof)->delete();
+						//remover evento si existe;
+						if(!$pre->isEmpty()){
+							$event = $pre->first();
+							$e2s = E2S::whereEvent_id($event->id)->whereStaff_id($delprof)->delete();
+						}
+						if(!$def->isEmpty()){
+							$event = $def->first();
+							$e2s = E2S::whereEvent_id($event->id)->whereStaff_id($delprof)->delete();
+						}
+
+						//AVISAR POR MAIL
+						$title="Exención de Comisión";
+						$view="emails.delete-from-comision";
+						$prof = Staff::find($delprof)->wc_id;
+						
+						$wc = WCtodo::add("u!2g", array('subject_id'=>$_POST['id'], 'user'=>$prof));
+
+						$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
+						Correo::enviar($prof, $title, $view, $parameters);
 					}
-					if(!$def->isEmpty()){
-						$event = $def->first();
-						$e2s = E2S::whereEvent_id($event->id)->whereStaff_id($delprof)->delete();
-					}
-
-					//AVISAR POR MAIL
-					$title="Exención de Comisión";
-					$view="emails.delete-from-comision";
-					$prof = Staff::find($delprof)->wc_id;
-					
-					$wc = WCtodo::add("u!2g", array('subject_id'=>$_POST['id'], 'user'=>$prof));
-
-					$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
-					Correo::enviar($prof, $title, $view, $parameters);
 
 				}
 				$a = DID::action(Auth::user()->wc_id, "modificar comision", $_POST['id'], "memoria", "+".$_POST['news']."-".$_POST['dels']);
 
 				$return['ok'] = 1;
+
 
 
 			}else{
@@ -502,7 +520,7 @@ class PostComision{
 						$row['insurname'] = $inv->surname;
 						$row['inwc_id'] = $inv->wc_id;
 						$row['innc'] = $inv->name." ".$inv->surname;
-						$row['instatus'] = $pres->pivot->status;
+						$row['instatus'] = $inv->pivot->status;
 					}
 
 

@@ -67,6 +67,7 @@ class Rol {
 				"crearAyudante",
 				"revisartemas",
 				"notas",
+				"tallerGM",
 				"editrol"
 			),
 		"AY"=>

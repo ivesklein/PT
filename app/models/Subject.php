@@ -29,6 +29,11 @@ Class Subject extends Eloquent{
 		return $this->hasMany('CEvent', "detail", "id");
 	}
 
+	public function categorias()
+	{
+		return $this->hasMany('Categoria');
+	}
+
 	public function scopePredefensa($query)
 	{
 		return $query->eventos()->where("type","Predefensa")->first();
