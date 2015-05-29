@@ -39,7 +39,8 @@ class Rol {
 				"listaReasignar",
 				"listaAprobar",
 				"textos",
-				"rezagados"
+				"rezagados",
+				"reportes"
 			),
 		"P"=>
 			array(

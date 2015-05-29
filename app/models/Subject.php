@@ -24,6 +24,11 @@ Class Subject extends Eloquent{
 		return $this->hasOne('Student', "wc_id", "student2");
 	}
 
+	public function sponsor()
+	{
+		return $this->hasOne('Sponsor', "subject_id", "id");
+	}
+
 	public function eventos()
 	{
 		return $this->hasMany('CEvent', "detail", "id");

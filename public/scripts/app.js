@@ -101,17 +101,6 @@ angular.module("app.ui.ctrls",[])
 		)
 
 	.controller(
-		"Id",
-		//[
-		//	"$scope",
-			function($scope, $route, $routeParams){
-				var id = $routeParams.id+"";
-				$scope.id = id;
-				//console.log($routeParams);
-			}
-		//]
-	)
-	.controller(
 		"TareaController",
 		//[
 		//	"$scope",
@@ -129,6 +118,18 @@ angular.module("app.ui.ctrls",[])
 			function($scope, $route, $routeParams){
 				var idtema = $routeParams.idtema+"";
 				$scope.idtema = idtema;
+				//console.log($routeParams);
+			}
+		//]
+	).controller(
+		"Indentity",
+		//[
+		//	"$scope",
+			function($scope, $route, $routeParams){
+				var idtema = $routeParams.idtema+"";
+				$scope.idtema = idtema;
+				
+				jcall(idtema);
 				//console.log($routeParams);
 			}
 		//]
@@ -222,11 +223,16 @@ angular.module("app",
 				.when("/aprobartema/:idtema",{templateUrl:"ruta/aprobartema",controller: 'HojaRuta'})
 				//reportes
 				.when("/listarezagados",{templateUrl:"reportes/listarezagados",controller: 'Cleancache'})
-				.when("/rezagado/:id",{templateUrl:"reportes/rezagado",controller: 'Id'})
-				
+				.when("/rezagado/:idtema",{templateUrl:"reportes/rezagado",controller: 'HojaRuta'})
+
+				.when("/rep-memorias",{templateUrl:"reportes/listamemorias",controller: 'Cleancache'})
+				.when("/rep-memorias-a",{templateUrl:"reportes/listamemoriasa",controller: 'Cleancache'})
+				.when("/rep-atrazoentrega",{templateUrl:"reportes/atrazoentrega",controller: 'Cleancache'})
+				.when("/rep-atrazohoja",{templateUrl:"reportes/atrazohoja",controller: 'Cleancache'})
+
 				//comision
 				.when("/listacomisiones",{templateUrl:"comision/listacomisiones",controller: 'Cleancache'})
-				.when("/editarcomision/:id",{templateUrl:"comision/editarcomision",controller: 'Id'})
+				.when("/editarcomision/:idtema",{templateUrl:"comision/editarcomision",controller: 'Indentity'})
 
 				//otros
 				.when("/webcursos",	{templateUrl:"webcursos/webcursos",controller: 'Cleancache'})

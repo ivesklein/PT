@@ -201,6 +201,19 @@ class PostMemorias{
 
 							$subj->save();
 
+
+							$student1 = Student::whereWc_id($subj->student1)->first();
+							if(!empty($student1)){
+								$student1->subject_id = $subj->id;
+								$student1->save();
+							}
+							$student2 = Student::whereWc_id($subj->student2)->first();
+							if(!empty($student2)){
+								$student2->subject_id = $subj->id;
+								$student2->save();
+							}
+							
+
 							$temas[$subj->id] = array(
 								"s1"=>$fila[$EMAIL1],
 								"s2"=>$fila[$EMAIL2],
@@ -334,6 +347,13 @@ class PostMemorias{
 								$subj->defensa = 0;
 								$subj->save();
 
+								$student1 = Student::whereWc_id($subj->student1)->first();
+								if(!empty($student1)){
+									$student1->subject_id = $subj->id;
+									$student1->save();
+								}
+								
+
 								$temas[$subj->id] = array(
 									"s1"=>$fila[$V2EMAIL1],
 									"p"=>$fila[$V2MPROFESOR]
@@ -342,6 +362,12 @@ class PostMemorias{
 								if(empty($subj->student2)){
 									$subj->student2 = strtolower($fila[$V2EMAIL1]);
 									$subj->save();
+
+									$student2 = Student::whereWc_id($subj->student2)->first();
+									if(!empty($student2)){
+										$student2->subject_id = $subj->id;
+										$student2->save();
+									}
 
 									$temas[$subj->id]["s2"] = strtolower($fila[$V2EMAIL1]);
 								}else{
@@ -886,6 +912,309 @@ class PostMemorias{
 		}
 		return json_encode($return);
 
+	}
+
+	public static function filtro()
+	{
+		$return = array();	
+
+		if(Rol::hasPermission("reportes")){
+
+			$subjs = "";
+
+			$return = array("rows"=>array());	
+
+			if(isset($_POST['sem'])){
+				if(!empty($_POST['sem'])){
+					if(empty($subjs)){
+						$subjs = Subject::where('periodo',"LIKE","%".$_POST['sem']."%");
+					}else{
+						$subjs->where('periodo',"LIKE","%".$_POST['sem']."%");
+					}
+				}
+			}
+
+			if(isset($_POST['tema'])){
+				if(!empty($_POST['tema'])){
+					if(empty($subjs)){
+						$subjs = Subject::where('subject',"LIKE","%".$_POST['tema']."%");
+					}else{
+						$subjs->where('subject',"LIKE","%".$_POST['tema']."%");
+					}
+				}
+			}
+
+			if(isset($_POST['a1'])){
+				if(!empty($_POST['a1'])){
+					if(empty($subjs)){
+						$alumno = $_POST['a1'];
+						$subjs = Subject::select('subjects.*')->join('students as s1', 's1.wc_id', '=', 'subjects.student1')
+										->where(function ($query) use ($alumno) {
+							            $query->where('s1.name','LIKE','%'.$alumno.'%')
+							                  ->orWhere('s1.surname','LIKE','%'.$alumno.'%')
+							                  ->orWhere('s1.wc_id','LIKE','%'.$alumno.'%'); 
+							        });
+					}else{
+						$alumno = $_POST['a1'];
+						$subjs = $subjs->select('subjects.*')->join('students as s1', 's1.wc_id', '=', 'subjects.student1')
+									->where(function ($query) use ($alumno) {
+						            $query->where('s1.name','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s1.surname','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s1.wc_id','LIKE','%'.$alumno.'%');
+						        });
+					}
+				}
+			}
+
+			if(isset($_POST['a2'])){
+				if(!empty($_POST['a2'])){
+					if(empty($subjs)){
+						$alumno = $_POST['a2'];
+						$subjs = Subject::select('subjects.*')->join('students as s2', 's2.wc_id', '=', 'subjects.student2')
+										->where(function ($query) use ($alumno) {
+							            $query->where('s2.name','LIKE','%'.$alumno.'%')
+							                  ->orWhere('s2.surname','LIKE','%'.$alumno.'%')
+							                  ->orWhere('s2.wc_id','LIKE','%'.$alumno.'%'); 
+							        });
+					}else{
+						$alumno = $_POST['a2'];
+						$subjs = $subjs->select('subjects.*')->join('students as s2', 's2.wc_id', '=', 'subjects.student2')
+									->where(function ($query) use ($alumno) {
+						            $query->where('s2.name','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s2.surname','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s2.wc_id','LIKE','%'.$alumno.'%');
+						        });
+					}
+				}
+			}
+
+			if(isset($_POST['pg'])){
+				if(!empty($_POST['pg'])){
+					if(empty($subjs)){
+						$pg = $_POST['pg'];
+						$subjs = Subject::select('subjects.*')->join('staffs', 'staffs.wc_id', '=', 'subjects.adviser')
+										->where(function ($query) use ($pg) {
+							            $query->where('staffs.name','LIKE','%'.$pg.'%')
+							                  ->orWhere('staffs.surname','LIKE','%'.$pg.'%')
+							                  ->orWhere('staffs.wc_id','LIKE','%'.$pg.'%'); 
+							        });
+					}else{
+						$pg = $_POST['pg'];
+						$subjs = $subjs->select('subjects.*')->join('staffs', 'staffs.wc_id', '=', 'subjects.adviser')
+									->where(function ($query) use ($pg) {
+						            $query->where('staffs.name','LIKE','%'.$pg.'%')
+						                  ->orWhere('staffs.surname','LIKE','%'.$pg.'%')
+						                  ->orWhere('staffs.wc_id','LIKE','%'.$pg.'%');
+						        });
+					}
+				}
+			}
+
+			if(isset($_POST['cat'])){
+				if(!empty($_POST['cat'])){
+					if(empty($subjs)){
+						$subjs = Subject::select('subjects.*')
+								->join('categorias', 'categorias.subject_id', '=', 'subjects.id')
+								->where('categorias.categoria',"LIKE",'%'.$_POST['cat'].'%');
+					}else{
+						$subjs = Subject::select('subjects.*')
+								->join('categorias', 'categorias.subject_id', '=', 'subjects.id')
+								->where('categorias.categoria',"LIKE",'%'.$_POST['cat'].'%');
+					}
+				}
+			}
+
+
+			if(!empty($subjs)){
+
+				$subjs = $subjs->with('ostudent1');
+				$subjs = $subjs->with('ostudent2');
+				$subjs = $subjs->with('guia');
+				$subjs = $subjs->with('sponsor');
+
+
+				$subjs = $subjs->get();
+			
+				foreach ($subjs as $row) {
+					
+					$return["rows"][$row->id] = array();
+
+					$return["rows"][$row->id]['sem'] = $row->periodo;
+					$return["rows"][$row->id]['tema'] = $row->subject;
+					$return["rows"][$row->id]['pg'] = $row->adviser;
+					$return["rows"][$row->id]['a1'] = $row->student1;
+					$return["rows"][$row->id]['a2'] = $row->student2;
+
+					if(!empty($subj->ostudent1)){
+						$return["rows"][$row->id]['a1'] = $subj->ostudent1->name." ".$subj->ostudent1->surname;
+						$s1 = $subj->ostudent1->expediente;
+						if(!empty($s1)){
+							$return["rows"][$row->id]['pa1'] = $s1->promedio;
+							$return["rows"][$row->id]['ea1'] = $s1->estado;
+						}
+
+					}
+					if(!empty($subj->ostudent2)){
+						$return["rows"][$row->id]['a2'] = $subj->ostudent2->name." ".$subj->ostudent2->surname;
+						$s2 = $subj->ostudent2->expediente;
+						if(!empty($s2)){
+							$return["rows"][$row->id]['pa2'] = $s2->promedio;
+							$return["rows"][$row->id]['ea2'] = $s2->estado;
+						}
+					}
+					if(!empty($subj->guia)){
+						$return["rows"][$row->id]['pg'] = $subj->guia->name." ".$subj->guia->surname;
+					}
+
+					if(!empty($subj->sponsor)){
+						$return["rows"][$row->id]['em'] = $subj->sponsor->razon;
+					}
+
+					$cats = $row->categorias;
+					$i1 = 0;
+					$return["rows"][$row->id]['cat'] = "";
+					foreach ($cats as $cat) {
+						if($i1>0){$return["rows"][$row->id]['cat'] .=", ";}
+						$i1++;
+						$return["rows"][$row->id]['cat'] .= $cat->categoria;
+					}
+
+				}
+
+			}
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+	}
+
+	public static function filtroporalumnos()
+	{
+		$return = array();	
+
+		if(Rol::hasPermission("reportes")){
+
+			$active = Periodo::active();
+
+			$student = Student::select('students.*')
+						->join('subjects', 'subjects.id', '=', 'students.subject_id')
+						->where('subjects.periodo',$active);
+
+			$return = array("rows"=>array());	
+
+
+
+			if(isset($_POST['run'])){
+				if(!empty($_POST['run'])){
+					$alumno = $_POST['run'];
+					$student = $student->where('students.run','LIKE','%'.$alumno.'%'); 
+				}
+			}
+
+			if(isset($_POST['a1'])){
+				if(!empty($_POST['a1'])){
+					$alumno = $_POST['a1'];
+					$student = $student->where(function ($query) use ($alumno) {
+					            $query->where('students.name','LIKE','%'.$alumno.'%')
+					                  ->orWhere('students.surname','LIKE','%'.$alumno.'%'); 
+					        });
+				}
+			}
+
+			if(isset($_POST['mail'])){
+				if(!empty($_POST['mail'])){
+					$alumno = $_POST['mail'];
+					$student = $student->where('students.wc_id','LIKE','%'.$alumno.'%'); 
+				}
+			}
+
+			if(isset($_POST['tema'])){
+				if(!empty($_POST['tema'])){
+					$tema = $_POST['tema'];
+					$student = $student->where('subjects.subject','LIKE','%'.$tema.'%'); 
+				}
+			}
+
+			if(isset($_POST['pg'])){
+				if(!empty($_POST['pg'])){
+					$guia = $_POST['pg'];
+					$student = $student->join('staffs', 'subjects.adviser', '=', 'staffs.wc_id')
+								->where(function ($query) use ($guia) {
+					            $query->where('staffs.name','LIKE','%'.$guia.'%')
+					                  ->orWhere('staffs.surname','LIKE','%'.$guia.'%'); 
+					        });
+				}
+			}
+
+
+			if(!empty($student)){
+
+				/*$subjects = $subjects->with('ostudent1');
+				$subjects = $subjects->with('ostudent2');
+				$subjects = $subjects->with('guia');
+				$subjects = $subjects->with('sponsor');*/
+
+				$student = $student->with('subject');
+
+				$student = $student->get();
+			
+				foreach ($student as $row) {
+					
+					$return["rows"][$row->id] = array();
+
+					//$return["rows"][$row->id]['sem'] = $row->periodo;
+					//$return["rows"][$row->id]['tema'] = $row->subject;
+					//$return["rows"][$row->id]['pg'] = $row->adviser;
+					$return["rows"][$row->id]['run'] = $row->run;
+					$return["rows"][$row->id]['a1'] = $row->name." ".$row->surname;
+					$return["rows"][$row->id]['mail'] = $row->wc_id;
+
+					if(!empty($row->subject)){
+						$return["rows"][$row->id]['tema'] = $row->subject->subject;
+						$s1 = $row->subject->guia;
+						if(!empty($s1)){
+							$return["rows"][$row->id]['pg'] = $s1->name." ".$s1->surname;
+						}
+
+					}/*
+					if(!empty($subj->ostudent2)){
+						$return["rows"][$row->id]['a2'] = $subj->ostudent2->name." ".$subj->ostudent2->surname;
+						$s2 = $subj->ostudent2->expediente;
+						if(!empty($s2)){
+							$return["rows"][$row->id]['pa2'] = $s2->promedio;
+							$return["rows"][$row->id]['ea2'] = $s2->estado;
+						}
+					}
+					if(!empty($subj->guia)){
+						$return["rows"][$row->id]['pg'] = $subj->guia->name." ".$subj->guia->surname;
+					}
+
+					if(!empty($subj->sponsor)){
+						$return["rows"][$row->id]['em'] = $subj->sponsor->razon;
+					}
+
+					$cats = $row->categorias;
+					$i1 = 0;
+					$return["rows"][$row->id]['cat'] = "";
+					foreach ($cats as $cat) {
+						if($i1>0){$return["rows"][$row->id]['cat'] .=", ";}
+						$i1++;
+						$return["rows"][$row->id]['cat'] .= $cat->categoria;
+					}
+
+					*/
+
+				}
+
+			}
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
 	}
 
 }

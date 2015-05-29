@@ -6,6 +6,8 @@ var Tabla = function(head, body) {
 	yo.cols = {};
 	yo.order = [];
 
+	yo.csv = "";
+
 	yo.ajax = "";
 
 	yo.setajax = function(direccion){
@@ -108,6 +110,14 @@ var Tabla = function(head, body) {
                 console.log(data);
 
                 yo.rows.html("");
+                yo.csv="";
+
+                var i1 = 0;
+                for(col in yo.cols){
+					if(i1>0){yo.csv+=";"}
+					yo.csv+=yo.cols[col]['title'];
+					i1++;
+				}
 
                 datostabla = data['rows'];
                 var color = {"confirmar":"text-warning","confirmado":"text-success","rechazado":"text-danger","":""};
@@ -116,8 +126,10 @@ var Tabla = function(head, body) {
 
 					var row = data['rows'][n];
 					var tr = $("<tr id='"+row.id+"' class='rowlista'></tr>");
+					yo.csv += "\n";
 
 					var flag = 0;
+					i1 = 0;
 					for(var col in yo.order){
 						var colname = yo.order[col];
 						if (colname in row) {
@@ -128,10 +140,15 @@ var Tabla = function(head, body) {
 							}else{
 								tr.append("<td class='ct"+colname+"'>"+row[colname]+"</td>");
 							}
-							
+
+							if(i1>0){yo.csv+=";"}
+							i1++;
+							yo.csv += row[colname];
 							
 						}else{
 							tr.append("<td class='ct"+colname+"'></td>");
+							if(i1>0){yo.csv+=";"}
+							i1++;
 						}
 					}
 					//tr.append("<td class='p1-8'><abbr title='"+tema.tema+"'>"+tema.tema.substring(0,20)+'...</abbr></td>');
@@ -154,6 +171,24 @@ var Tabla = function(head, body) {
 		yo.typewatch(yo.findfun,200);
 	});
 
+	yo.download = function(filename, text) {
+		var pom = document.createElement('a');
+		pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+		pom.setAttribute('download', filename);
+
+		if (document.createEvent) {
+			var event = document.createEvent('MouseEvents');
+			event.initEvent('click', true, true);
+			pom.dispatchEvent(event);
+		}
+		else {
+			pom.click();
+		}
+	}
+
+	$(yo.head+" .download").on("click", function() {
+		yo.download("reporte.csv",yo.csv);
+	})
 
 
 };
