@@ -37,83 +37,20 @@ Route::post('config', function()
 		$message = "Faltan Variables";
 	}
 
-	if(false){//con pm
-		if(isset($_POST['upm']) && 
-		isset($_POST['ppm'])){
+	
 
-		}else{
-			$ok=false;
-			$message = "Faltan Variables";
-		}
+	$res5 = UserCreation::add($_POST['mailu'],
+						$_POST['nameu'],
+						$_POST['surnameu'],
+						"SA",
+						$_POST['passu']	);
 
-
-
-
-	//conectarse a pm
-	$soap = new PMsoap;
-	$res = $soap->login($_POST['upm'],$_POST['ppm']);
-	if(isset($res['ok'])){
-
-		//sacar variables
-		$res2 = $soap->processList();
-		if(isset($res2['ok'])){		
-
-			$res3 = $soap->taskList();
-			if(isset($res3['ok'])){		
-
-				$res4 = $soap->groupList();
-				if(isset($res4['ok'])){	
-				//crear administrador
-
-					$res5 = UserCreation::add($_POST['mailu'],
-												$_POST['nameu'],
-												$_POST['surnameu'],
-												"SA",
-												$_POST['passu'],
-												$soap
-											);
-					if(isset($res5['ok'])){
-					}else{
-						$ok=false;
-						$message = "res4 error:".$res5['error'];
-					}		
-
-				}else{
-					$ok=false;
-					$message = "Error GroupsUID:".$res4['error'];
-				}
-			}else{
-				$ok=false;
-				$message = "Error TaskUID:".$res3['error'];
-			}
-		}else{
-			$ok=false;
-			$message = "Error ProcessUID:".$res2['error'];
-		}
-
-		//mostrar resultado
-
-	}else{
-		$message = "res error:".$res["error"];
+	if(isset($res5["error"])){
+		$message = $res5["error"];
 	}
 
 	return View::make("message", array('ok'=>$ok,'message'=>$message));
 
-	}else{//sin pm
-
-		$res5 = UserCreation::add($_POST['mailu'],
-							$_POST['nameu'],
-							$_POST['surnameu'],
-							"SA",
-							$_POST['passu']	);
-
-		if(isset($res5["error"])){
-			$message = $res5["error"];
-		}
-
-		return View::make("message", array('ok'=>$ok,'message'=>$message));
-
-	}
 
 });
 
@@ -225,7 +162,11 @@ Route::controller('comision','ViewsComision');
 
 Route::get('feedback/{id}', 'GetFile@feedback');
 
-
+Route::get('/aceptarcomision/{id}' ,function($id)
+{
+	//$id = Input::get('id');
+	return View::make("views.comision.aceptarcomision", array("id"=>$id));
+});
 //tests////////////////////////////////////////
 
 Route::get('/a/view' ,function()
@@ -300,7 +241,12 @@ Route::post('/test' ,function()
 Route::get('/test' ,function()
 {
 
-	$dt = Carbon::now();
+
+	//$cat = new Categoria;
+	//$cat->subject_id = 31;
+	//$cat->categoria = "Informática";
+	//$cat->save();
+	//$dt = Carbon::now();
 
 	//setlocale(LC_TIME, 'spanish');
 	//$dt->setLocale('es');
@@ -309,7 +255,7 @@ Route::get('/test' ,function()
 	//echo CarbonLocale::spanish($str);
 	//echo "<br>";
 	//echo $str;
-	echo "<form method='POST' enctype='multipart/form-data'><input type='file' name='file'><input type='submit' ></form>";
+	//echo "<form method='POST' enctype='multipart/form-data'><input type='file' name='file'><input type='submit' ></form>";
 	//setlocale (LC_TIME,"spanish");
 	//$long_date = str_replace("De","de",ucwords(strftime("%A, %d de %B de %Y")));
 	//echo $long_date;

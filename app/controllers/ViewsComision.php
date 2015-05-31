@@ -25,7 +25,6 @@ public function getEditarcomision()
 {
 		return View::make('views.comision.editarcomision');
 }
-
 	
 }
 ?>

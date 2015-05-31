@@ -184,6 +184,8 @@ class PostComision{
 							$com->type= 2;
 						}
 
+						$com->token = md5($newprof.$_POST['id'].microtime());
+
 						$com->save();
 
 						//agreagr evento si existe;
@@ -210,7 +212,7 @@ class PostComision{
 						$wc = WCtodo::add("newuser", array('user'=>$prof, 'rol'=>'P'));
 						$wc = WCtodo::add("u2g", array('subject_id'=>$_POST['id'], 'user'=>$prof));
 
-						$parameters = array("tema"=>$subj->subject, "id"=>$subj->id);
+						$parameters = array("tema"=>$subj->subject, "id"=>$subj->id,"token"=>$com->token);
 						Correo::enviar($prof, $title, $view, $parameters);
 					}
 
@@ -550,11 +552,12 @@ class PostComision{
 		if(Rol::hasPermission("coordefensa")){
 
 			
+			$users = Staff::select("staffs.*")->leftJoin('areas', 'areas.staff_id', '=', 'staffs.id');
 
 			if(isset($_POST['name'])){
 				Log::info("is name");
 				$name = $_POST['name'];
-				$users = Staff::where('staffs.name','LIKE','%'.$name.'%')
+				$users = $users->where('staffs.name','LIKE','%'.$name.'%')
 			                  ->orWhere('staffs.surname','LIKE','%'.$name.'%')
 			                  ->orWhere('staffs.wc_id','LIKE','%'.$name.'%');
 			
@@ -563,7 +566,7 @@ class PostComision{
 			if(isset($_POST['esp'])){
 				Log::info("is esp");
 				$esp = $_POST['esp'];
-				$users = Staff::where("1","1");
+				$users = $users->where('areas.area',"LIKE",'%'.$esp.'%');
 			}
 
 			if(!isset($_POST['name']) && !isset($_POST['esp'])){
@@ -587,7 +590,12 @@ class PostComision{
 					$row['wc_id'] = $user->wc_id;
 					$row['nc'] = $user->name." ".$user->surname;
 
+					$esp = $user->areas;
+
 					$row['esp'] = "";
+					foreach ($esp as $es) {
+						$row['esp'] .= $es->area.", ";
+					}
 
 					$row['guias'] = $user->guias()->wherePeriodo(Periodo::active())->count();
 					$row['comisiones'] = $row['guias'];
@@ -605,6 +613,31 @@ class PostComision{
 
 		return json_encode($return);
 
+	}
+
+	public static function aceptarcomision()
+	{
+		$return = array();
+		if(isset($_POST['id'])){
+
+			$com = Comision::whereToken($_POST['id'])->first();
+
+			if(!empty($com)){
+				if($com->status=="confirmar"){
+					$com->status = "confirmado";
+					$com->save();
+					$return["ok"] = "ok";
+				}else{
+					$return["error"] = "Ya ha respondido";
+				}
+			}else{
+				$return["error"] = "No se encuentra comision.";
+			}
+
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
 	}
 
 }

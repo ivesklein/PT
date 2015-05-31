@@ -194,7 +194,7 @@ angular.module("app",
 				.when("/calendario",	{templateUrl:"views/calendario",controller: 'Cleancache'})
 				.when("/coordefensa",	{templateUrl:"views/coordefensa",controller: 'Cleancache'})
 				.when("/periodos",		{templateUrl:"views/periodos",controller: 'Cleancache'})
-				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision",controller: 'Cleancache'})
+				
 				
 				//usuario
 				.when("/pages/signin",	{templateUrl:"user/login",controller: 'Cleancache'})
@@ -202,6 +202,8 @@ angular.module("app",
 				.when("/funcionarios",	{templateUrl:"user/funcionarios",controller: 'Cleancache'})
 				.when("/ayudantes",		{templateUrl:"user/ayudantes",controller: 'Cleancache'})
 				.when("/alumnos",		{templateUrl:"user/alumnos",controller: 'Cleancache'})
+
+				.when("/perfil/:idtema",{templateUrl:"user/perfil",controller: 'Indentity'})
 
 				//entregas
 				.when("/tareas",		{templateUrl:"entregas/tareas",controller: 'Cleancache'})
@@ -227,13 +229,15 @@ angular.module("app",
 
 				.when("/rep-memorias",{templateUrl:"reportes/listamemorias",controller: 'Cleancache'})
 				.when("/rep-memorias-a",{templateUrl:"reportes/listamemoriasa",controller: 'Cleancache'})
+				.when("/rep-memorias-a-h",{templateUrl:"reportes/listamemoriasah",controller: 'Cleancache'})
 				.when("/rep-atrazoentrega",{templateUrl:"reportes/atrazoentrega",controller: 'Cleancache'})
 				.when("/rep-atrazohoja",{templateUrl:"reportes/atrazohoja",controller: 'Cleancache'})
 
 				//comision
 				.when("/listacomisiones",{templateUrl:"comision/listacomisiones",controller: 'Cleancache'})
 				.when("/editarcomision/:idtema",{templateUrl:"comision/editarcomision",controller: 'Indentity'})
-
+				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision",controller: 'Cleancache'})
+				.when("/confirmarcomisionh/:idtema",{templateUrl:"aceptarcomision",controller: 'Indentity'})
 				//otros
 				.when("/webcursos",	{templateUrl:"webcursos/webcursos",controller: 'Cleancache'})
 

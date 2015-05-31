@@ -18,7 +18,7 @@
 
                             if($rol == "CA" || $rol == "SA"){
                                 $array = array("items"=>array(
-                                    "CA"=>array("title"=>"Cordinador Académico", "value"=>"CA"),
+                                    "CA"=>array("title"=>"Coordinador Académico", "value"=>"CA"),
                                     "SA"=>array("title"=>"Secretario Académico", "value"=>"SA"),
                                     "P"=>array("title"=>"Profesor Guía o Comisión", "value"=>"P"),
                                     "PT"=>array("title"=>"Profesor Taller", "value"=>"PT", "sel"=>1),
@@ -74,18 +74,30 @@
     </div>
 
     <div class="panel panel-default" id="profesorlist">
-        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Usuarios</strong></div>
-        <?=$table?>
+        <div class="panel-heading" id="headt"><strong><div class="form-inline"></div><span class="glyphicon glyphicon-page"></span> Usuarios <div class="btn btn-xs btn-success download"><i class="fa fa-download"></i></div></strong></div>
     </div>
-
+    <script src="js/table.js"></script>
     <script type="text/javascript">
+
+        var tabla = new Tabla("#headt", "#profesorlist");
+
+        tabla.setajax("Usuarios_funcionarios");
+        tabla.addcol("name", "Nombre",              [0,1], 1, 1, 0, "link","#/perfil/");
+        tabla.addcol("surname","Apellido",          [0,1], 1, 1, 0, "link","#/perfil/");
+        tabla.addcol("mail", "Mail",                [0,1], 1, 1, 0, "link","#/perfil/");
+        tabla.addcol("CA",  "Coordinador Académico",[0,1], 0, 1, 0, "checkbox");
+        tabla.addcol("SA", "Secretario Académico",  [0,1], 0, 1, 0, "checkbox");
+        tabla.addcol("P", "Profesor Planta",        [0,1], 0, 1, 0, "checkbox");
+        tabla.addcol("PT",  "Profesor Taller",      [0,1], 0, 1, 0, "checkbox");
+        tabla.addcol("AY", "Ayudante Taller",       [0,1], 0, 1, 0, "checkbox");
+        tabla.addcol("AA", "Ayudante Academico",    [0,1], 0, 1, 0, "checkbox");
+
 
         $("#profesorlist").on("click", 'input[type="checkbox"]', function(event) {
 
             var val = $(this).val();
             var id = $(this).attr("n");
-            var name = $(this).parent().parent().parent().find(":nth-child(1)").html()+" "+$(this).parent().parent().parent().find(":nth-child(2)").html();
-            var perm = $(this).next().html();
+            var name = $("#profesorlist tr#"+id+" .ctname").html()+" "+$("#profesorlist tr#"+id+" .ctsurname").html();
 
             var action = $(this).is(':checked');
             var act = "";

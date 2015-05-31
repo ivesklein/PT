@@ -1217,4 +1217,139 @@ class PostMemorias{
 		return json_encode($return);
 	}
 
+	public static function filtroporalumnoshist()
+	{
+		$return = array();	
+
+		if(Rol::hasPermission("reportes")){
+
+			$active = Periodo::active();
+
+			$student = Student::select('students.*')
+						->join('subjects', 'subjects.id', '=', 'students.subject_id')
+						->where('subjects.periodo',"!=",$active);
+
+			$return = array("rows"=>array());	
+
+
+
+			if(isset($_POST['run'])){
+				if(!empty($_POST['run'])){
+					$alumno = $_POST['run'];
+					$student = $student->where('students.run','LIKE','%'.$alumno.'%'); 
+				}
+			}
+
+			if(isset($_POST['per'])){
+				if(!empty($_POST['per'])){
+					$per = $_POST['per'];
+					$student = $student->where('subjects.periodo','LIKE','%'.$per.'%'); 
+				}
+			}
+
+			if(isset($_POST['a1'])){
+				if(!empty($_POST['a1'])){
+					$alumno = $_POST['a1'];
+					$student = $student->where(function ($query) use ($alumno) {
+					            $query->where('students.name','LIKE','%'.$alumno.'%')
+					                  ->orWhere('students.surname','LIKE','%'.$alumno.'%'); 
+					        });
+				}
+			}
+
+			if(isset($_POST['mail'])){
+				if(!empty($_POST['mail'])){
+					$alumno = $_POST['mail'];
+					$student = $student->where('students.wc_id','LIKE','%'.$alumno.'%'); 
+				}
+			}
+
+			if(isset($_POST['tema'])){
+				if(!empty($_POST['tema'])){
+					$tema = $_POST['tema'];
+					$student = $student->where('subjects.subject','LIKE','%'.$tema.'%'); 
+				}
+			}
+
+			if(isset($_POST['pg'])){
+				if(!empty($_POST['pg'])){
+					$guia = $_POST['pg'];
+					$student = $student->join('staffs', 'subjects.adviser', '=', 'staffs.wc_id')
+								->where(function ($query) use ($guia) {
+					            $query->where('staffs.name','LIKE','%'.$guia.'%')
+					                  ->orWhere('staffs.surname','LIKE','%'.$guia.'%'); 
+					        });
+				}
+			}
+
+
+			if(!empty($student)){
+
+				/*$subjects = $subjects->with('ostudent1');
+				$subjects = $subjects->with('ostudent2');
+				$subjects = $subjects->with('guia');
+				$subjects = $subjects->with('sponsor');*/
+
+				$student = $student->with('subject');
+
+				$student = $student->get();
+			
+				foreach ($student as $row) {
+					
+					$return["rows"][$row->id] = array();
+
+					//$return["rows"][$row->id]['sem'] = $row->periodo;
+					//$return["rows"][$row->id]['tema'] = $row->subject;
+					//$return["rows"][$row->id]['pg'] = $row->adviser;
+					$return["rows"][$row->id]['run'] = $row->run;
+					$return["rows"][$row->id]['a1'] = $row->name." ".$row->surname;
+					$return["rows"][$row->id]['mail'] = $row->wc_id;
+
+					if(!empty($row->subject)){
+						$return["rows"][$row->id]['tema'] = $row->subject->subject;
+						$return["rows"][$row->id]['per'] = $row->subject->periodo;
+						$s1 = $row->subject->guia;
+						if(!empty($s1)){
+							$return["rows"][$row->id]['pg'] = $s1->name." ".$s1->surname;
+						}
+
+					}/*
+					if(!empty($subj->ostudent2)){
+						$return["rows"][$row->id]['a2'] = $subj->ostudent2->name." ".$subj->ostudent2->surname;
+						$s2 = $subj->ostudent2->expediente;
+						if(!empty($s2)){
+							$return["rows"][$row->id]['pa2'] = $s2->promedio;
+							$return["rows"][$row->id]['ea2'] = $s2->estado;
+						}
+					}
+					if(!empty($subj->guia)){
+						$return["rows"][$row->id]['pg'] = $subj->guia->name." ".$subj->guia->surname;
+					}
+
+					if(!empty($subj->sponsor)){
+						$return["rows"][$row->id]['em'] = $subj->sponsor->razon;
+					}
+
+					$cats = $row->categorias;
+					$i1 = 0;
+					$return["rows"][$row->id]['cat'] = "";
+					foreach ($cats as $cat) {
+						if($i1>0){$return["rows"][$row->id]['cat'] .=", ";}
+						$i1++;
+						$return["rows"][$row->id]['cat'] .= $cat->categoria;
+					}
+
+					*/
+
+				}
+
+			}
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+	}
+
 }

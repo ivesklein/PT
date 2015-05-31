@@ -326,7 +326,7 @@ class PostWebcursos{
  
 
 
-
+                // REGISTRAR GRUPOS START//
 
         		$newgroups = WCtodo::wherePeriodo(Periodo::active())->whereAction('newgroup')->whereDid(0)->get();
 
@@ -339,6 +339,7 @@ class PostWebcursos{
 
         			$data = json_decode($group->data);
         			$name = $data->group;
+        			Log::info("newgroup:".$name);
         			$idsubj = $data->subject_id;
 
 					$res = $wc->createGroup($name,$idsubj);
@@ -350,15 +351,20 @@ class PostWebcursos{
                 		$group->did = 1;
                 		$group->save();
                 		$count++;
+
                 	}
 
                 	$return['groups'][] = $name;
 
-
-
         		}
 
+        		// REGISTRAR GRUPOS END//
+
+
         		if($stop==0){
+
+        			// REGISTRAR USUARIOS START//
+
 
 	        		$newusers = WCtodo::wherePeriodo(Periodo::active())->whereAction('newuser')->whereDid(0)->get();
 	        		$t = WCtodo::wherePeriodo(Periodo::active())->
@@ -375,7 +381,6 @@ class PostWebcursos{
 						$users[$data->user] = array("add"=>array($data->rol), "del"=>array());
 						Log::info("foruseradd:".$data->user);
 					}
-
 
 					foreach ($t as $role) {
 						$data = json_decode($role->data);

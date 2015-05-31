@@ -146,6 +146,21 @@ class Menu {
 			"where"=>"temas",
 			"place"=>"40",
 			"array"=>array("link"=>"#/notas", "title"=>"Evaluar Defensas", "n"=>0)
+		),
+		"reportes-t"=>array(
+			"where"=>"reportes",
+			"place"=>"26",
+			"array"=>array("link"=>"#/rep-memorias", "title"=>"Memorias", "n"=>0)
+		),
+		"reportes-a"=>array(
+			"where"=>"reportes",
+			"place"=>"27",
+			"array"=>array("link"=>"#/rep-memorias-a", "title"=>"Memorias/Alumno", "n"=>0)
+		),
+		"reportes-a-h"=>array(
+			"where"=>"reportes",
+			"place"=>"28",
+			"array"=>array("link"=>"#/rep-memorias-a-h", "title"=>"Memorias/Alumno H", "n"=>0)
 		)
 
 

@@ -9,4 +9,10 @@ Class Categoria extends Eloquent{
 		return $this->hasOne('Subject', "id", "subject_id");
 	}
 
+	public function scopeLista($query){
+
+		$query->groupBy('categoria')->get();
+		
+	}
+
 }

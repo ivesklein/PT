@@ -36,6 +36,11 @@ class ViewsReportes extends BaseController
 		return View::make('views.reportes.memorias-a');
 	}
 
+	public function getListamemoriasah()
+	{
+		return View::make('views.reportes.memorias-a-h');
+	}
+
 	public function getAtrazoentrega()
 	{
 		return View::make('views.reportes.atrazo-entrega');

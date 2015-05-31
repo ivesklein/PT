@@ -101,6 +101,28 @@ class ViewsTypeahead extends BaseController
 		return json_encode($res);
 	}
 
+	public function getAreas()
+	{
+		
+		$res = array();	
+		$term = Input::get('term');
+		//$pers = Periodo::where('name',"LIKE","%".$term."%")->get();
+		if($term=="*"){
+			$pers = Area::lista()->get();
+		}else{
+			$pers = Area::lista()->where('area',"LIKE","%".$term."%")->get();
+		}
+		
+
+		if(!$pers->isEmpty()){
+			foreach ($pers as $per) {
+				$res[] = array('value'=>$per->area);
+			}
+		}
+
+		return json_encode($res);
+	}
+
 }
 
 ?>

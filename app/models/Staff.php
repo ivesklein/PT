@@ -29,6 +29,10 @@ Class Staff extends Eloquent{
 		return $this->belongsToMany("Subject", "revisors", "staff_id", "subject_id");
 	}
 
+	public function areas()
+	{
+		return $this->hasMany('Area');
+	}
 
 
 }

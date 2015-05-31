@@ -23,7 +23,7 @@ var Tabla = function(head, body) {
 	yo.head2 = $(yo.body+" .tsearch");
 	yo.rows = $(yo.body+" .tbody");
 
-	yo.addcol = function(name, title, opcional, search, sorted, abbr){
+	yo.addcol = function(name, title, opcional, search, sorted, abbr, control, link){
 		
 		//name, title, opcional, search, sorted
 		/*var name = ("short" in vararray)?vararray["short"]:"nn"+Math.floor(Math.random()*1000);
@@ -41,14 +41,16 @@ var Tabla = function(head, body) {
 		opcional = opcional!=undefined?opcional:[0,1];
 		if(opcional[0]==0){opcional[1]=1;}
 
-		search = name!=undefined?search:0;
-		sorted = name!=undefined?sorted:0;
+		search = search!=undefined?search:0;
+		sorted = sorted!=undefined?sorted:0;
 
-		abbr = name!=undefined?abbr:0;
+		abbr = abbr!=undefined?abbr:0;
 
+		control = control!=undefined?control:"text";
+		link = link!=undefined?link:0;
 
 		yo.order.push(name);
-		yo.cols[name] = {"name":name, "title":title, "opcional":opcional, "search":search, "sorted":sorted, "abbr":abbr};
+		yo.cols[name] = {"name":name, "title":title, "opcional":opcional, "search":search, "sorted":sorted, "abbr":abbr, "control":control, "link":link};
 		
 		yo.head1.append("<th class='ct"+name+"'>"+title+"</th>");
 
@@ -135,7 +137,15 @@ var Tabla = function(head, body) {
 						if (colname in row) {
 							flag=1;
 
-							if(yo.cols[colname]['abbr']>0){
+							if(yo.cols[colname]['control']=="checkbox"){
+								var sel = row[colname]['status'];
+								var dis = row[colname]['perm']==1?0:1;
+
+								tr.append("<td class='ct"+colname+"'>"+yo.checkbox("",row.id,colname,yo.cols[colname]['title'],sel,dis)+"</td>");
+
+							}else if(yo.cols[colname]['control']=="link"){
+								tr.append("<td class='ct"+colname+"'><a href='"+yo.cols[colname]['link']+row.id+"'>"+row[colname]+"</a></td>");
+							}else if(yo.cols[colname]['abbr']>0){
 								tr.append("<td class='ct"+colname+"'><abbr title='"+row[colname]+"'>"+row[colname].substring(0,yo.cols[colname]['abbr'])+"...</abbr></td>");
 							}else{
 								tr.append("<td class='ct"+colname+"'>"+row[colname]+"</td>");
@@ -143,7 +153,12 @@ var Tabla = function(head, body) {
 
 							if(i1>0){yo.csv+=";"}
 							i1++;
-							yo.csv += row[colname];
+							if(yo.cols[colname]['control']=="checkbox"){
+								yo.csv += row[colname]['status'];
+							}else{
+								yo.csv += row[colname];
+							}
+							
 							
 						}else{
 							tr.append("<td class='ct"+colname+"'></td>");
@@ -189,6 +204,21 @@ var Tabla = function(head, body) {
 	$(yo.head+" .download").on("click", function() {
 		yo.download("reporte.csv",yo.csv);
 	})
+
+	yo.checkbox = function(name, n, value, title, sel, dis){
+
+		name = name!=undefined?'name="'+name+'"':"";
+		n = n!=undefined?'n="'+n+'"':"";
+		value = value!=undefined?'value="'+value+'"':"";
+		title = title!=undefined?title:"";
+		sel = sel!=undefined?sel:0;
+		dis = dis!=undefined?dis:0;
+
+		sel = sel==1?"checked":"";
+		dis = dis==1?"disabled":"";
+
+		return '<label class="ui-checkbox"><input type="checkbox" '+name+' '+value+' '+n+' '+sel+' '+dis+'><span>'+title+'</span></label>'
+	}
 
 
 };

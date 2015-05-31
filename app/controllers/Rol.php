@@ -40,7 +40,10 @@ class Rol {
 				"listaAprobar",
 				"textos",
 				"rezagados",
-				"reportes"
+				"reportes",
+				"reportes-t",
+				"reportes-a",
+				"reportes-a-h"
 			),
 		"P"=>
 			array(

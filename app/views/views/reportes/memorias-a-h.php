@@ -13,7 +13,7 @@
 <div class="page page-table">
 
     <div class="panel panel-default tabla">
-        <div class="panel-heading"><strong><div class="form-inline"></div><span class="glyphicon glyphicon-page"></span> Memorias Activas por Alumno <div class="btn btn-xs btn-success download"><i class="fa fa-download"></i></div></strong></div>
+        <div class="panel-heading"><strong><div class="form-inline"></div><span class="glyphicon glyphicon-page"></span> Memorias Históricas por Alumno <div class="btn btn-xs btn-success download"><i class="fa fa-download"></i></div></strong></div>
 
     </div>
 	
@@ -25,7 +25,8 @@
 
         var tabla = new Tabla(".panel-heading", ".tabla");
 
-        tabla.setajax("Memorias_filtroporalumnos");
+        tabla.setajax("Memorias_filtroporalumnoshist");
+        tabla.addcol("per", "Semestre",     [1,1], 1, 1);
         tabla.addcol("run", "Run",          [1,1], 1, 1);
         tabla.addcol("a1","Nombre",         [1,1], 1, 1);
         tabla.addcol("mail", "Email",       [1,1], 1, 1);

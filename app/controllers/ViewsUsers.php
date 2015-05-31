@@ -143,6 +143,15 @@ class ViewsUsers extends BaseController
 	}
 	//  USUARIOS  //
 
+	public function getPerfil()
+	{
+		return View::make('views.perfil.perfil');
+	}
+
+	public function getMiperfil()
+	{
+		return Redirect::to('/#/perfil/'.Auth::user()->id);
+	}
 
 
 
