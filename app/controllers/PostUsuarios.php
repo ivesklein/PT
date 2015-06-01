@@ -388,6 +388,147 @@ class PostUsuarios{
 		}
 	}
 
+	public static function insertdata()	
+	{	
+
+		if(Rol::hasPermission("reportes")){
+
+
+			$MAIL = 0 ;
+			$VAL = 1 ;
+
+			//$periodo = $_POST['periodo'];
+
+			$file = Files::post("csv");
+			$var = $_POST['var'];
+
+			if(isset($file["ok"])){
+				$ruta = $file["ok"]["tmp_name"];
+				
+				//return $file["ok"]["type"];
+				
+				
+				$res = CSV::toArray($ruta);
+				if(isset($res['error'])){
+					Session::put('alert', array("var"=>$var, "message"=>'No se puede leer el archivo, compruebe que tenga formato \'.csv\''));
+					return Redirect::to("#/rep-memorias-a");
+				}
+
+				//for profesores, 
+					//verificar si existen, 
+					//si no crearlos.
+				foreach ($res as $n => $fila) {
+					if($n!=0){
+
+						try {
+							
+							$student = Student::whereWc_id($fila[$MAIL])->with('expediente')->first();
+							if(!empty($student)){
+								if(!empty($student->expediente)){
+									$exp = $student->expediente;
+								}else{
+									$exp = new Expediente;
+									$exp->student_id = $student->id;
+									$exp->save();
+								}
+
+								if($var=="carrera"){
+									if(!empty($fila[$VAL])){
+										$exp->carrera = $fila[$VAL];
+										$exp->save();
+									}
+								}
+
+								if($var=="financiero"){
+									if(!empty($fila[$VAL])){
+										if($fila[$VAL]=="1"
+										||$fila[$VAL]=="ok"
+										||$fila[$VAL]=="si"
+										||$fila[$VAL]=="yes"
+										||$fila[$VAL]=="Ok"
+										||$fila[$VAL]=="Si"){
+											$exp->financiero = "1";
+											$exp->save();
+										}elseif($fila[$VAL]=="0"
+											||$fila[$VAL]==0
+										||$fila[$VAL]=="no"
+										||$fila[$VAL]=="No"){
+											$exp->financiero = "0";
+											$exp->save();
+										}
+									}
+								}
+
+								if($var=="biblioteca"){
+									if(!empty($fila[$VAL])){
+										if($fila[$VAL]=="1"
+										||$fila[$VAL]=="ok"
+										||$fila[$VAL]=="si"
+										||$fila[$VAL]=="yes"
+										||$fila[$VAL]=="Ok"
+										||$fila[$VAL]=="Si"){
+											$exp->biblioteca = "1";
+											$exp->save();
+										}elseif($fila[$VAL]=="0"
+											||$fila[$VAL]==0
+										||$fila[$VAL]=="no"
+										||$fila[$VAL]=="No"){
+											$exp->biblioteca = "0";
+											$exp->save();
+										}
+									}
+								}
+
+								if($var=="academico"){
+									if(!empty($fila[$VAL])){
+										if($fila[$VAL]=="1"
+										||$fila[$VAL]=="ok"
+										||$fila[$VAL]=="si"
+										||$fila[$VAL]=="yes"
+										||$fila[$VAL]=="Ok"
+										||$fila[$VAL]=="Si"){
+											$exp->academico = "1";
+											$exp->save();
+										}elseif($fila[$VAL]=="0"
+											||$fila[$VAL]==0
+										||$fila[$VAL]=="no"
+										||$fila[$VAL]=="No"){
+											$exp->academico = "0";
+											$exp->save();
+										}
+									}
+								}
+
+							}
+
+
+						} catch (Exception $e) {
+							
+							Session::put('alert', array("var"=>$var, "message"=>'No se puede leer el archivo, compruebe que tenga formato \'.csv\''));
+					
+							return Redirect::to("#/rep-memorias-a");
+
+						}
+						
+					}//row encabezado
+				}//for rows
+
+				$a = DID::action(Auth::user()->wc_id, "agregar ".$var, "", "Usuarios", "");
+
+				return Redirect::to("#/rep-memorias-a");
+
+			}else{
+				//error con el archivo
+				Session::put('alert', array("var"=>$var, "message"=>'No se puede leer el archivo'));
+					
+				return Redirect::to("#/rep-memorias-a");
+			}
+
+
+		}else{
+			return Redirect::to("login");
+		}
+	}
 
     public static function funcionarios()
     {

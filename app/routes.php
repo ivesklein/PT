@@ -76,13 +76,13 @@ Route::get('rol', array( "before"=>'auth' ,function()
 
 	$name = array(
 		"SA"=>"Secretaría Académica",
-		"CA"=>"Coordinación Académica",
+		"CA"=>"Dirección Académica",
 		"P"=>"Profesor Guía o Comisión",
 		"PT"=>"Profesor de Taller",
 		"AY"=>"Ayudante de Taller",
 		"MA"=>"CronJobs Supervisor",
 		"DA"=>"Analista de datos",
-		"AA"=>"Ayudante Académico"
+		"AA"=>"Coordinación Académico"
 	);
 	$array = array();
 	$id = Auth::user()->id; //id user

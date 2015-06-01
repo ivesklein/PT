@@ -1,4 +1,4 @@
-La <?=isset($tipo)?$tipo:"*";?> del grupo <?=isset($grupo)?$grupo:"*";?> con tema "<?=isset($tema)?$tema:"*";?>" de realizará el <?=isset($time)?$time:"*";?>
+La <?=isset($tipo)?$tipo:"*";?> del grupo <?=isset($grupo)?$grupo:"*";?> con tema "<?=isset($tema)?$tema:"*";?>" se realizará el <?=isset($time)?$time:"*";?>
 <br>
 Atte,<br>
 <br>

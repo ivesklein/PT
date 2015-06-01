@@ -145,6 +145,14 @@ var Tabla = function(head, body) {
 
 							}else if(yo.cols[colname]['control']=="link"){
 								tr.append("<td class='ct"+colname+"'><a href='"+yo.cols[colname]['link']+row.id+"'>"+row[colname]+"</a></td>");
+							}else if(yo.cols[colname]['control']=="check"){
+								if(row[colname]=="1"){
+									tr.append("<td class='ct"+colname+" popsel text-center' style='color:rgb(0, 192, 0);'><span class='glyphicon glyphicon-ok'></span></td>");
+								}else if(row[colname]=="0"){
+									tr.append("<td class='ct"+colname+" popsel text-center' style='color:red;'><span class='glyphicon glyphicon-remove'></span></td>");
+								}else{
+									tr.append("<td class='ct"+colname+" popsel'></td>");
+								}
 							}else if(yo.cols[colname]['abbr']>0){
 								tr.append("<td class='ct"+colname+"'><abbr title='"+row[colname]+"'>"+row[colname].substring(0,yo.cols[colname]['abbr'])+"...</abbr></td>");
 							}else{

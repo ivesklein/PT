@@ -18,11 +18,12 @@
 
                             if($rol == "CA" || $rol == "SA"){
                                 $array = array("items"=>array(
-                                    "CA"=>array("title"=>"Coordinador Académico", "value"=>"CA"),
+                                    "CA"=>array("title"=>"Director Académico", "value"=>"CA"),
                                     "SA"=>array("title"=>"Secretario Académico", "value"=>"SA"),
                                     "P"=>array("title"=>"Profesor Guía o Comisión", "value"=>"P"),
                                     "PT"=>array("title"=>"Profesor Taller", "value"=>"PT", "sel"=>1),
-                                    "AY"=>array("title"=>"Ayudante Taller", "value"=>"AY")
+                                    "AY"=>array("title"=>"Ayudante Taller", "value"=>"AY"),
+                                    "AY"=>array("title"=>"Coordinador Académico", "value"=>"AA")
                                 ));
                             }elseif($rol == "PT"){
                                 $array = array("items"=>array(
@@ -85,12 +86,12 @@
         tabla.addcol("name", "Nombre",              [0,1], 1, 1, 0, "link","#/perfil/");
         tabla.addcol("surname","Apellido",          [0,1], 1, 1, 0, "link","#/perfil/");
         tabla.addcol("mail", "Mail",                [0,1], 1, 1, 0, "link","#/perfil/");
-        tabla.addcol("CA",  "Coordinador Académico",[0,1], 0, 1, 0, "checkbox");
+        tabla.addcol("CA",  "Director Académico",[0,1], 0, 1, 0, "checkbox");
         tabla.addcol("SA", "Secretario Académico",  [0,1], 0, 1, 0, "checkbox");
         tabla.addcol("P", "Profesor Planta",        [0,1], 0, 1, 0, "checkbox");
         tabla.addcol("PT",  "Profesor Taller",      [0,1], 0, 1, 0, "checkbox");
         tabla.addcol("AY", "Ayudante Taller",       [0,1], 0, 1, 0, "checkbox");
-        tabla.addcol("AA", "Ayudante Academico",    [0,1], 0, 1, 0, "checkbox");
+        tabla.addcol("AA", "Coordinador Academico",    [0,1], 0, 1, 0, "checkbox");
 
 
         $("#profesorlist").on("click", 'input[type="checkbox"]', function(event) {

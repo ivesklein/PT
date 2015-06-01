@@ -1097,6 +1097,11 @@ class PostMemorias{
 		if(Rol::hasPermission("reportes")){
 
 			$active = Periodo::active();
+			$tareas = Tarea::wherePeriodo_name($active)->where("tipo","<",4)->get();
+			$idtareas = array();
+			foreach ($tareas as $tarea) {
+				$idtareas[] = $tarea->id;
+			}
 
 			$student = Student::select('students.*')
 						->join('subjects', 'subjects.id', '=', 'students.subject_id')
@@ -1148,6 +1153,14 @@ class PostMemorias{
 				}
 			}
 
+			if(isset($_POST['car'])){
+				if(!empty($_POST['car'])){
+					$car = $_POST['car'];
+					$student = $student->join('expedientes', 'expedientes.student_id', '=', 'students.id')
+								->where('expedientes.carrera','LIKE','%'.$car.'%');
+				}
+			}
+
 
 			if(!empty($student)){
 
@@ -1157,6 +1170,7 @@ class PostMemorias{
 				$subjects = $subjects->with('sponsor');*/
 
 				$student = $student->with('subject');
+				$student = $student->with('expediente');
 
 				$student = $student->get();
 			
@@ -1171,11 +1185,50 @@ class PostMemorias{
 					$return["rows"][$row->id]['a1'] = $row->name." ".$row->surname;
 					$return["rows"][$row->id]['mail'] = $row->wc_id;
 
+
+					if(!empty($row->expediente)){
+						$return["rows"][$row->id]['car'] = $row->expediente->carrera;
+						$return["rows"][$row->id]['fin'] = $row->expediente->financiero;
+						$return["rows"][$row->id]['bib'] = $row->expediente->biblioteca;
+						$return["rows"][$row->id]['aca'] = $row->expediente->academico;
+					}
+
 					if(!empty($row->subject)){
 						$return["rows"][$row->id]['tema'] = $row->subject->subject;
 						$s1 = $row->subject->guia;
 						if(!empty($s1)){
 							$return["rows"][$row->id]['pg'] = $s1->name." ".$s1->surname;
+						}
+
+						$nstudent = $row->wc_id==$row->subject->student1?0:1;
+
+						$sum = 0;
+						$n = 0;
+
+						foreach ($idtareas as $tareaid) {
+							# code...
+							$nota = Nota::whereSubject_id($row->subject->id)->whereTarea_id($tareaid)->get();
+							if(!$nota->isEmpty()){
+								$notita = $nota->first();
+								$notas = $notita->nota;
+								$feedbacks = $notita->feedback;
+
+								if($notas!=""){
+	                                $notas = json_decode($notas);
+	                                $notaa = $notas[$nstudent];
+	                                if(!empty($notaa)){
+	                                	$sum +=$notaa;
+	                                	$n++;
+	                                }
+	                            }
+
+							}
+						}
+
+						if($n>0){
+							$return["rows"][$row->id]['pa1'] = ($sum/$n)." (".$n." notas)";
+						}else{
+							$return["rows"][$row->id]['pa1'] = "(sin notas)";
 						}
 
 					}/*
@@ -1343,6 +1396,32 @@ class PostMemorias{
 
 				}
 
+			}
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+	}
+
+	public static function listaalumnos()
+	{
+		$return = array();	
+		if(Rol::hasPermission("reportes")){
+			$active = Periodo::active();
+			$student = Student::select('students.*')
+						->join('subjects', 'subjects.id', '=', 'students.subject_id')
+						->where('subjects.periodo',$active);
+
+			$return = array("rows"=>array());	
+
+			if(!empty($student)){
+				$student = $student->get();
+				foreach ($student as $row) {
+					$return["rows"][$row->id] = array();
+					$return["rows"][$row->id]['mail'] = $row->wc_id;
+				}
 			}
 
 		}else{
