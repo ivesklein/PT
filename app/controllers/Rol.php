@@ -23,7 +23,12 @@ class Rol {
 				"rutaaleatorio",
 				"revisartemas",
 				"listaReasignar",
-				"listaAprobar"
+				"listaAprobar",
+				"reportes",
+				"reportes-t",
+				"reportes-t-h",
+				"reportes-a",
+				"reportes-a-h"
 			),
 		"SA"=>
 			array(
@@ -42,6 +47,7 @@ class Rol {
 				"rezagados",
 				"reportes",
 				"reportes-t",
+				"reportes-t-h",
 				"reportes-a",
 				"reportes-a-h"
 			),
@@ -91,7 +97,12 @@ class Rol {
 				"coordefensa",
 				"viewProfEvents",
 				"defensas",
-				"revisartareas"
+				"revisartareas",
+				"reportes",
+				"reportes-t",
+				"reportes-t-h",
+				"reportes-a",
+				"reportes-a-h"
 			),
 		"MA"=>
 			array(

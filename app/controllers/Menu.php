@@ -60,7 +60,7 @@ class Menu {
 		"coordefensa"=>array(
 			"where"=>"calendario",
 			"place"=>"19",
-			"array"=>array("link"=>"#/coordefensa", "title"=>"Coordinar Defensas", "n"=>0)
+			"array"=>array("link"=>"#/listacomisiones", "title"=>"Coordinar Defensas", "n"=>0)
 		),
 		"comisionConfirmation"=>array(
 			"where"=>"temas",
@@ -150,16 +150,21 @@ class Menu {
 		"reportes-t"=>array(
 			"where"=>"reportes",
 			"place"=>"26",
-			"array"=>array("link"=>"#/rep-memorias", "title"=>"Memorias", "n"=>0)
+			"array"=>array("link"=>"#/rep-memorias-ac", "title"=>"Memorias Activas", "n"=>0)
+		),
+		"reportes-t-h"=>array(
+			"where"=>"reportes",
+			"place"=>"28",
+			"array"=>array("link"=>"#/rep-memorias", "title"=>"Memorias Historicas", "n"=>0)
 		),
 		"reportes-a"=>array(
 			"where"=>"reportes",
-			"place"=>"27",
+			"place"=>"29",
 			"array"=>array("link"=>"#/rep-memorias-a", "title"=>"Memorias/Alumno", "n"=>0)
 		),
 		"reportes-a-h"=>array(
 			"where"=>"reportes",
-			"place"=>"28",
+			"place"=>"30",
 			"array"=>array("link"=>"#/rep-memorias-a-h", "title"=>"Memorias/Alumno H", "n"=>0)
 		)
 

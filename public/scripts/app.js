@@ -228,6 +228,7 @@ angular.module("app",
 				.when("/rezagado/:idtema",{templateUrl:"reportes/rezagado",controller: 'HojaRuta'})
 
 				.when("/rep-memorias",{templateUrl:"reportes/listamemorias",controller: 'Cleancache'})
+				.when("/rep-memorias-ac",{templateUrl:"reportes/listamemoriasac",controller: 'Cleancache'})
 				.when("/rep-memorias-a",{templateUrl:"reportes/listamemoriasa",controller: 'Cleancache'})
 				.when("/rep-memorias-a-h",{templateUrl:"reportes/listamemoriasah",controller: 'Cleancache'})
 				.when("/rep-atrazoentrega",{templateUrl:"reportes/atrazoentrega",controller: 'Cleancache'})

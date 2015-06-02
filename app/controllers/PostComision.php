@@ -20,7 +20,14 @@ class PostComision{
 					//$return["data"]['s1']['surname'] = $subj->ostudent1->surname;
 					//$return["data"]['s1']['wc_id'] = $subj->ostudent1->wc_id;
 					//$return["data"]['s1']['run'] = $subj->ostudent1->run;
-					$return["data"]['s1']['nc'] = $subj->ostudent1->name." ".$subj->ostudent1->surname;
+					$carr = "";
+					$exp = $subj->ostudent1->expediente;
+					if(!empty($exp)){
+						if(!empty($exp->carrera)){
+							$carr = " (".$exp->carrera.")";
+						}
+					}
+					$return["data"]['s1']['nc'] = $subj->ostudent1->name." ".$subj->ostudent1->surname.$carr;
 				}
 				$return["data"]['s2'] = array();
 				if(!empty($subj->ostudent2)){
@@ -28,7 +35,14 @@ class PostComision{
 					//$return["data"]['s2']['surname'] = $subj->ostudent2->surname;
 					//$return["data"]['s2']['wc_id'] = $subj->ostudent2->wc_id;
 					//$return["data"]['s2']['run'] = $subj->ostudent2->run;
-					$return["data"]['s2']['nc'] = $subj->ostudent2->name." ".$subj->ostudent2->surname;
+					$carr = "";
+					$exp = $subj->ostudent2->expediente;
+					if(!empty($exp)){
+						if(!empty($exp->carrera)){
+							$carr = " (".$exp->carrera.")";
+						}
+					}
+					$return["data"]['s2']['nc'] = $subj->ostudent2->name." ".$subj->ostudent2->surname.$carr;
 				}
 
 				$guia = $subj->guia;

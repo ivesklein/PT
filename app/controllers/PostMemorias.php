@@ -922,7 +922,9 @@ class PostMemorias{
 
 			$subjs = "";
 
-			$return = array("rows"=>array());	
+			$return = array("rows"=>array());
+
+			$subjs = Subject::where('periodo',"!=",$active);	
 
 			if(isset($_POST['sem'])){
 				if(!empty($_POST['sem'])){
@@ -1077,6 +1079,225 @@ class PostMemorias{
 						if($i1>0){$return["rows"][$row->id]['cat'] .=", ";}
 						$i1++;
 						$return["rows"][$row->id]['cat'] .= $cat->categoria;
+					}
+
+				}
+
+			}
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+	}
+
+	public static function filtroactivo()
+	{
+		$return = array();	
+
+		if(Rol::hasPermission("reportes")){
+
+			$subjs = "";
+
+			$return = array("rows"=>array());	
+
+			$active = Periodo::active();
+			$subjs = Subject::where('periodo',$active);
+
+			$tareas = Tarea::wherePeriodo_name($active)->where("tipo","<",4)->get();
+			$idtareas = array();
+			foreach ($tareas as $tarea) {
+				$idtareas[] = $tarea->id;
+			}
+
+			if(isset($_POST['tema'])){
+				if(!empty($_POST['tema'])){
+					if(empty($subjs)){
+						$subjs = Subject::where('subject',"LIKE","%".$_POST['tema']."%");
+					}else{
+						$subjs->where('subject',"LIKE","%".$_POST['tema']."%");
+					}
+				}
+			}
+
+			if(isset($_POST['a1'])){
+				if(!empty($_POST['a1'])){
+					if(empty($subjs)){
+						$alumno = $_POST['a1'];
+						$subjs = Subject::select('subjects.*')->join('students as s1', 's1.wc_id', '=', 'subjects.student1')
+										->where(function ($query) use ($alumno) {
+							            $query->where('s1.name','LIKE','%'.$alumno.'%')
+							                  ->orWhere('s1.surname','LIKE','%'.$alumno.'%')
+							                  ->orWhere('s1.wc_id','LIKE','%'.$alumno.'%'); 
+							        });
+					}else{
+						$alumno = $_POST['a1'];
+						$subjs = $subjs->select('subjects.*')->join('students as s1', 's1.wc_id', '=', 'subjects.student1')
+									->where(function ($query) use ($alumno) {
+						            $query->where('s1.name','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s1.surname','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s1.wc_id','LIKE','%'.$alumno.'%');
+						        });
+					}
+				}
+			}
+
+			if(isset($_POST['a2'])){
+				if(!empty($_POST['a2'])){
+					if(empty($subjs)){
+						$alumno = $_POST['a2'];
+						$subjs = Subject::select('subjects.*')->join('students as s2', 's2.wc_id', '=', 'subjects.student2')
+										->where(function ($query) use ($alumno) {
+							            $query->where('s2.name','LIKE','%'.$alumno.'%')
+							                  ->orWhere('s2.surname','LIKE','%'.$alumno.'%')
+							                  ->orWhere('s2.wc_id','LIKE','%'.$alumno.'%'); 
+							        });
+					}else{
+						$alumno = $_POST['a2'];
+						$subjs = $subjs->select('subjects.*')->join('students as s2', 's2.wc_id', '=', 'subjects.student2')
+									->where(function ($query) use ($alumno) {
+						            $query->where('s2.name','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s2.surname','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s2.wc_id','LIKE','%'.$alumno.'%');
+						        });
+					}
+				}
+			}
+
+			if(isset($_POST['pg'])){
+				if(!empty($_POST['pg'])){
+					if(empty($subjs)){
+						$pg = $_POST['pg'];
+						$subjs = Subject::select('subjects.*')->join('staffs', 'staffs.wc_id', '=', 'subjects.adviser')
+										->where(function ($query) use ($pg) {
+							            $query->where('staffs.name','LIKE','%'.$pg.'%')
+							                  ->orWhere('staffs.surname','LIKE','%'.$pg.'%')
+							                  ->orWhere('staffs.wc_id','LIKE','%'.$pg.'%'); 
+							        });
+					}else{
+						$pg = $_POST['pg'];
+						$subjs = $subjs->select('subjects.*')->join('staffs', 'staffs.wc_id', '=', 'subjects.adviser')
+									->where(function ($query) use ($pg) {
+						            $query->where('staffs.name','LIKE','%'.$pg.'%')
+						                  ->orWhere('staffs.surname','LIKE','%'.$pg.'%')
+						                  ->orWhere('staffs.wc_id','LIKE','%'.$pg.'%');
+						        });
+					}
+				}
+			}
+
+			if(isset($_POST['cat'])){
+				if(!empty($_POST['cat'])){
+					if(empty($subjs)){
+						$subjs = Subject::select('subjects.*')
+								->join('categorias', 'categorias.subject_id', '=', 'subjects.id')
+								->where('categorias.categoria',"LIKE",'%'.$_POST['cat'].'%');
+					}else{
+						$subjs = Subject::select('subjects.*')
+								->join('categorias', 'categorias.subject_id', '=', 'subjects.id')
+								->where('categorias.categoria',"LIKE",'%'.$_POST['cat'].'%');
+					}
+				}
+			}
+
+
+			if(!empty($subjs)){
+
+				$subjs = $subjs->with('ostudent1');
+				$subjs = $subjs->with('ostudent2');
+				$subjs = $subjs->with('guia');
+				$subjs = $subjs->with('sponsor');
+
+
+				$subjs = $subjs->get();
+			
+				foreach ($subjs as $subj) {
+					
+					$return["rows"][$subj->id] = array();
+
+					$return["rows"][$subj->id]['sem'] = $subj->periodo;
+					$return["rows"][$subj->id]['tema'] = $subj->subject;
+					$return["rows"][$subj->id]['pg'] = $subj->adviser;
+					$return["rows"][$subj->id]['a1'] = $subj->student1;
+					$return["rows"][$subj->id]['a2'] = $subj->student2;
+
+					if(!empty($subj->ostudent1)){
+						$return["rows"][$subj->id]['a1'] = $subj->ostudent1->name." ".$subj->ostudent1->surname;
+						$s1 = $subj->ostudent1->expediente;
+						if(!empty($s1)){
+							$return["rows"][$subj->id]['pa1'] = $s1->promedio;
+							$return["rows"][$subj->id]['ea1'] = $s1->estado;
+						}
+
+					}
+					if(!empty($subj->ostudent2)){
+						$return["rows"][$subj->id]['a2'] = $subj->ostudent2->name." ".$subj->ostudent2->surname;
+						$s2 = $subj->ostudent2->expediente;
+						if(!empty($s2)){
+							$return["rows"][$subj->id]['pa2'] = $s2->promedio;
+							$return["rows"][$subj->id]['ea2'] = $s2->estado;
+						}
+					}
+					if(!empty($subj->guia)){
+						$return["rows"][$subj->id]['pg'] = $subj->guia->name." ".$subj->guia->surname;
+					}
+
+					if(!empty($subj->sponsor)){
+						$return["rows"][$subj->id]['em'] = $subj->sponsor->razon;
+					}
+
+					$cats = $subj->categorias;
+					$i1 = 0;
+					$return["rows"][$subj->id]['cat'] = "";
+					foreach ($cats as $cat) {
+						if($i1>0){$return["rows"][$subj->id]['cat'] .=", ";}
+						$i1++;
+						$return["rows"][$subj->id]['cat'] .= $cat->categoria;
+					}
+
+
+					//$nstudent = $subj->wc_id==$subj->subject->student1?0:1;
+
+					$sum1 = 0;
+					$n1 = 0;
+					$sum2 = 0;
+					$n2 = 0;
+
+					foreach ($idtareas as $tareaid) {
+						# code...
+						$nota = Nota::whereSubject_id($subj->id)->whereTarea_id($tareaid)->get();
+						if(!$nota->isEmpty()){
+							$notita = $nota->first();
+							$notas = $notita->nota;
+							$feedbacks = $notita->feedback;
+
+							if($notas!=""){
+                                $notas = json_decode($notas);
+                                $nota1 = $notas[0];
+                                $nota2 = $notas[1];
+                                if(!empty($nota1)){
+                                	$sum1 +=$nota1;
+                                	$n1++;
+                                }
+                                if(!empty($nota2)){
+                                	$sum2 +=$nota2;
+                                	$n2++;
+                                }
+                            }
+
+						}
+					}
+
+					if($n1>0){
+						$return["rows"][$subj->id]['pa1'] = ($sum1/$n1)." (".$n1." notas)";
+					}else{
+						$return["rows"][$subj->id]['pa1'] = "(sin notas)";
+					}
+					if($n2>0){
+						$return["rows"][$subj->id]['pa2'] = ($sum2/$n2)." (".$n2." notas)";
+					}else{
+						$return["rows"][$subj->id]['pa2'] = "(sin notas)";
 					}
 
 				}
