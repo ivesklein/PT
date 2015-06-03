@@ -328,14 +328,18 @@
 
     <script type="text/javascript">
 
+    	var color = "";
+
     	$('a[data-target="#tab3"], a[data-target="#tab4"]').click(function (e) {
 		  	e.preventDefault()
 		  	$(this).tab('show')
 		  	var view = "";
 		  	if($(this).attr("data-target")=="#tab3"){
 		  		view = '#calendar1';
+		  		color = "darkcyan";
 		  	}else if($(this).attr("data-target")=="#tab4"){
 		  		view = '#calendar2';
+		  		color = "blue";
 		  	}
 		  	var cal = $(".calendar");
 
@@ -547,8 +551,8 @@
 	            var add = function(start, end) {
 	            	console.log(this)
 	                var id = idsubj;
-	                var eventcolor = "darkcyan";
-	                var eventdes="Predefensa";
+	                var eventcolor = color;
+	                //var eventdes="Predefensa";
 	                //verificar que se sepa que tipo de evento es
 	                
                     //guardarlo
