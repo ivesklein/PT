@@ -6,6 +6,8 @@ var Tabla = function(head, body) {
 	yo.cols = {};
 	yo.order = [];
 
+	yo.vars = {};
+
 	yo.csv = "";
 
 	yo.ajax = "";
@@ -22,6 +24,10 @@ var Tabla = function(head, body) {
 	yo.head1 = $(yo.body+" .ttitle");
 	yo.head2 = $(yo.body+" .tsearch");
 	yo.rows = $(yo.body+" .tbody");
+
+	yo.setvar = function(name,val){
+		yo.vars[name] = val;
+	}
 
 	yo.addcol = function(name, title, opcional, search, sorted, abbr, control, link){
 		
@@ -52,8 +58,12 @@ var Tabla = function(head, body) {
 		yo.order.push(name);
 		yo.cols[name] = {"name":name, "title":title, "opcional":opcional, "search":search, "sorted":sorted, "abbr":abbr, "control":control, "link":link};
 		
-		yo.head1.append("<th class='ct"+name+"'>"+title+"</th>");
-
+		if(control=="check"){
+			yo.head1.append("<th class='ct"+name+" text-center'>"+title+"</th>");
+		}else{
+			yo.head1.append("<th class='ct"+name+"'>"+title+"</th>");
+		}
+		
 		if(search==1){
 			yo.head2.append("<th class='ct"+name+"' data-name='"+name+"'>"+yo.finder+"</th>");
 		}else{
@@ -97,6 +107,10 @@ var Tabla = function(head, body) {
         datos = {
             f:yo.ajax
         };
+
+        for(vari in yo.vars){
+        	datos[vari] = yo.vars[vari];
+        }
 
         $(yo.body+" .find").each(function() {
 			var name = $(this).parents("th").attr("data-name");
@@ -145,6 +159,8 @@ var Tabla = function(head, body) {
 
 							}else if(yo.cols[colname]['control']=="link"){
 								tr.append("<td class='ct"+colname+"'><a href='"+yo.cols[colname]['link']+row.id+"'>"+row[colname]+"</a></td>");
+							}else if(yo.cols[colname]['control']=="button"){
+								tr.append("<td class='ct"+colname+"'><a class='btn btn-success' href='"+yo.cols[colname]['link']+row.id+"'>"+yo.cols[colname]['title']+"</a></td>");
 							}else if(yo.cols[colname]['control']=="check"){
 								if(row[colname]=="1"){
 									tr.append("<td class='ct"+colname+" popsel text-center' style='color:rgb(0, 192, 0);'><span class='glyphicon glyphicon-ok'></span></td>");

@@ -25,7 +25,7 @@
 
         var tabla = new Tabla(".panel-heading", ".tabla");
 
-        tabla.setajax("Memorias_filtroactivo");
+        tabla.setajax("Reportes_filtroactivo");
         tabla.addcol("tema","Tema",          [1,1], 1, 1, 20);
         tabla.addcol("cat", "Categoria",     [1,1], 1, 1);
         tabla.addcol("a1",  "Alumno 1",      [1,1], 1, 1);
@@ -34,6 +34,7 @@
         tabla.addcol("pa2", "Promedio A.2",  [1,1], 0, 1);
         tabla.addcol("pg",  "Profesor Guía", [1,1], 1, 1);
         tabla.addcol("em",  "Empresa",       [1,1], 1, 1);
+        tabla.findfun();
 
     </script>
 

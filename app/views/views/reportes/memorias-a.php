@@ -25,7 +25,7 @@
             <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Asignar Carreras</strong></div>
             <div class="panel-body">
                 
-                <form method="POST" action="#/rep-memorias-a" enctype="multipart/form-data">
+                <form method="POST" action="#/repamemorias" enctype="multipart/form-data">
                         <input type="hidden" name="f" value="Usuarios_insertdata"></input>
                         <input type="hidden" name="var" value="carrera"></input>
                         <a id="down1" style="text-transform: initial;"><span class="glyphicon glyphicon-file"></span> plantilla1.csv</a>
@@ -43,7 +43,7 @@
         <div class="panel panel-default" id="agregarfinanzas">
             <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Estado Finanzas</strong></div>
             <div class="panel-body">
-                <form method="POST" action="#/rep-memorias-a" enctype="multipart/form-data">
+                <form method="POST" action="#/repamemorias" enctype="multipart/form-data">
                         <input type="hidden" name="f" value="Usuarios_insertdata"></input>
                         <input type="hidden" name="var" value="financiero"></input>
                         <a id="down2" style="text-transform: initial;"><span class="glyphicon glyphicon-file"></span> plantilla2.csv</a>
@@ -60,7 +60,7 @@
         <div class="panel panel-default" id="agregarbiblioteca">
             <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Estado Biblioteca</strong></div>
             <div class="panel-body">
-                <form method="POST" action="#/rep-memorias-a" enctype="multipart/form-data">
+                <form method="POST" action="#/repamemorias" enctype="multipart/form-data">
                         <input type="hidden" name="f" value="Usuarios_insertdata"></input>
                         <input type="hidden" name="var" value="biblioteca"></input>
                         <a id="down3" style="text-transform: initial;"><span class="glyphicon glyphicon-file"></span> plantilla3.csv</a>
@@ -77,7 +77,7 @@
         <div class="panel panel-default" id="agregaracademico">
             <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Estado Académico</strong></div>
             <div class="panel-body">
-                <form method="POST" action="#/rep-memorias-a" enctype="multipart/form-data">
+                <form method="POST" action="#/repamemorias" enctype="multipart/form-data">
                         <input type="hidden" name="f" value="Usuarios_insertdata"></input>
                         <input type="hidden" name="var" value="academico"></input>
                         <a id="down4" style="text-transform: initial;"><span class="glyphicon glyphicon-file"></span> plantilla4.csv</a>
@@ -106,7 +106,7 @@
 
         var tabla = new Tabla(".panel-heading", ".tabla");
 
-        tabla.setajax("Memorias_filtroporalumnos");
+        tabla.setajax("Reportes_filtroporalumnos");
         tabla.addcol("run", "Run",          [1,1], 1, 1);
         tabla.addcol("a1","Nombre",         [1,1], 1, 1);
         tabla.addcol("mail", "Email",       [1,1], 1, 1);
@@ -118,15 +118,16 @@
         tabla.addcol("fin",  "Finanzas",        [1,1], 1, 1, 0, "check");
         tabla.addcol("bib",  "Biblioteca",      [1,1], 1, 1, 0, "check");
         tabla.addcol("aca",  "Estado Académico",[1,1], 1, 1, 0, "check");
+        tabla.findfun();
 
         $("#down1").on("click",function() {
             ajx({
                 data:{f:"Memorias_listaalumnos"},
                 ok:function(data) {
                     if("rows" in data){
-                        var csv = "Alumno;Carrera";
+                        var csv = "Run;Mail;Carrera";
                         for(row in data.rows){
-                            csv += "\n"+data.rows[row]['mail']+";";
+                            csv += "\n"+data.rows[row]['run']+";"+data.rows[row]['mail']+";";
                         }
                         tabla.download("plantilla1.csv",csv);
                     }
@@ -139,9 +140,9 @@
                 data:{f:"Memorias_listaalumnos"},
                 ok:function(data) {
                     if("rows" in data){
-                        var csv = "Alumno;Estado Finanzas";
+                        var csv = "Run;Mail;Estado Finanzas";
                         for(row in data.rows){
-                            csv += "\n"+data.rows[row]['mail']+";";
+                            csv += "\n"+data.rows[row]['run']+";"+data.rows[row]['mail']+";";
                         }
                         tabla.download("plantilla2.csv",csv);
                     }
@@ -154,9 +155,9 @@
                 data:{f:"Memorias_listaalumnos"},
                 ok:function(data) {
                     if("rows" in data){
-                        var csv = "Alumno;Estado Biblioteca";
+                        var csv = "Run;Mail;Estado Biblioteca";
                         for(row in data.rows){
-                            csv += "\n"+data.rows[row]['mail']+";";
+                            csv += "\n"+data.rows[row]['run']+";"+data.rows[row]['mail']+";";
                         }
                         tabla.download("plantilla3.csv",csv);
                     }
@@ -169,9 +170,9 @@
                 data:{f:"Memorias_listaalumnos"},
                 ok:function(data) {
                     if("rows" in data){
-                        var csv = "Alumno;Estado Académico";
+                        var csv = "Run;Mail;Estado Académico";
                         for(row in data.rows){
-                            csv += "\n"+data.rows[row]['mail']+";";
+                            csv += "\n"+data.rows[row]['run']+";"+data.rows[row]['mail']+";";
                         }
                         tabla.download("plantilla4.csv",csv);
                     }

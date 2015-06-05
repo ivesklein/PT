@@ -139,7 +139,7 @@ class Menu {
 		),
 		"rezagados"=>array(
 			"where"=>"reportes",
-			"place"=>"25",
+			"place"=>"31",
 			"array"=>array("link"=>"#/listarezagados", "title"=>"Rezagados", "n"=>0)
 		),
 		"defensas"=>array(
@@ -150,22 +150,32 @@ class Menu {
 		"reportes-t"=>array(
 			"where"=>"reportes",
 			"place"=>"26",
-			"array"=>array("link"=>"#/rep-memorias-ac", "title"=>"Memorias Activas", "n"=>0)
+			"array"=>array("link"=>"#/repacmemorias", "title"=>"Memorias", "n"=>0)
 		),
 		"reportes-t-h"=>array(
 			"where"=>"reportes",
 			"place"=>"28",
-			"array"=>array("link"=>"#/rep-memorias", "title"=>"Memorias Historicas", "n"=>0)
+			"array"=>array("link"=>"#/repmemorias", "title"=>"Memorias Históricas", "n"=>0)
 		),
 		"reportes-a"=>array(
 			"where"=>"reportes",
-			"place"=>"29",
-			"array"=>array("link"=>"#/rep-memorias-a", "title"=>"Memorias/Alumno", "n"=>0)
+			"place"=>"27",
+			"array"=>array("link"=>"#/repamemorias", "title"=>"Alumnos", "n"=>0)
 		),
 		"reportes-a-h"=>array(
 			"where"=>"reportes",
+			"place"=>"29",
+			"array"=>array("link"=>"#/repahmemorias", "title"=>"Alumnos Históricos", "n"=>0)
+		),
+		"reportes-hoja"=>array(
+			"where"=>"reportes",
 			"place"=>"30",
-			"array"=>array("link"=>"#/rep-memorias-a-h", "title"=>"Memorias/Alumno H", "n"=>0)
+			"array"=>array("link"=>"#/rephojaruta", "title"=>"Hoja de Ruta", "n"=>0)
+		),
+		"reportes-eval"=>array(
+			"where"=>"reportes",
+			"place"=>"31",
+			"array"=>array("link"=>"#/repevaluaciones", "title"=>"Evaluaciones", "n"=>0)
 		)
 
 

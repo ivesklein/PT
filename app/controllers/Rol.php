@@ -28,7 +28,9 @@ class Rol {
 				"reportes-t",
 				"reportes-t-h",
 				"reportes-a",
-				"reportes-a-h"
+				"reportes-a-h",
+				"reportes-hoja",
+				"reportes-eval"
 			),
 		"SA"=>
 			array(
@@ -49,7 +51,9 @@ class Rol {
 				"reportes-t",
 				"reportes-t-h",
 				"reportes-a",
-				"reportes-a-h"
+				"reportes-a-h",
+				"reportes-hoja",
+				"reportes-eval"
 			),
 		"P"=>
 			array(
@@ -78,7 +82,8 @@ class Rol {
 				"revisartemas",
 				"notas",
 				"tallerGM",
-				"editrol"
+				"editrol",
+				"reportes-eval"
 			),
 		"AY"=>
 			array(
@@ -102,7 +107,8 @@ class Rol {
 				"reportes-t",
 				"reportes-t-h",
 				"reportes-a",
-				"reportes-a-h"
+				"reportes-a-h",
+				"reportes-hoja"
 			),
 		"MA"=>
 			array(

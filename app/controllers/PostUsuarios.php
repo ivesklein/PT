@@ -393,9 +393,9 @@ class PostUsuarios{
 
 		if(Rol::hasPermission("reportes")){
 
-
-			$MAIL = 0 ;
-			$VAL = 1 ;
+			$RUN = 0 ;
+			$MAIL = 1 ;
+			$VAL = 2 ;
 
 			//$periodo = $_POST['periodo'];
 

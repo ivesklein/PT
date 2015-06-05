@@ -140,7 +140,7 @@ class PostWC {
 							}else{
 								log::info("si aviso");
 
-								$hoja->status("profesor");
+								$hoja->status = "profesor";
 								$hoja->save();
 
 								$st1 = explode("@",$tema->student1);

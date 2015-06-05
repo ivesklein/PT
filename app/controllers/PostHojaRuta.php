@@ -202,7 +202,7 @@ class PostHojaRuta{
 				    	if($hoja->status=="profesor"){
 				    		
 				    		$hoja->adviser="firmado";
-				    		$hoja->status("buscar-revisor");
+				    		$hoja->status = "buscar-revisor";
 				    		$hoja->save();
 
 							//$subj->hojaruta = "asignar-revisor";

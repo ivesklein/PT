@@ -503,13 +503,13 @@ class ViewsWC extends BaseController
 							//}
 
 						}else{
-							return View::make("lti.notyet");
+							return View::make("lti.notyet", array("v"=>"tarea tipo dos todavia no ".$date));
 						}
 					}else{
-						return View::make("lti.notyet");
+						return View::make("lti.notyet", array("v"=>"no hay tarea"));
 					}
 				}else{
-					return View::make("lti.notyet");
+					return View::make("lti.notyet", array("v"=>"no hay tema"));
 				}
 
 				if(true){

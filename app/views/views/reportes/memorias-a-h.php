@@ -25,7 +25,7 @@
 
         var tabla = new Tabla(".panel-heading", ".tabla");
 
-        tabla.setajax("Memorias_filtroporalumnoshist");
+        tabla.setajax("Reportes_filtroporalumnoshist");
         tabla.addcol("per", "Semestre",     [1,1], 1, 1);
         tabla.addcol("run", "Run",          [1,1], 1, 1);
         tabla.addcol("a1","Nombre",         [1,1], 1, 1);
@@ -34,7 +34,7 @@
         tabla.addcol("pg", "Profesor Guía", [1,1], 1, 1);
         tabla.addcol("pa1", "Promedio Notas",[1,1], 0, 1);
         tabla.addcol("em",  "Empresa",      [1,1], 1, 1);
-
+        tabla.findfun();
     </script>
 
 </div>

@@ -6,12 +6,12 @@ Class Rezagado extends Eloquent{
 
 	public function student()
 	{
-		return $this->belongsTo('Student');
+		return $this->hasOne('Student', "id", "student_id");
 	}
 
 	public function subject()
 	{
-		return $this->belongsTo('Subject');
+		return $this->hasOne('Subject', "id", "subject_id");
 	}
 
 }

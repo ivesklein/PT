@@ -225,14 +225,15 @@ angular.module("app",
 				.when("/aprobartema/:idtema",{templateUrl:"ruta/aprobartema",controller: 'HojaRuta'})
 				//reportes
 				.when("/listarezagados",{templateUrl:"reportes/listarezagados",controller: 'Cleancache'})
-				.when("/rezagado/:idtema",{templateUrl:"reportes/rezagado",controller: 'HojaRuta'})
+				.when("/rezagado/:idtema",{templateUrl:"reportes/rezagado",controller: 'Indentity'})
 
-				.when("/rep-memorias",{templateUrl:"reportes/listamemorias",controller: 'Cleancache'})
-				.when("/rep-memorias-ac",{templateUrl:"reportes/listamemoriasac",controller: 'Cleancache'})
-				.when("/rep-memorias-a",{templateUrl:"reportes/listamemoriasa",controller: 'Cleancache'})
-				.when("/rep-memorias-a-h",{templateUrl:"reportes/listamemoriasah",controller: 'Cleancache'})
-				.when("/rep-atrazoentrega",{templateUrl:"reportes/atrazoentrega",controller: 'Cleancache'})
-				.when("/rep-atrazohoja",{templateUrl:"reportes/atrazohoja",controller: 'Cleancache'})
+				.when("/repmemorias",{templateUrl:"reportes/listamemorias",controller: 'Cleancache'})
+				.when("/repacmemorias",{templateUrl:"reportes/listamemoriasac",controller: 'Cleancache'})
+				.when("/repamemorias",{templateUrl:"reportes/listamemoriasa",controller: 'Cleancache'})
+				.when("/repahmemorias",{templateUrl:"reportes/listamemoriasah",controller: 'Cleancache'})
+				.when("/repevaluaciones",{templateUrl:"reportes/evaluaciones",controller: 'Cleancache'})
+				.when("/reptarea/:idtema",{templateUrl:"reportes/tarea",controller: 'Indentity'})
+				.when("/rephojaruta",{templateUrl:"reportes/hojaruta",controller: 'Cleancache'})
 
 				//comision
 				.when("/listacomisiones",{templateUrl:"comision/listacomisiones",controller: 'Cleancache'})
