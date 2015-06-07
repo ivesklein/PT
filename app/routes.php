@@ -241,7 +241,11 @@ Route::post('/test' ,function()
 Route::get('/test' ,function()
 {
 
-
+	$profes = Evalguia::wherePeriodo(Periodo::active())->groupBy("pg")->get();
+	foreach ($profes as $k) {
+		echo $k->pg;
+		echo "<br>";
+	}
 	//$cat = new Categoria;
 	//$cat->subject_id = 31;
 	//$cat->categoria = "Informática";

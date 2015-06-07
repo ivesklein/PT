@@ -13,7 +13,7 @@
 <div class="page page-table">
 
     <div class="panel panel-default tabla">
-        <div class="panel-heading"><strong><div class="form-inline"></div><span class="glyphicon glyphicon-page"></span> Evaluciones <div class="btn btn-xs btn-success download"><i class="fa fa-download"></i></div></strong></div>
+        <div class="panel-heading"><strong><div class="form-inline"></div><span class="glyphicon glyphicon-page"></span> Evaluaciones <div class="btn btn-xs btn-success download"><i class="fa fa-download"></i></div></strong></div>
 
     </div>
 	

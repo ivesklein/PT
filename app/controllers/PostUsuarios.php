@@ -2,6 +2,11 @@
 
 class PostUsuarios{
 
+	public static function test()
+    {
+        return true;
+    }	
+
 	public static function perfil()
 	{
 		$return = array();

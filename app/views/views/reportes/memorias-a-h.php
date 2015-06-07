@@ -33,6 +33,7 @@
         tabla.addcol("tema",  "Tema",       [1,1], 1, 1, 20);
         tabla.addcol("pg", "Profesor Guía", [1,1], 1, 1);
         tabla.addcol("pa1", "Promedio Notas",[1,1], 0, 1);
+        tabla.addcol("ea1", "Estado",       [1,1], 1, 1);
         tabla.addcol("em",  "Empresa",      [1,1], 1, 1);
         tabla.findfun();
     </script>

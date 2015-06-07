@@ -2,6 +2,11 @@
 
 class PostWebcursos{
 
+	public static function test()
+    {
+        return true;
+    }	
+
 	public static function cursos()
 	{
 		$return = array();

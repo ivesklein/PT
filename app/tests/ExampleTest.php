@@ -45,6 +45,7 @@ class ExampleTest extends TestCase {
 		ViewsUsers::test();
 		ViewsWC::test();
 		ViewsWebcursos::test();
+		ViewsMemorias::test();
 
 	}
 

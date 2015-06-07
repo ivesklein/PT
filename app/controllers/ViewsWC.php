@@ -194,33 +194,47 @@ class ViewsWC extends BaseController
 
 			}elseif(!$ps->isEmpty()){//alumno
 
-				$subj = Subject::studentfind($lti['email'])->get();
-				if(!$subj->isEmpty()){
-					$tema = $subj->first();
+				Session::put('wc.user', $lti['email']);
 
-					$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->get();
-					if(!$tareas->isEmpty()){
-						$tarea = $tareas->first();
+				$tema = Subject::studentfind($lti['email'])->first();
+				$student_id = Student::whereWc_id($lti['email'])->first()->id;
+
+				if(!empty($tema)){
+
+					$tarea = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->first();
+					if(!empty($tarea)){
 						$date = CarbonLocale::parse($tarea->date);
 						if($date<Carbon::now()){
 
 							//if ya evaluo
 
-							$profs = Staff::whereWc_id($tema->adviser)->get();
-							if(!$profs->isEmpty()){
-								$prof = $profs->first();
-								return View::make("lti.evaluacion", array("name"=>$prof->name." ".$prof->surname));
+							$prof = Staff::whereWc_id($tema->adviser)->first();
+							if(!empty($prof)){
+								
+								$exist = Evalguia::whereStudent_id($student_id)->wherePg($prof->id)->wherePeriodo($tema->periodo)->first();
+								if(empty($exist)){
+
+									return View::make("lti.evaluacion", array("name"=>$prof->name." ".$prof->surname));
+							
+								}else{
+									//ya evaluó
+									return View::make("lti.message",array("title"=>"Gracias","contenido"=>"Su evaluación docente se realizó con exito. Esta será comunicada al profesor guía despues de la Defensa.", "color"=>"success"));
+								}
+
+								
+
+
 							}else{
-								return View::make("lti.notyet");
+								return View::make("lti.message",array("title"=>"Aún no", "contenido"=>"La evaluación docente debe realizarse despues de la entrega final."));
 							}
 						}else{
-							return View::make("lti.notyet");
+							return View::make("lti.message",array("title"=>"Aún no", "contenido"=>"La evaluación docente debe realizarse despues de la entrega final."));
 						}
 					}else{
-						return View::make("lti.notyet");
+						return View::make("lti.message",array("title"=>"Aún no", "contenido"=>"La evaluación docente debe realizarse despues de la entrega final."));
 					}
 				}else{
-					return View::make("lti.notyet");
+					return View::make("lti.message",array("title"=>"Error","contenido"=>"No perteneces a ningún tema activo", "color"=>"danger"));
 				}
 
 

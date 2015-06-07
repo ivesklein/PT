@@ -797,6 +797,15 @@ class PostReportes{
 				}
 			}
 
+			if(isset($_POST['ea1'])){
+				if(!empty($_POST['ea1'])){
+					$alumno = $_POST['ea1'];
+					$student = $student->where(function ($query) use ($alumno) {
+					            $query->where('students.status','LIKE','%'.$alumno.'%'); 
+					        });
+				}
+			}
+
 			if(isset($_POST['mail'])){
 				if(!empty($_POST['mail'])){
 					$alumno = $_POST['mail'];
@@ -843,6 +852,7 @@ class PostReportes{
 					//$return["rows"][$row->id]['pg'] = $row->adviser;
 					$return["rows"][$row->id]['run'] = $row->run;
 					$return["rows"][$row->id]['a1'] = $row->name." ".$row->surname;
+					$return["rows"][$row->id]['ea1'] = $row->status;
 					$return["rows"][$row->id]['mail'] = $row->wc_id;
 
 					if(!empty($row->subject)){

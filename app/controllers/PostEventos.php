@@ -2,6 +2,10 @@
 
 class PostEventos{
 
+	public static function test()
+    {
+        return true;
+    }
 
 	public static function nuevo()
 	{

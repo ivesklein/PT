@@ -2,6 +2,11 @@
 
 class PostComision{
 
+	public static function test()
+    {
+        return true;
+    }
+
 	public static function data()
 	{
 		$return = array();

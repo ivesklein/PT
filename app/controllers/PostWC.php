@@ -1,5 +1,10 @@
 <?php
 class PostWC {
+
+	public static function test()
+    {
+        return true;
+    }
 	
 	public static function ajxvernota()
 	{
@@ -178,6 +183,127 @@ class PostWC {
 			$return["error"] = "no autentificado";
 		}
 		return json_encode($return);
+	}
+
+	public static function feedback()
+	{
+		$return = array();
+		$user = Session::get('wc.user' ,"0");
+		if($user!="0"){
+
+			$tema = Subject::studentfind($user)->wherePeriodo(Periodo::active())->first();
+			if(!empty($tema)){
+					
+				$tareas = Tarea::wherePeriodo_name(Periodo::active())->whereTipo(2)->get();
+				if(!$tareas->isEmpty()){
+					$tarea = $tareas->first();
+					$date = CarbonLocale::parse($tarea->date);
+					if($date<Carbon::now()){
+
+						//if ya evaluo
+
+						$prof = Staff::whereWc_id($tema->adviser)->first();
+						if(!empty($prof)){
+
+							$subject_id = $tema->id;
+							$pg = $prof->id;
+							$student_id = Student::whereWc_id($user)->first()->id;
+
+							$notas = array();
+							$sum = 0;
+							$n = 0;
+							if(isset($_POST['p1'])){
+								$n++;
+								$sum += $_POST['p1'];
+								$notas["p1"] = $_POST['p1'];
+							}
+							if(isset($_POST['p2'])){
+								$n++;
+								$sum += $_POST['p2'];
+								$notas["p2"] = $_POST['p2'];
+							}
+							if(isset($_POST['p3'])){
+								$n++;
+								$sum += $_POST['p3'];
+								$notas["p3"] = $_POST['p3'];
+							}
+							if(isset($_POST['p4'])){
+								$n++;
+								$sum += $_POST['p4'];
+								$notas["p4"] = $_POST['p4'];
+							}
+							if(isset($_POST['p5'])){
+								$n++;
+								$sum += $_POST['p5'];
+								$notas["p5"] = $_POST['p5'];
+							}
+							if(isset($_POST['p6'])){
+								$n++;
+								$sum += $_POST['p6'];
+								$notas["p6"] = $_POST['p6'];
+							}
+							if(isset($_POST['p7'])){
+								$n++;
+								$sum += $_POST['p7'];
+								$notas["p7"] = $_POST['p7'];
+							}
+							if(isset($_POST['p8'])){
+								$n++;
+								$sum += $_POST['p8'];
+								$notas["p8"] = $_POST['p8'];
+							}
+							if(isset($_POST['coments'])){
+								$coments = $_POST['coments'];
+							}else{
+								$coments = "";
+							}
+
+							if($n==8){
+
+								$exist = Evalguia::whereStudent_id($student_id)->wherePg($pg)->wherePeriodo($tema->periodo)->first();
+								if(empty($exist)){
+
+									$eval = new Evalguia;
+								
+									$eval->subject_id = $subject_id;
+									$eval->pg = $pg;
+									$eval->promedio = $sum/$n;
+									$eval->notas = json_encode($notas);
+									$eval->comentario = $coments;
+									$eval->periodo = $tema->periodo;
+									$eval->student_id = $student_id;
+									$eval->save();
+
+									return View::make("lti.message",array("title"=>"Gracias","contenido"=>"Su evaluación docente se realizó con exito. Esta será comunicada al profesor guía despues de la Defensa.", "color"=>"success"));
+
+								}else{
+									//ya evaluó
+									return View::make("lti.message",array("title"=>"Gracias","contenido"=>"Su evaluación docente se realizó con exito. Esta será comunicada al profesor guía despues de la Defensa.", "color"=>"success"));
+								}
+							}else{
+								//faltan notas
+								return View::make("lti.message",array("title"=>"Error","contenido"=>"Faltan Variables", "color"=>"danger"));
+							}
+						}else{
+							return View::make("lti.message",array("title"=>"Aún no", "contenido"=>"La evaluación docente debe realizarse despues de la entrega final."));
+						}
+					}else{
+						return View::make("lti.message",array("title"=>"Aún no", "contenido"=>"La evaluación docente debe realizarse despues de la entrega final."));
+					}
+				}else{
+					return View::make("lti.message",array("title"=>"Aún no", "contenido"=>"La evaluación docente debe realizarse despues de la entrega final."));
+				}
+
+
+			}else{//hay tema
+				return View::make("lti.message",array("title"=>"Error","contenido"=>"No perteneces a ningún tema activo", "color"=>"danger"));
+			}
+
+			//$return['ok'] = $user;//View::make("lti.notas");
+		}else{
+			return View::make("lti.message",array("title"=>"Error","contenido"=>"No autentificado", "color"=>"danger"));
+		}
+		
 	}
 
 }

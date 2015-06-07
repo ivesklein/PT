@@ -2,6 +2,10 @@
 
 class PostTextos{
 
+	public static function test()
+    {
+        return true;
+    }
 
 	public static function gettextos()
 	{

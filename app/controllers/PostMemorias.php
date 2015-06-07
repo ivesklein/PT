@@ -2,6 +2,11 @@
 
 class PostMemorias{
 
+	public static function test()
+    {
+        return true;
+    }
+
 	public static function testdata()
 	{
 		

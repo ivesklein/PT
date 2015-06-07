@@ -2,6 +2,11 @@
 
 class PostTareas{
 
+	public static function test()
+    {
+        return true;
+    }
+
 	public static function guardar()
 	{
 		$return = array();

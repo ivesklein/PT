@@ -2,6 +2,11 @@
 
 class PostHojaRuta{
 
+	public static function test()
+    {
+        return true;
+    }
+
 	public static function estado()
 	{
 		$return = array();

@@ -2,11 +2,11 @@
 
 
 <div class="panel panel-default" style="margin-right: 7px;">
-        <div class="panel-heading"><strong><span class="glyphicon glyphicon-check"></span> Evaluar Profesor Guía</strong></div>
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-check"></span> <?php if(isset($title)){echo $title;} ?></strong></div>
         <div class="panel-body row">
     	    <div class="panel-body">
-                <div class="alert alert-warning">
-                    La evaluación docente es despues de la entrega final y antes de la defensa.<font style="display:none"><?php echo isset($v)?$v:""; ?></font>
+                <div class="alert alert-<?php if(isset($color)){echo $color;}else{echo"warning";} ?>">
+                    <?php if(isset($contenido)){echo $contenido;} ?>
                 </div>
             </div>
         </div>

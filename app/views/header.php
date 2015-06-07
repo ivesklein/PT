@@ -203,7 +203,7 @@
                 </a>
                 <ul class="dropdown-menu with-arrow pull-right">
                     <li>
-                        <a href="#/pages/profile">
+                        <a href="user/miperfil">
                             <i class="fa fa-user"></i>
                             <span data-i18n="My Profile"></span>
                         </a>

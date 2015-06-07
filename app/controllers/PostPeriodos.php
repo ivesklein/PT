@@ -2,6 +2,11 @@
 
 class PostPeriodos{
 
+	public static function test()
+    {
+        return true;
+    }
+
 	public static function crear()
 	{
 		if(Rol::hasPermission("periodosCreate")){
@@ -103,11 +108,105 @@ class PostPeriodos{
 				}
 
 				$event = Periodo::find($_POST["id"]);
+		        
+				//recopilar evaluaciones docentes
+				$profes = Evalguia::wherePeriodo($event->name)->groupBy("pg")->get();
+				foreach ($profes as $k) {
+					$evaluaciones = Evalguia::wherePg($k->pg)->wherePeriodo($per)->get();
+					//variables iniciales
+					$n = Evalguia::wherePg($k->pg)->wherePeriodo($per)->count();
+
+					$comentarios = array();
+
+					$notas = array(
+						"p1"=>array("sum"=>0,"n"=>0),
+						"p2"=>array("sum"=>0,"n"=>0),
+						"p3"=>array("sum"=>0,"n"=>0),
+						"p4"=>array("sum"=>0,"n"=>0),
+						"p5"=>array("sum"=>0,"n"=>0),
+						"p6"=>array("sum"=>0,"n"=>0),
+						"p7"=>array("sum"=>0,"n"=>0),
+						"p8"=>array("sum"=>0,"n"=>0)
+						);
+
+					$notasfinal = array();
+					foreach ($evaluaciones as $eval) {
+						$evnotas = json_decode($eval->notas);
+						if(isset($evnotas->p1)){
+							$notas['p1']['sum'] += $evnotas->p1;
+							$notas['p1']['n']++;
+						}
+						if(isset($evnotas->p2)){
+							$notas['p2']['sum'] += $evnotas->p2;
+							$notas['p2']['n']++;
+						}
+						if(isset($evnotas->p3)){
+							$notas['p3']['sum'] += $evnotas->p3;
+							$notas['p3']['n']++;
+						}
+						if(isset($evnotas->p4)){
+							$notas['p4']['sum'] += $evnotas->p4;
+							$notas['p4']['n']++;
+						}
+						if(isset($evnotas->p5)){
+							$notas['p5']['sum'] += $evnotas->p5;
+							$notas['p5']['n']++;
+						}
+						if(isset($evnotas->p6)){
+							$notas['p6']['sum'] += $evnotas->p6;
+							$notas['p6']['n']++;
+						}
+						if(isset($evnotas->p7)){
+							$notas['p7']['sum'] += $evnotas->p7;
+							$notas['p7']['n']++;
+						}
+						if(isset($evnotas->p8)){
+							$notas['p8']['sum'] += $evnotas->p8;
+							$notas['p8']['n']++;
+						}
+						if(!empty($eval->comentario)){
+							$comentarios[] = $eval->comentario;
+						}
+					}
+					$tot = array("sum"=>0,"n"=>0);
+					foreach ($notas as $key => $value) {
+						$notasfinal[$key] = $value["sum"]/$value["n"];
+						$tot["sum"] += $notasfinal[$key];
+						$tot["n"]++;
+					}
+					$notasfinal["tot"] = $tot["sum"]/$tot["n"];
+
+					$to = Staff::find($k->pg);
+
+					$vars = array(
+						"to"=>$to->wc_id,
+						"title"=>"Evaluaciones de memoristas FIC ".$per,
+						"view"=>"emails.feedbackdocente",
+						"parameters"=>array("periodo"=>$per, 
+											"pg"=>$to->name." ".$to->surname, 
+											"n"=>$n,
+											"table"=>$notasfinal,
+											"comentarios"=>$comentarios)
+					);
+
+					Cron::addafter("mail", $vars, Carbon::now());
+
+				}
+
+
+
+
+
+
+
+
+
+
+
+
+
 		        $event->status = 'closed';
 		        $event->save();
-
-
-
 
 
 		        $return["ok"] = $event->id;
