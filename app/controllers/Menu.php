@@ -176,8 +176,12 @@ class Menu {
 			"where"=>"reportes",
 			"place"=>"31",
 			"array"=>array("link"=>"#/repevaluaciones", "title"=>"Evaluaciones", "n"=>0)
+		),
+		"reportes-evalguias"=>array(
+			"where"=>"reportes",
+			"place"=>"32",
+			"array"=>array("link"=>"#/evalguias", "title"=>"Evaluacion Docente", "n"=>0)
 		)
-
 
 		
 

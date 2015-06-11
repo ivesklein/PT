@@ -30,7 +30,9 @@ class Rol {
 				"reportes-a",
 				"reportes-a-h",
 				"reportes-hoja",
-				"reportes-eval"
+				"reportes-eval",
+				"reportes-evalguias"
+
 			),
 		"SA"=>
 			array(
@@ -53,7 +55,8 @@ class Rol {
 				"reportes-a",
 				"reportes-a-h",
 				"reportes-hoja",
-				"reportes-eval"
+				"reportes-eval",
+				"reportes-evalguias"
 			),
 		"P"=>
 			array(
@@ -108,7 +111,8 @@ class Rol {
 				"reportes-t-h",
 				"reportes-a",
 				"reportes-a-h",
-				"reportes-hoja"
+				"reportes-hoja",
+				"reportes-evalguias"
 			),
 		"MA"=>
 			array(

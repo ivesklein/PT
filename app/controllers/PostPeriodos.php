@@ -191,6 +191,13 @@ class PostPeriodos{
 
 					Cron::addafter("mail", $vars, Carbon::now());
 
+					$resumen = new Evalguia;
+					$resumen->periodo = $per;
+					$resumen->pg = $k->pg;
+					$resumen->promedio = $notasfinal["tot"];
+					$resumen->comentario = $n;
+					$resumen->save();
+
 				}
 
 

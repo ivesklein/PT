@@ -234,6 +234,7 @@ angular.module("app",
 				.when("/repevaluaciones",{templateUrl:"reportes/evaluaciones",controller: 'Cleancache'})
 				.when("/reptarea/:idtema",{templateUrl:"reportes/tarea",controller: 'Indentity'})
 				.when("/rephojaruta",{templateUrl:"reportes/hojaruta",controller: 'Cleancache'})
+				.when("/evalguias",{templateUrl:"reportes/evalguias",controller: 'Cleancache'})
 
 				//comision
 				.when("/listacomisiones",{templateUrl:"comision/listacomisiones",controller: 'Cleancache'})

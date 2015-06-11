@@ -61,5 +61,10 @@ class ViewsReportes extends BaseController
 		return View::make('views.reportes.hojaruta');
 	}
 
+	public function getEvalguias()
+	{
+		return View::make('views.reportes.evalguias');
+	}
+
 }
 ?>

@@ -1160,4 +1160,71 @@ class PostReportes{
 		return json_encode($return);
 	}
 
+	public static function evalguias()
+	{
+		$return = array();	
+
+		if(Rol::hasPermission("reportes")){
+
+			$active = Periodo::active();
+
+			$evaluacion = Evalguia::select('evalguias.*')
+						->join('staffs', 'staffs.id', '=', 'evalguias.pg')
+						->where('evalguias.periodo', "!=", $active)
+						->where('evalguias.subject_id', "");
+
+			$return = array("rows"=>array());	
+
+			if(isset($_POST['sem'])){
+				if(!empty($_POST['sem'])){
+					$sem = $_POST['sem'];
+					$evaluacion = $evaluacion->where('evalguias.periodo','LIKE','%'.$sem.'%');
+				}
+			}
+
+			if(isset($_POST['prom'])){
+				if(!empty($_POST['prom'])){
+					$prom = $_POST['prom'];
+					$evaluacion = $evaluacion->where('evalguias.promedio','LIKE','%'.$prom.'%');
+				}
+			}
+
+			if(isset($_POST['pg'])){
+				if(!empty($_POST['pg'])){
+					$guia = $_POST['pg'];
+					$evaluacion = $evaluacion->where(function ($query) use ($guia) {
+					            $query->where('staffs.name','LIKE','%'.$guia.'%')
+					                  ->orWhere('staffs.surname','LIKE','%'.$guia.'%'); 
+					        });
+				}
+			}
+
+			if(!empty($evaluacion)){
+
+				$evaluacion = $evaluacion->with('guia');
+
+				$evaluacion = $evaluacion->get();
+			
+				foreach ($evaluacion as $row) {
+					
+					$return["rows"][$row->id] = array();
+					$return["rows"][$row->id]['sem'] = $row->periodo;
+
+					if(!empty($row->guia)){
+						$return["rows"][$row->id]['pg'] = $row->guia->name." ".$row->guia->surname;
+					}
+
+					$return["rows"][$row->id]['prom'] = round($row->promedio,1);
+
+				}
+
+			}
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+	}
+
 }
