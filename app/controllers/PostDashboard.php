@@ -189,4 +189,110 @@ class PostDashboard{
 		return json_encode($return);
     }
 
+    public static function tareas()
+    {
+    	$return = array();
+		if(Rol::actual("PT") || Rol::actual("AY")){
+			//tareas
+			$return['tareas'] = array();
+			$tareas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",5)->get();
+			
+			$total=0;
+			
+			$subjs = Subject::wherePeriodo(Periodo::active())->get();
+			foreach ($subjs as $subj) {
+				if(!empty($subj->student1)){
+					$total++;
+				}
+				if(!empty($subj->student2)){
+					$total++;
+				}
+			}
+
+			
+
+			foreach ($tareas as $tarea) {
+				$todo = array();
+				$cuenta = 0;
+				$notastodas = array();
+				$todo['title'] = $tarea->title;
+				$todo['name'] = str_replace(" ", "", $tarea->title);
+				
+				//porcentaje
+				$notas = Nota::whereTarea_id($tarea->id)->get();
+				foreach ($notas as $row) {
+					if(!empty($row->nota)){
+						$notitas = json_decode($row->nota);
+						if(!empty($notitas[0])){
+							$notastodas[] = $notitas[0];
+							$cuenta++;
+						}
+						if(!empty($notitas[1])){
+							$notastodas[] = $notitas[1];
+							$cuenta++;
+						}
+					}
+				}
+				//hist
+				if($total>0){
+					$todo['percent'] = round(100*$cuenta/$total);
+				}
+
+				$todo['hist'] = array(
+					"1.5"=>0,
+					"2.0"=>0,
+					"2.5"=>0,
+					"3.0"=>0,
+					"3.5"=>0,
+					"4.0"=>0,
+					"4.5"=>0,
+					"5.0"=>0,
+					"5.5"=>0,
+					"6.0"=>0,
+					"6.5"=>0,
+					"7.0"=>0
+					);
+
+				foreach ($notastodas as $key => $nota) {
+					if($nota<=1.5){
+						$todo['hist']['1.5']++;
+					}elseif($nota<=2.0){
+						$todo['hist']['2.0']++;
+					}elseif($nota<=2.5){
+						$todo['hist']['2.5']++;
+					}elseif($nota<=3.0){
+						$todo['hist']['3.0']++;
+					}elseif($nota<=3.5){
+						$todo['hist']['3.5']++;
+					}elseif($nota<=4.0){
+						$todo['hist']['4.0']++;
+					}elseif($nota<=4.5){
+						$todo['hist']['4.5']++;
+					}elseif($nota<=5.0){
+						$todo['hist']['5.0']++;
+					}elseif($nota<=5.5){
+						$todo['hist']['5.5']++;
+					}elseif($nota<=6.0){
+						$todo['hist']['6.0']++;
+					}elseif($nota<=6.5){
+						$todo['hist']['6.5']++;
+					}elseif($nota<=7.0){
+						$todo['hist']['7.0']++;
+					}
+				}
+
+
+
+				$return['tareas'][] = $todo;
+			}
+
+
+
+		}else{
+			$return["error"] = "not permission";
+		}
+		return json_encode($return);
+    }
+
+
 }

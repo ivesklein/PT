@@ -6,6 +6,10 @@
 			
 		}
 
+		.title{
+			font-size: 11px;
+		}
+
 		.easypiechart{
 			display:inline-block;
 			position:relative;
