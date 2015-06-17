@@ -1,9 +1,6 @@
 <div class="page page-table">
 	<script type="text/javascript" src="js/jquery.easypiechart.min.js"></script>
 
-	<script type="text/javascript" src="js/jquery.flot.min.js"></script>
-	<script type="text/javascript" src="js/jquery.flot.pie.min.js"></script>
-	<script type="text/javascript" src="js/jquery.flot.categories.min.js"></script>
 	<style>
 		.chart{
 			
@@ -80,6 +77,18 @@
 	    });*/
 
 	    this.setPercent = function(percent) {
+	    	if(percent<20){
+				this.color = "red";
+			}else if(percent<40){
+				this.color = "orange";
+			}else if(percent<60){
+				this.color = "yellow";
+			}else if(percent<80){
+				this.color = "green";
+			}else{
+				this.color = "blue";
+			}
+
 	    	$("#"+this.dom+" .chart").attr("data-percent", percent).html('<span class="pie-percent">'+percent+'</span>');
 			$("#"+this.dom+" .chart").easyPieChart({
 		        lineCap:"square",

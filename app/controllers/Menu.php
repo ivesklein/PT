@@ -141,11 +141,6 @@ class Menu {
 			"place"=>"27",
 			"array"=>array("link"=>"#/texto", "title"=>"Textos Firmas", "n"=>0)
 		),
-		"rezagados"=>array(
-			"where"=>"reportes",
-			"place"=>"31",
-			"array"=>array("link"=>"#/listarezagados", "title"=>"Rezagados", "n"=>0)
-		),
 		"defensas"=>array(
 			"where"=>"temas",
 			"place"=>"40",
@@ -185,6 +180,11 @@ class Menu {
 			"where"=>"reportes",
 			"place"=>"32",
 			"array"=>array("link"=>"#/evalguias", "title"=>"Evaluacion Docente", "n"=>0)
+		),
+		"rezagados"=>array(
+			"where"=>"reportes",
+			"place"=>"33",
+			"array"=>array("link"=>"#/listarezagados", "title"=>"Rezagados", "n"=>0)
 		)
 
 		

@@ -173,4 +173,20 @@ class PostDashboard{
 		return json_encode($return);
     }
 
+    public static function rezagados()
+    {
+    	$return = array();
+		if(Rol::actual("SA")){
+			//comisiones conformadas
+			$return['value'] = 0;
+			$q = Rezagado::where("rezagados.status","abierto")->groupBy("rezagados.student_id")->get();
+			foreach ($q as $row) {
+				$return['value']++; 
+			}
+		}else{
+			$return["error"] = "not permission";
+		}
+		return json_encode($return);
+    }
+
 }
