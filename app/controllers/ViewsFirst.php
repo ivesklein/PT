@@ -56,7 +56,18 @@ class ViewsFirst extends BaseController
 
 	public function getDashboard()
 	{
-		return View::make('dashboard');
+		if(Rol::actual()=="P"){
+			return View::make('dashboard.pg');	
+		}elseif(Rol::actual()=="PT" || Rol::actual()=="AY"){
+			return View::make('dashboard.pt');	
+		}elseif(Rol::actual()=="CA" || Rol::actual()=="AA"){
+			return View::make('dashboard.da');	
+		}elseif(Rol::actual()=="SA"){
+			return View::make('dashboard.sa');	
+		}else{
+			return ".";
+		}
+		
 	}
 	//  ESTRUCTURA  //
 

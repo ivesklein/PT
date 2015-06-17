@@ -9,6 +9,7 @@ class Rol {
 	static $roles = array(
 		"CA"=>
 			array(
+				"dashboard",
 				"temasCreate",
 				"temasView",
 				"periodosCreate",
@@ -36,6 +37,7 @@ class Rol {
 			),
 		"SA"=>
 			array(
+				"dashboard",
 				"temasView",
 				"periodosCreate",
 				"periodosEdit",
@@ -60,6 +62,7 @@ class Rol {
 			),
 		"P"=>
 			array(
+				"dashboard",
 				"guiaConfirmation",
 				"calendario",
 				"newevent",
@@ -72,6 +75,7 @@ class Rol {
 			),
 		"PT"=>
 			array(
+				"dashboard",
 				"guiasConfirmation",
 				"profesores",
 				"guiasAsignar",
@@ -86,10 +90,14 @@ class Rol {
 				"notas",
 				"tallerGM",
 				"editrol",
+				"reportes-t",
+				"reportes-a",
+				"reportes-hoja",
 				"reportes-eval"
 			),
 		"AY"=>
 			array(
+				"dashboard",
 				"guiasConfirmation",
 				"guiasAsignar",
 				"profesores",
@@ -98,10 +106,15 @@ class Rol {
 				"viewProfEvents",
 				"tareas",
 				"notas",
-				"editrol"
+				"editrol",
+				"reportes-t",
+				"reportes-a",
+				"reportes-hoja",
+				"reportes-eval"
 			),
 		"AA"=>
 			array(
+				"dashboard",
 				"coordefensa",
 				"viewProfEvents",
 				"defensas",
@@ -112,6 +125,7 @@ class Rol {
 				"reportes-a",
 				"reportes-a-h",
 				"reportes-hoja",
+				"reportes-eval",
 				"reportes-evalguias"
 			),
 		"MA"=>

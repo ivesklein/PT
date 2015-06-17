@@ -170,12 +170,20 @@ class PostPeriodos{
 					}
 					$tot = array("sum"=>0,"n"=>0);
 					foreach ($notas as $key => $value) {
-						$notasfinal[$key] = round($value["sum"]/$value["n"],1);
+						if($value["n"]>0){
+							$notasfinal[$key] = round($value["sum"]/$value["n"],1);
+						}else{
+							$notasfinal[$key] = "";
+						}
 						$tot["sum"] += $notasfinal[$key];
 						$tot["n"]++;
 					}
-					$notasfinal["tot"] = round($tot["sum"]/$tot["n"],1);
-
+					if($tot["n"]>0){
+						$notasfinal["tot"] = round($tot["sum"]/$tot["n"],1);
+					}else{
+						$notasfinal["tot"] = "";
+					}
+					
 					$to = Staff::find($k->pg);
 
 					$vars = array(

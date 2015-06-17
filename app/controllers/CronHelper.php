@@ -231,9 +231,17 @@ class CronHelper {
 					if(!empty($cron)){
 						if($o2c->type="defsub1"){
 							$cron->triggertime = $sub1;
+							if($sub1>Carbon::now()){
+								$cron->fired = 0;
+								$cron->attempts = 0;
+							}
 						}
 						if($o2c->type="defsub5"){
 							$cron->triggertime = $sub5;
+							if($sub5>Carbon::now()){
+								$cron->fired = 0;
+								$cron->attempts = 0;
+							}
 						}	
 						$cron->save();
 					}
@@ -246,13 +254,15 @@ class CronHelper {
 	public static function delDefensa($evento)
 	{
 
+		Log::info("del");
 		if(!empty($evento)){
 
 				$id = $evento->id;
-
+				Log::info("del".$id);
 				$o2cs = O2C::whereOther_id($id)->whereOther("defensa")->get();
 				
 				foreach ($o2cs as $o2c) {
+					Log::info("del one");
 					$o2c->delete();
 				}
 

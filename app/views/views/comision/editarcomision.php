@@ -214,12 +214,11 @@
 		            <div class="panel panel-default" id="fechaprebox">
 		                <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Fijar Fecha Predefensa</strong></div>
 		                <div class="panel-body">
-
-		                        <ul class="list-group" id="eventdetpre">
-		                            <li class="list-group-item">Inicio <font class="inicio"></font></li>
-		                            <li class="list-group-item">Fin <font class="fin"></font></li>
-		                        </ul>
-		                    
+	                        <ul class="list-unstyled list-info" id="eventdetpre">
+	                            <li class="text-center"><i class="col-xs-3">Inicio</i> <font class="inicio"></font></li>
+	                            <li class="text-center"><i class="col-xs-3">Fin</i> <font class="fin"></font></li>
+	                            <li class="text-center"><i class="col-xs-3">Lugar</i> <div class="col-xs-9 input-group lugar"></div></li>
+	                        </ul>
 		                </div>
 		            </div>
 		            <div class="panel panel-default">
@@ -267,12 +266,11 @@
 		            <div class="panel panel-default" id="fechadefbox">
 		                <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Fijar Fecha Defensa</strong></div>
 		                <div class="panel-body">
-
-		                        <ul class="list-group" id="eventdetdef">
-		                            <li class="list-group-item">Inicio <font class="inicio"></font></li>
-		                            <li class="list-group-item">Fin <font class="fin"></font></li>
-		                        </ul>
-		                    
+	                        <ul class="list-unstyled list-info" id="eventdetdef">
+	                            <li class="text-center"><i class="col-xs-3">Inicio</i> <font class="inicio"></font></li>
+	                            <li class="text-center"><i class="col-xs-3">Fin</i> <font class="fin"></font></li>
+	                            <li class="text-center"><i class="col-xs-3">Lugar</i> <div class="col-xs-9 input-group lugar"></div></li>
+	                        </ul>
 		                </div>
 		            </div>
 		            <div class="panel panel-default">
@@ -579,9 +577,17 @@
                             $('.calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
                             $('.calendar').fullCalendar('unselect');
 
-                            $("#eventdetpre .inicio").html(start.format());
-                            $("#eventdetpre .fin").html(end.format());
-                            
+                            if(eventcolor=="blue"){
+                            	$("#eventdetdef .inicio").html(start.format());
+	                            $("#eventdetdef .fin").html(end.format());
+	                            $("#eventdetdef .lugar").html(buttonaddplace(""));
+
+
+                            }else{
+	                            $("#eventdetpre .inicio").html(start.format());
+	                            $("#eventdetpre .fin").html(end.format());
+	                            $("#eventdetpre .lugar").html(buttonaddplace(""));
+                            }
                         },
                         error:function(data){
                             alert(data)
@@ -611,6 +617,15 @@
 	                            ok:function(data){
 
 	                            	$('.calendar').fullCalendar('updateEvent', event);
+
+	                            	if(event.color=="blue"){
+		                            	$("#eventdetdef .inicio").html(start.format());
+			                            $("#eventdetdef .fin").html(end.format());
+			                            
+		                            }else{
+			                            $("#eventdetpre .inicio").html(start.format());
+			                            $("#eventdetpre .fin").html(end.format());
+		                            }
 	                            },
 	                            error:error
 	                        });
@@ -634,7 +649,17 @@
 	                                id: event.id
 	                            },
 	                            ok:function(data){
+	                            	if(event.color=="blue"){
+		                            	$("#eventdetdef .inicio").html("");
+			                            $("#eventdetdef .fin").html("");
+			                            $("#eventdetdef .lugar").html("");
+		                            }else{
+			                            $("#eventdetpre .inicio").html("");
+			                            $("#eventdetpre .fin").html("");
+			                            $("#eventdetpre .lugar").html("");
+		                            }
 	                                $('.calendar').fullCalendar('removeEvents',event.id);
+
 	                            }
 	                        });
 	                    }
@@ -789,18 +814,30 @@
 	                        if("pre" in data){
 	                            if("start" in data["pre"]){
 	                                $("#eventdetpre .inicio").html(data["pre"]['start'])
+		                           	if("data" in data["pre"]){
+		                                $("#eventdetpre .lugar").html(labelplace(data["pre"]['data'])) 
+		                            }else{
+		                            	$("#eventdetpre .lugar").html(buttonaddplace(""));
+		                            }
 	                            }
 	                            if("end" in data["pre"]){
 	                                $("#eventdetpre .fin").html(data["pre"]['end'])   
 	                            }
+
 	                        }
 	                        if("def" in data){
 	                            if("start" in data["def"]){
 	                                $("#eventdetdef .inicio").html(data["def"]['start'])
+	                                if("data" in data["def"]){
+		                                $("#eventdetdef .lugar").html(labelplace(data["def"]['data']))   
+		                            }else{
+		                            	$("#eventdetdef .lugar").html(buttonaddplace(""));
+		                            }
 	                            }
 	                            if("end" in data["def"]){
 	                                $("#eventdetdef .fin").html(data["def"]['end'])   
-	                            }      
+	                            }
+	                            
 	                        }
 
 
@@ -1073,6 +1110,41 @@
 
 
     	}
+
+    	//funciones para el manejo del lugar
+    	function buttonaddplace (lugar) {
+    		return '<input type="text" class="form-control" value="'+lugar+'" placeholder="Lugar"><span class="input-group-btn"><button class="btn btn-default addplace" type="button"><span class="glyphicon glyphicon-floppy-disk"></span></button></span>';
+    	} 
+
+    	function labelplace (lugar) {
+    		return '<span><span class="labellugar">'+lugar+'</span> <div class="btn btn-warning edit pull-right"><span class="glyphicon glyphicon-pencil"></span></div></span>';
+    	}
+
+    	$(".ui-tab-container").on("click", ".addplace",function() {
+    		var val = $(this).parents(".lugar").find("input").val();
+    		//es def o pre
+    		var tipo = $(this).parents(".list-info").attr("id")=="eventdetpre"?"pre":"def";
+    		//id = 
+    		var id = idsubj;
+    		//ajx
+    		ajx({
+                data:{
+                	f:"Comision_setplace",
+                	val:val,
+                	tipo:tipo,
+                	id:id
+                },
+                ok:function(data) {
+                	$("#eventdet"+tipo+" .lugar").html(labelplace(val));
+                }
+            });//ajx
+
+    	});
+
+    	$(".ui-tab-container").on("click", ".edit",function() {
+    		var val = $(this).parents(".lugar").find(".labellugar").html();
+    		var tipo = $(this).parents(".list-info").find(".lugar").html(buttonaddplace(val));
+    	});
 
     
     </script>

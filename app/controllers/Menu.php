@@ -7,7 +7,11 @@ class Menu {
     }
 	//public static $colors = array("danger","orange", "warning", "success", "info", "primary-light", "primary", "violet");
 	static $vistaPermiso = array(
-		"temasCreate"=>array(
+		"dashboard"=>array(
+			"where"=>"dashboard",
+			"place"=>"1",
+			"array"=>array("link"=>"#/dashboard", "title"=>"Dashboard", "n"=>0)
+		),"temasCreate"=>array(
 			"where"=>"temas",
 			"place"=>"10",
 			"array"=>array("link"=>"#/itemas", "title"=>"Agregar Temas", "n"=>0)
@@ -190,7 +194,7 @@ class Menu {
 	static $Menus = array(
 		"dashboard" => array(
 			"place"=>"0",
-			"array"=>array("Dashboard", "#/menu", "dashboard", "danger", 0)
+			"array"=>array("Dashboard", "#/dashboard", "dashboard", "danger", 0)
 		),
 		"temas" => array(
 			"place"=>"11",
@@ -249,6 +253,8 @@ class Menu {
 		}
 
 		if($subrows==""){
+			return View::make("menu.row", array("link"=>$link, "icon"=>$icon, "background"=>$color, "title"=>$name, "n"=>$n));
+		}elseif($name=="Dashboard"){
 			return View::make("menu.row", array("link"=>$link, "icon"=>$icon, "background"=>$color, "title"=>$name, "n"=>$n));
 		}else{
 			return View::make("menu.row", array("link"=>$link, "icon"=>$icon, "background"=>$color, "title"=>$name, "n"=>$n, "submenu"=>$subrows));

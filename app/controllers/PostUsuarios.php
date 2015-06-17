@@ -641,7 +641,48 @@ class PostUsuarios{
 		}
 
 		return json_encode($return);				
-    } 
+    }
 
+    public static function myguiascomisiones()
+    {
+    	$return = array();
+		if(Rol::actual("P")){
+			//datos guias
+			$subjs = Subject::wherePeriodo(Periodo::active())->whereAdviser(Auth::user()->wc_id)->get();
+			$return['guias'] = array();
+			$return['guiaswait'] = array();
+			foreach ($subjs as $subj) {
+				$st1 = explode("@",$subj->student1);
+		    	$st2 = explode("@",$subj->student2);
+		    	$grupo = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+				if($subj->status=="confirmed"){
+					$return['guias'][$subj->id] = array("id"=>$subj->id, "grupo"=>$grupo, "a1"=>$subj->student1, "a2"=>$subj->student2, "tema"=>$subj->subject);
+				}
+				if($subj->status=="confirm"){
+					$return['guiaswait'][$subj->id] = array("id"=>$subj->id, "grupo"=>$grupo, "a1"=>$subj->student1, "a2"=>$subj->student2, "tema"=>$subj->subject);
+				}
+			}
+
+			//datos comisiones
+			$return['comisiones'] = array();
+			$return['comisioneswait'] = array();
+			
+			$comisiones = Staff::find(Auth::user()->id)->comision()->wherePeriodo(Periodo::active())->get();
+			foreach ($comisiones as $comision) {
+				$st1 = explode("@",$comision->student1);
+		    	$st2 = explode("@",$comision->student2);
+		    	$grupo = $st1[0]." & ".$st2[0]."(".$comision->id.")";
+				if($comision->pivot->status=="confirmado"){
+					$return['comisiones'][$comision->id] = array("id"=>$comision->id, "grupo"=>$grupo, "a1"=>$comision->student1, "a2"=>$comision->student2, "tema"=>$comision->subject);
+				}
+				if($comision->pivot->status=="confirmar"){
+					$return['comisioneswait'][$comision->id] = array("id"=>$comision->id, "grupo"=>$grupo, "a1"=>$comision->student1, "a2"=>$comision->student2, "tema"=>$subj->subject);
+				}
+			}
+		}else{
+			$return["error"] = "not permission";
+		}
+		return json_encode($return);
+    }
 
 }

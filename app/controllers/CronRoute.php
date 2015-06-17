@@ -333,8 +333,11 @@ class CronRoute {
 		    	$array["parameters"]['grupo'] = $grupo;
 		    	$array["parameters"]['tipo'] = $type;
 				$array["parameters"]['tema'] = $subj->subject;
+				if(!empty($event->data)){
+					$array["parameters"]['place'] = $event->data;	
+				}
+				$array["parameters"]['remain'] = CarbonLocale::parse($event->start)->diffParaHumanos();
 				$array["parameters"]['time'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
-				$array["parameters"]['place'] = "";
 				foreach ($part as $to) {
 
 					$array["to"] = $to;

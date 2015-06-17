@@ -142,10 +142,16 @@ class PostComision{
 							$tipo = "Defensa";
 							$return['def']['start'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
 							$return['def']['end'] = CarbonLocale::spanish(Carbon::parse($event->end)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
+							if(!empty($event->data)){
+								$return['def']['data'] = $event->data;
+							}
 						}elseif($event->color=="darkcyan"){
 							$tipo = "Predefensa";
 							$return['pre']['start'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
 							$return['pre']['end'] = CarbonLocale::spanish(Carbon::parse($event->end)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
+							if(!empty($event->data)){
+								$return['pre']['data'] = $event->data;
+							}
 						}
 					}
 				}
@@ -653,6 +659,39 @@ class PostComision{
 				$return["error"] = "No se encuentra comision.";
 			}
 
+		}else{
+			$return["error"] = "faltan variables";
+		}
+		return json_encode($return);
+	}
+
+	public static function setplace()
+	{
+		$return = array();
+		if(isset($_POST['id']) && isset($_POST['val']) && isset($_POST['tipo'])){
+
+			if(Rol::hasPermission("coordefensa")){
+
+				if($_POST['tipo']=="def"){
+					$tipo = "Defensa";
+				}
+				if($_POST['tipo']=="pre"){
+					$tipo = "Predefensa";
+				}
+
+				$event = CEvent::whereDetail($_POST['id'])->whereType($tipo)->first();
+
+				if(!empty($event)){
+					$event->data = $_POST['val'];
+					$event->save();
+					$return["ok"]=1;
+				}else{
+					$return["error"] = "Evento no existe";
+				}
+
+			}else{
+				$return["error"] = "not permission";
+			}
 		}else{
 			$return["error"] = "faltan variables";
 		}

@@ -177,8 +177,8 @@ angular.module("app",
 		function($routeProvider){
 			
 			return $routeProvider
-				.when("/",{redirectTo:"/listatemas"})
-				//.when("/dashboard",		{templateUrl:"views/dashboard.html",controller: 'Cleancache'})
+				.when("/",{redirectTo:"/dashboard"})
+				.when("/dashboard",		{templateUrl:"views/dashboard",controller: 'Cleancache'})
 				
 				.when("/itemas",		{templateUrl:"views/itemas",controller: 'Cleancache'})
 				.when("/vista3",		{templateUrl:"views/vista3",controller: 'Cleancache'})

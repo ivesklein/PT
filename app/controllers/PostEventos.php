@@ -93,7 +93,8 @@ class PostEventos{
 				        "detail" => $event->detail,
 				        "start" => $event->start,
 				        "end" => $event->end,
-				        "color" => $event->color
+				        "color" => $event->color,
+				        "delta" => CarbonLocale::parse($event->start)->diffParaHumanos()
 	        		);
 
 	        	if($event->color=="blue"||$event->color=="darkcyan"){
@@ -118,7 +119,8 @@ class PostEventos{
 			        "start" => $start,
 			        "end" => $end,
 			        "color" => "cyan",
-			        "editable" => false
+			        "editable" => false,
+			        "delta" => CarbonLocale::parse($tarea->date)->diffParaHumanos()
         		);
 	        }
 
