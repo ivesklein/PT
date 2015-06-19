@@ -121,11 +121,11 @@ class PostReportes{
 		return json_encode($return);
 	}
 
-	public static function filtro()
+	public static function filtro()//memorias historicas
 	{
 		$return = array();	
 
-		if(Rol::hasPermission("reportes")){
+		if(Rol::hasPermission("reportes-t-h")){
 
 			$subjs = "";
 
@@ -247,7 +247,7 @@ class PostReportes{
 				foreach ($subjs as $subj) {
 					
 					$return["rows"][$subj->id] = array();
-
+					$return["rows"][$subj->id]['id'] = $subj->id;
 					$return["rows"][$subj->id]['sem'] = $subj->periodo;
 					$return["rows"][$subj->id]['tema'] = $subj->subject;
 					$return["rows"][$subj->id]['pg'] = $subj->adviser;
@@ -362,7 +362,7 @@ class PostReportes{
 	{
 		$return = array();	
 
-		if(Rol::hasPermission("reportes")){
+		if(Rol::hasPermission("reportes-t")){
 
 			$subjs = "";
 
@@ -482,6 +482,7 @@ class PostReportes{
 					
 					$return["rows"][$subj->id] = array();
 
+					$return["rows"][$subj->id]['id'] = $subj->id;
 					$return["rows"][$subj->id]['sem'] = $subj->periodo;
 					$return["rows"][$subj->id]['tema'] = $subj->subject;
 					$return["rows"][$subj->id]['pg'] = $subj->adviser;
@@ -581,7 +582,7 @@ class PostReportes{
 	{
 		$return = array();	
 
-		if(Rol::hasPermission("reportes")){
+		if(Rol::hasPermission("reportes-a")){
 
 			$active = Periodo::active();
 			$tareas = Tarea::wherePeriodo_name($active)->where("tipo","<",4)->get();
@@ -668,6 +669,7 @@ class PostReportes{
 					//$return["rows"][$row->id]['sem'] = $row->periodo;
 					//$return["rows"][$row->id]['tema'] = $row->subject;
 					//$return["rows"][$row->id]['pg'] = $row->adviser;
+					$return["rows"][$row->id]['id'] = $row->id;
 					$return["rows"][$row->id]['run'] = $row->run;
 					$return["rows"][$row->id]['a1'] = $row->name." ".$row->surname;
 					$return["rows"][$row->id]['mail'] = $row->wc_id;
@@ -761,7 +763,7 @@ class PostReportes{
 	{
 		$return = array();	
 
-		if(Rol::hasPermission("reportes")){
+		if(Rol::hasPermission("reportes-a-h")){
 
 			$active = Periodo::active();
 
@@ -850,6 +852,7 @@ class PostReportes{
 					//$return["rows"][$row->id]['sem'] = $row->periodo;
 					//$return["rows"][$row->id]['tema'] = $row->subject;
 					//$return["rows"][$row->id]['pg'] = $row->adviser;
+					$return["rows"][$row->id]['id'] = $row->id;
 					$return["rows"][$row->id]['run'] = $row->run;
 					$return["rows"][$row->id]['a1'] = $row->name." ".$row->surname;
 					$return["rows"][$row->id]['ea1'] = $row->status;
@@ -1224,6 +1227,88 @@ class PostReportes{
 			$return["error"] = "not permission";
 		}
 
+		return json_encode($return);
+	}
+
+	public static function gmtdata()
+	{
+		$return = array();	
+		if(Rol::actual("SA")){
+			if(isset($_POST['id'])){
+
+				$subj = Subject::find($_POST['id']);
+				if(!empty($subj)){
+					$return['subject'] = $subj->subject;
+					$return['adviser'] = $subj->adviser;
+					$return['status'] = $subj->status;
+					$return['periodo'] = $subj->periodo;
+					$return['student1'] = $subj->student1;
+					$return['student2'] = $subj->student2;
+
+					$pres = $subj->comision()->where("comisions.type","1")->first();
+					if(!empty($pres)){
+						$return['pr'] = $pres->wc_id;
+					}else{
+						$return['pr'] = "";
+					}
+					$inv = $subj->comision()->where("comisions.type","2")->first();
+					if(!empty($inv)){
+						$return['in'] = $inv->wc_id;
+					}else{
+						$return['in'] = "";
+					}
+
+					$return['pre'] = "";
+					$return['def'] = "";
+					$defensas = CEvent::whereDetail($subj->id)->get();
+					if(!$defensas->isEmpty()){
+						foreach ($defensas as $event) {
+							if($event->color=="blue"){
+								$return['def'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
+							}elseif($event->color=="darkcyan"){
+								$return['pre'] = CarbonLocale::spanish(Carbon::parse($event->start)->formatLocalized('%A %d de %B de %Y a las %H:%M'));
+							}
+						}
+					}
+
+				}else{
+					$return["error"] = "Proyecto no existe";
+				}
+			}else{
+				$return["error"] = "faltan variables";	
+			}
+		}else{
+			$return["error"] = "not permission";
+		}
+		return json_encode($return);
+	}
+
+	public static function gmadata()
+	{
+		$return = array();	
+		if(Rol::actual("SA")){
+			if(isset($_POST['id'])){
+
+				$student = Student::find($_POST['id']);
+				if(!empty($student)){
+					$return['wc_id'] = $student->wc_id;
+					$return['run'] = $student->run;
+					$return['name'] = $student->name;
+					$return['surname'] = $student->surname;
+					$return['status'] = $student->status;
+					$return['subject'] = $student->student2;
+
+
+
+				}else{
+					$return["error"] = "Proyecto no existe";
+				}
+			}else{
+				$return["error"] = "faltan variables";	
+			}
+		}else{
+			$return["error"] = "not permission";
+		}
 		return json_encode($return);
 	}
 

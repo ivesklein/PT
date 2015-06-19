@@ -26,6 +26,9 @@
         var tabla = new Tabla(".panel-heading", ".tabla");
 
         tabla.setajax("Reportes_filtroporalumnoshist");
+        <?php if(Rol::actual("SA")){ ?>
+        tabla.setgm("gma");
+        <?php } ?>
         tabla.addcol("per", "Semestre",     [1,1], 1, 1);
         tabla.addcol("run", "Run",          [1,1], 1, 1);
         tabla.addcol("a1","Nombre",         [1,1], 1, 1);

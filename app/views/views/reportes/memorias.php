@@ -26,6 +26,7 @@
         var tabla = new Tabla(".panel-heading", ".tabla");
 
         tabla.setajax("Reportes_filtro");
+        <?php if(Rol::actual()=="SA"){ echo 'tabla.setgm("gmt");'; } ?>
         tabla.addcol("sem", "Semestre",      [0,1], 1, 1);
         tabla.addcol("tema","Tema",          [1,1], 1, 1, 20);
         tabla.addcol("cat", "Categoria",     [1,1], 1, 1);

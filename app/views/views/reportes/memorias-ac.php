@@ -26,6 +26,10 @@
         var tabla = new Tabla(".panel-heading", ".tabla");
 
         tabla.setajax("Reportes_filtroactivo");
+        <?php if(Rol::actual("SA")){ ?>
+        tabla.setgm("gmt");
+        <?php } ?>
+        
         tabla.addcol("tema","Tema",          [1,1], 1, 1, 20);
         tabla.addcol("cat", "Categoria",     [1,1], 1, 1);
         tabla.addcol("a1",  "Alumno 1",      [1,1], 1, 1);

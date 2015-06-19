@@ -11,9 +11,18 @@ var Tabla = function(head, body) {
 	yo.csv = "";
 
 	yo.ajax = "";
+	yo.gm = "";
 
 	yo.setajax = function(direccion){
 		yo.ajax = direccion;
+	};
+
+	yo.setgm = function(target){
+		yo.gm = target;
+		yo.order.push("gm");
+		yo.cols["gm"] = {"name":"gm", "title":"", "opcional":[0,1], "search":0, "sorted":0, "abbr":0, "control":"gm", "link":target};
+		yo.head1.append("<th class='ctgm'></th>");
+		yo.head2.append("<th class='ctgm'></th>");
 	};
 
 	//views
@@ -27,7 +36,7 @@ var Tabla = function(head, body) {
 
 	yo.setvar = function(name,val){
 		yo.vars[name] = val;
-	}
+	};
 
 	yo.addcol = function(name, title, opcional, search, sorted, abbr, control, link){
 		
@@ -183,7 +192,9 @@ var Tabla = function(head, body) {
 								yo.csv += row[colname];
 							}
 							
-							
+						}else if(colname=="gm"){
+							tr.append("<td class='ctgm'><a href='#/"+yo.cols[colname]['link']+"/"+row.id+"' class='btn'><span class='fa fa-pencil'></span></a></td>");
+
 						}else{
 							tr.append("<td class='ct"+colname+"'></td>");
 							if(i1>0){yo.csv+=";"}

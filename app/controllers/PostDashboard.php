@@ -52,7 +52,7 @@ class PostDashboard{
     public static function hojasderutas()
     {
     	$return = array();
-		if(Rol::actual("SA") || Rol::actual("CA") || Rol::actual("AA")){
+		if(Rol::actual("SA") || Rol::actual("CA") || Rol::actual("AA")|| Rol::actual("PT")|| Rol::actual("AY")){
 			//nosee
 			$return["percent"]=34;
 		}else{
@@ -116,7 +116,7 @@ class PostDashboard{
     public static function comisiones()
     {
     	$return = array();
-		if(Rol::actual("SA") || Rol::actual("CA") || Rol::actual("AA")){
+		if(Rol::actual("SA") || Rol::actual("CA") || Rol::actual("AA")|| Rol::actual("PT")|| Rol::actual("AY")){
 			//comisiones conformadas
 			$total=0;
 			$confirmados=0;

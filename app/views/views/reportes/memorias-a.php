@@ -107,6 +107,9 @@
         var tabla = new Tabla(".panel-heading", ".tabla");
 
         tabla.setajax("Reportes_filtroporalumnos");
+        <?php if(Rol::actual("SA")){ ?>
+        tabla.setgm("gma");
+        <?php } ?>
         tabla.addcol("run", "Run",          [1,1], 1, 1);
         tabla.addcol("a1","Nombre",         [1,1], 1, 1);
         tabla.addcol("mail", "Email",       [1,1], 1, 1);

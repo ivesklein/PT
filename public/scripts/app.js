@@ -236,11 +236,14 @@ angular.module("app",
 				.when("/rephojaruta",{templateUrl:"reportes/hojaruta",controller: 'Cleancache'})
 				.when("/evalguias",{templateUrl:"reportes/evalguias",controller: 'Cleancache'})
 
+				.when("/gmt/:idtema",{templateUrl:"reportes/gmt",controller: 'Indentity'})
+				.when("/gma/:idtema",{templateUrl:"reportes/gma",controller: 'Indentity'})
+
 				//comision
 				.when("/listacomisiones",{templateUrl:"comision/listacomisiones",controller: 'Cleancache'})
 				.when("/editarcomision/:idtema",{templateUrl:"comision/editarcomision",controller: 'Indentity'})
 				.when("/confirmarcomision",{templateUrl:"views/confirmarcomision",controller: 'Cleancache'})
-				.when("/confirmarcomisionh/:idtema",{templateUrl:"aceptarcomision",controller: 'Indentity'})
+				
 				//otros
 				.when("/webcursos",	{templateUrl:"webcursos/webcursos",controller: 'Cleancache'})
 

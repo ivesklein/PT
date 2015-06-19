@@ -220,12 +220,20 @@ class Rol {
 		}
 	}
 
-	public static function actual()
+	public static function actual($check = false)
 	{
 		if(Auth::check()) {
-			return Session::get('rol' ,"0");
+			if($check==false){
+				return Session::get('rol' ,"0");
+			}else{
+				if($check==Session::get('rol' ,"0")){
+					return true;
+				}else{
+					return false;
+				}
+			}
 		}else{
-			return 0;
+			return false;
 		}
 	}
 

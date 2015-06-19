@@ -66,5 +66,15 @@ class ViewsReportes extends BaseController
 		return View::make('views.reportes.evalguias');
 	}
 
+	public function getGmt()
+	{
+		return View::make('views.reportes.gmt');
+	}
+
+	public function getGma()
+	{
+		return View::make('views.reportes.gma');
+	}
+
 }
 ?>
