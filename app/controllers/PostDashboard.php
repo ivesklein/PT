@@ -54,7 +54,46 @@ class PostDashboard{
     	$return = array();
 		if(Rol::actual("SA") || Rol::actual("CA") || Rol::actual("AA")|| Rol::actual("PT")|| Rol::actual("AY")){
 			//nosee
-			$return["percent"]=34;
+			$subjs = Subject::wherePeriodo(Periodo::active())->get();
+			$return['total'] = 0;
+			$return['alumno'] = 0;
+			$return['profesor'] = 0;
+			$return['revisor'] = 0;
+			$return['secretaria'] = 0;
+
+			foreach ($subjs as $subj) {
+				if(!empty($subj->student1)){
+					$return['total']++;	
+				}
+				if(!empty($subj->student2)){
+					$return['total']++;	
+				}
+				$hoja = $subj->firmas;
+				if(!empty($hoja)){
+					if($hoja->student1=="firmado"){
+						if($hoja->secre1=="firmado"){
+							$return['secretaria']++;
+						}elseif($hoja->revisor=="firmado"){
+							$return['revisor']++;
+						}elseif($hoja->adviser=="firmado"){
+							$return['profesor']++;
+						}else{
+							$return['alumno']++;
+						}
+					}
+					if($hoja->student2=="firmado"){
+						if($hoja->secre2=="firmado"){
+							$return['secretaria']++;
+						}elseif($hoja->revisor=="firmado"){
+							$return['revisor']++;
+						}elseif($hoja->adviser=="firmado"){
+							$return['profesor']++;
+						}else{
+							$return['alumno']++;
+						}
+					}
+				}
+			}
 		}else{
 			$return["error"] = "not permission";
 		}

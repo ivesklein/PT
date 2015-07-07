@@ -8,11 +8,6 @@
             <a id="link" class="btn btn-info" target="_blanc">Ver Memoria</a>
             <br><br>
             <div class="alert alert-info">Buscar por nombre de grupo: <h3 id="grupo"></h3></div>
-            <hr></hr>
-			<p><?php if(isset($declaracion)){echo $declaracion;}else{echo "Declaración";}?></p>
-            <div class="col-xs-offset-2 col-xs-3"><div class="btn btn-info" id="aceptardec" n="1">Aceptar declaración</div></div>
-            <div class="col-xs-offset-1 col-xs-3"><div class="btn btn-warning" id="rechazardec" n="0">Rechazar declaración</div></div>
-
         </div>
     </div>
 

@@ -433,15 +433,12 @@
                 
                 $('#temas').on("change",function() {
 
-
                     $("#comisionbox, #fechaprebox, #fechadefbox").show();
                     loadtema();
 
                 })
                 
-      
-                 
-                    
+
                 Lista = new Eventos("#list","#calendar");
 
                 $("#add").on("click",function() {
@@ -460,7 +457,6 @@
                         }
                     });
 
-                    
                 })
 
                 $( "#buscarprofesor" ).autocomplete({

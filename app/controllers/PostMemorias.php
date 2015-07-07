@@ -922,7 +922,7 @@ class PostMemorias{
 	public static function listaalumnos()
 	{
 		$return = array();	
-		if(Rol::hasPermission("reportes")){
+		if(Rol::hasPermission("reportes-a")){
 			$active = Periodo::active();
 			$student = Student::select('students.*')
 						->join('subjects', 'subjects.id', '=', 'students.subject_id')
@@ -944,6 +944,113 @@ class PostMemorias{
 		}
 
 		return json_encode($return);
+	}
+
+	public static function lista()
+	{
+		$return = array();	
+		if(Rol::hasPermission("reportes-t")){
+			$active = Periodo::active();
+			$subjects = Subject::wherePeriodo($active)->get();
+			$return = array("rows"=>array());	
+
+			if(!empty($subjects)){
+				foreach ($subjects as $subj) {
+					$return["rows"][$subj->id] = array();
+					$return["rows"][$subj->id]['id'] = $subj->id;
+					$return["rows"][$subj->id]['tema'] = $subj->subject;
+				}
+			}
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+	}
+
+
+
+	public static function insertdata()	
+	{	
+
+		if(Rol::hasPermission("reportes-t")){
+
+			$ID = 0 ;
+			$TEMA = 1 ;
+			$VAL = 2 ;
+
+			//$periodo = $_POST['periodo'];
+
+			$file = Files::post("csv");
+			$var = $_POST['var'];
+
+			if(isset($file["ok"])){
+				$ruta = $file["ok"]["tmp_name"];
+				
+				//return $file["ok"]["type"];
+				
+				
+				$res = CSV::toArray($ruta);
+				if(isset($res['error'])){
+					Session::put('alert', array("var"=>$var, "message"=>'No se puede leer el archivo, compruebe que tenga formato \'.csv\''));
+					return Redirect::to("#/repacmemorias");
+				}
+
+				//for profesores, 
+					//verificar si existen, 
+					//si no crearlos.
+				foreach ($res as $n => $fila) {
+					if($n!=0){
+						try {
+							
+							$subject = Subject::find($fila[$ID]);
+							if(!empty($subject)){
+								if($var=="categoria"){
+									//borrar categorías
+									$a = Categoria::whereSubject_id($subject->id)->delete();
+									//agregar categorias
+									if(!empty($fila[$VAL])){
+										$each = explode(",",$fila[$VAL]);
+										foreach ($each as $value) {
+											$new = new Categoria;
+											$new->subject_id = $subject->id;
+											$new->categoria = $value;
+											$new->save();
+										}
+									}
+								}
+
+
+							}
+
+
+						} catch (Exception $e) {
+							Log::info("up:error:".$e->getMessage());
+							Session::put('alert', array("var"=>$var, "message"=>'No se puede leer el archivo, compruebe que tenga formato \'.csv\''));
+					
+							return Redirect::to("#/repacmemorias");
+
+						}
+						
+					}//row encabezado
+				}//for rows
+
+				$a = DID::action(Auth::user()->wc_id, "agregar ".$var, "", "Usuarios", "");
+
+				return Redirect::to("#/repacmemorias");
+
+			}else{
+				//error con el archivo
+				Session::put('alert', array("var"=>$var, "message"=>'No se puede leer el archivo'));
+				
+				return Redirect::to("#/repacmemorias");
+			}
+
+
+		}else{
+			return Redirect::to("login");
+		}
 	}
 
 }

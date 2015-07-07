@@ -909,7 +909,7 @@ class PostReportes{
 	{
 		$return = array();	
 
-		if(Rol::hasPermission("reportes")){
+		if(Rol::hasPermission("reportes-hoja")){
 
 			$active = Periodo::active();
 
@@ -1167,7 +1167,7 @@ class PostReportes{
 	{
 		$return = array();	
 
-		if(Rol::hasPermission("reportes")){
+		if(Rol::hasPermission("reportes-evalguias")){
 
 			$active = Periodo::active();
 

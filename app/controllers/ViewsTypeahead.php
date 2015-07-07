@@ -62,7 +62,7 @@ class ViewsTypeahead extends BaseController
 		
 		$res = array();	
 		$term = Input::get('term');
-		$users = Staff::where('name',"LIKE","%".$term."%")->orWhere('surname',"LIKE","%".$term."%")->get();
+		$users = Staff::where('name',"LIKE","%".$term."%")->orWhere('surname',"LIKE","%".$term."%")->orWhere('wc_id',"LIKE","%".$term."%")->get();
 
 		if(!$users->isEmpty()){
 			foreach ($users as $user) {
@@ -76,7 +76,29 @@ class ViewsTypeahead extends BaseController
 				$comisions += $user->comision()->wherePeriodo(Periodo::active())->count();
 
 
-				$res[] = array('value'=>$value2,'label'=>$name,'comisions'=>$comisions);
+				$res[] = array('value'=>$value2,'label'=>$name,'comisions'=>$comisions, 'mail'=>$user->wc_id);
+				
+
+			}
+		}
+
+		return json_encode($res);
+	}
+
+	public function getStudents()
+	{
+		
+		$res = array();	
+		$term = Input::get('term');
+		$users = Student::where('name',"LIKE","%".$term."%")->orWhere('surname',"LIKE","%".$term."%")->orWhere('wc_id',"LIKE","%".$term."%")->get();
+
+		if(!$users->isEmpty()){
+			foreach ($users as $user) {
+
+				$name = $user->name." ".$user->surname." ".$user->wc_id;
+				$value2 = $user->id;
+
+				$res[] = array('value'=>$value2,'label'=>$name, 'mail'=>$user->wc_id);
 				
 
 			}

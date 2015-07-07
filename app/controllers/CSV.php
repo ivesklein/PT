@@ -114,19 +114,17 @@ class CSV {
             $regExp = '/['.$delimiter.']/';
             $fields = preg_split($regExp, $line);
             if(count($fields) > 1){
-                if(!empty($results[$delimiter])){
-                    $results[$delimiter]++;
-                } else {
-                    $results[$delimiter] = 1;
-                }   
+                $results[$delimiter] = count($fields);
             }
         }
         try {
             $results = array_keys($results, max($results));
+            Log::info("csv:parse:with ".$results[0]);
             return $results[0];
             
         } catch (Exception $e) {
-            return ",";
+            Log::info("csv:parse:error");
+            return ";";
         }
     }
 

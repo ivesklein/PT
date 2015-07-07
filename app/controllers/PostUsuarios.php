@@ -396,7 +396,7 @@ class PostUsuarios{
 	public static function insertdata()	
 	{	
 
-		if(Rol::hasPermission("reportes")){
+		if(Rol::hasPermission("reportes-a")){
 
 			$RUN = 0 ;
 			$MAIL = 1 ;
@@ -416,7 +416,7 @@ class PostUsuarios{
 				$res = CSV::toArray($ruta);
 				if(isset($res['error'])){
 					Session::put('alert', array("var"=>$var, "message"=>'No se puede leer el archivo, compruebe que tenga formato \'.csv\''));
-					return Redirect::to("#/rep-memorias-a");
+					return Redirect::to("#/repamemorias");
 				}
 
 				//for profesores, 
@@ -511,7 +511,7 @@ class PostUsuarios{
 							
 							Session::put('alert', array("var"=>$var, "message"=>'No se puede leer el archivo, compruebe que tenga formato \'.csv\''));
 					
-							return Redirect::to("#/rep-memorias-a");
+							return Redirect::to("#/repamemorias");
 
 						}
 						
@@ -520,13 +520,13 @@ class PostUsuarios{
 
 				$a = DID::action(Auth::user()->wc_id, "agregar ".$var, "", "Usuarios", "");
 
-				return Redirect::to("#/rep-memorias-a");
+				return Redirect::to("#/repamemorias");
 
 			}else{
 				//error con el archivo
 				Session::put('alert', array("var"=>$var, "message"=>'No se puede leer el archivo'));
 					
-				return Redirect::to("#/rep-memorias-a");
+				return Redirect::to("#/repamemorias");
 			}
 
 

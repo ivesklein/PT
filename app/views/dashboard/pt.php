@@ -2,6 +2,7 @@
 	<script type="text/javascript" src="js/jquery.easypiechart.min.js"></script>
 	<script type="text/javascript" src="js/jquery.flot.min.js"></script>
 	<script type="text/javascript" src="js/jquery.flot.categories.min.js"></script>
+	<script type="text/javascript" src="js/jquery.flot.pie.min.js"></script>
 
 
 	<style>
@@ -72,6 +73,65 @@
     </div>
 
 	<script>
+
+	function labelFormatter(label, series) {
+		return "<div style='font-size:12pt; text-align:center; padding:2px; color:white;' title='" + Math.round(series.percent) + "%'>" + label + "</div>";
+	}
+
+	var medidor4 = function(dom, title, percents, link, color){
+		var modelito = $("#modelito");
+		this.dom = dom;
+		this.color = color;
+		this.colores = {
+			"blue":"#1C7EBB",
+			"cyan":"#449DD5",
+			"green":"#23AE89",
+			"yellow":"#FFB61C",
+			"orange":"#F98E33",
+			"red":"#E94B3B",
+			"purple":"#6A55C2"
+		}
+
+		$('.page').append(modelito.clone().attr("id",dom).show());
+		//$("#"+dom+" .chart").attr("data-percent", percent).html('<span class="pie-percent">'+percent+'</span>');
+		$("#"+dom+" .title").html(title);
+		$("#"+dom+" a").attr("href", link);
+
+	    this.setPercent = function(data) {
+
+		    var foptions = {
+			    series: {
+			        pie: {
+			            show: true,
+			            radius: 0.95,
+			            innerRadius: 0.6,
+			            label: {
+			                show: true,
+			                radius: (0.95+0.6)/2,
+			                formatter: labelFormatter,
+			                threshold: 0.1
+			            }
+			        }
+			    },
+			    legend: {
+			        show: false
+			    }
+			};
+
+			var cero = data.total - data.alumno - data.profesor - data.revisor - data.secretaria;
+
+			var data = [
+				{"label":"0/4", "data":cero, "color":this.colores["red"]},
+				{"label":"1/4", "data":data.alumno, "color":this.colores["orange"]},
+				{"label":"2/4", "data":data.profesor, "color":this.colores["yellow"]},
+				{"label":"3/4", "data":data.revisor, "color":this.colores["green"]},
+				{"label":"4/4", "data":data.secretaria, "color":this.colores["cyan"]},
+				];
+
+    		$.plot("#"+this.dom+" .chart", data, foptions);
+
+	    }
+	}
 
 	var medidor3 = function(dom, title, percent, link, hist){
 		var modelito = $("#modelito2");
@@ -218,7 +278,7 @@
 
 				var m1 = new medidor("comisiones", "Comisiones Conformadas", 0, "#/listacomisiones", "cyan")
 				var m2 = new medidor("pre", "Predefensas agendadas", 0, "#/listacomisiones", "red")
-				var m3 = new medidor("hoja", "Hojas de Rutas", 0, "", "red")
+				var m3 = new medidor4("hoja", "Hojas de Rutas", 0, "#/rephojaruta", "red")
 				var m4 = new medidor("evaldoc", "Evaluaciones Docentes", 0, "", "yellow")
 
 				ajx({
@@ -242,7 +302,7 @@
 						f:"Dashboard_hojasderutas"
 					},
 					ok:function(data) {
-						m3.setPercent(data.percent)
+						m3.setPercent(data)
 					}
 				});
 				ajx({
