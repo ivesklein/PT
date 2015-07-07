@@ -23,7 +23,7 @@
                                     "P"=>array("title"=>"Profesor Guía o Comisión", "value"=>"P"),
                                     "PT"=>array("title"=>"Profesor Taller", "value"=>"PT", "sel"=>1),
                                     "AY"=>array("title"=>"Ayudante Taller", "value"=>"AY"),
-                                    "AY"=>array("title"=>"Coordinador Académico", "value"=>"AA")
+                                    "AA"=>array("title"=>"Coordinador Académico", "value"=>"AA")
                                 ));
                             }elseif($rol == "PT"){
                                 $array = array("items"=>array(
