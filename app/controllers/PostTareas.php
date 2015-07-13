@@ -301,7 +301,7 @@ class PostTareas{
 					
 					$modify=isset($_POST['modify']);
 							//pasado		o		defensas     y         tiempo de evaluacion                     o        rol  revisar tareas
-					if( ($date<Carbon::now() || $tarea->tipo>=3) && ($date>Carbon::now()->subDays($tarea->evaltime) || Rol::hasPermission("tallerGM") ) ){
+					if( ($date<Carbon::now() || $tarea->tipo>=3) ){
 
 						$feedback = isset($_POST['feedback'])? $_POST['feedback']:"";
 			

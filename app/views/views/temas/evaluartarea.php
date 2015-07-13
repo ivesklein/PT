@@ -263,7 +263,7 @@
                                 $("#t"+n+" .panel-heading").append('<font style="color:red;" class="pull-right">'+tarea.date+'</font>');
 
 
-                            }if(tarea.active==1){//if nota mostrar
+                            }if(tarea.active==1 || tarea.active==2){//if nota mostrar
                                 //$("#t"+n+" .nota").val(tarea.nota);
                                 //$("#t"+n+" .feedback").val(tarea.feedback);
                                 $("#t"+n+" .submit").attr("n",tarea.id).on("click",modify);
@@ -311,7 +311,7 @@
                                 }
 
 
-                            }if(tarea.active==2){//disable all if nota mostrar
+                            }/*if(tarea.active==2){//disable all if nota mostrar
                                 if(tarea.nota!=""){
                                     var notas = JSON.parse(tarea.nota);
                                     $("#t"+n+" .nota.nota1").val(notas[0]);
@@ -327,7 +327,7 @@
                                 $("#t"+n+" .submit").attr("n",tarea.id).hide();
                                 $("#t"+n+" .verentrega").attr("href","http://webcursos.uai.cl/mod/assign/view.php?id="+tarea.url+"&action=grading");
                                 $("#t"+n+" .panel-body").css("background","#f6f6f6");
-                            }
+                            }*/
 
                         }//for
                     },//ok
