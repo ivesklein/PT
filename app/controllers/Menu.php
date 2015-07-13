@@ -213,7 +213,7 @@ class Menu {
 			"array"=>array("Calendario", "#/menu", "calendar", "primary", 0)
 		),
 		"webcursos" => array(
-			"place"=>"21",
+			"place"=>"29",
 			"array"=>array("Webcursos", "#/menu", "calendar", "primary", 0)
 		),
 		"hojaruta" => array(
@@ -229,7 +229,7 @@ class Menu {
 			"array"=>array("Registros", "#/menu", "calendar", "primary", 0)
 		),
 		"reportes" => array(
-			"place"=>"29",
+			"place"=>"28",
 			"array"=>array("Reportes", "#/menu", "calendar", "primary", 0)
 		),
 		"otros" => array(
