@@ -328,6 +328,42 @@ class PostTareas{
 							}
 
 							$notita->save();
+
+							if($tarea->tipo=="4"){
+								$subj = Subject::find($_POST['id']);
+								if(!empty($subj)){
+									if(!empty($_POST['nota'])){
+										$jsonnota = json_decode($_POST['nota']);
+										if(!empty($jsonnota[0])){
+											$st1 = Student::whereWc_id($subj->student1)->first();
+											if(!empty($st1)){
+												if($jsonnota[0]>4){
+													//titulado!!!
+													$st1->status = "titulado";
+													$st1->save();	
+												}else{
+													$st1->status = "reprobado";
+													$st1->save();
+												}
+											}
+										}
+										if(!empty($jsonnota[1])){
+											$st2 = Student::whereWc_id($subj->student2)->first();
+											if(!empty($st2)){
+												if($jsonnota[1]>4){
+													//titulado!!!
+													$st2->status = "titulado";
+													$st2->save();	
+												}else{
+													$st2->status = "reprobado";
+													$st2->save();
+												}
+											}
+										}
+									}
+								}
+							}
+
 							$return["ok"] = 1;
 							$a = DID::action(Auth::user()->wc_id, "reevaluar tarea", $_POST['tarea'], "tarea", $_POST['nota']);
 						
@@ -352,6 +388,41 @@ class PostTareas{
 
 							$notita->save();
 
+							if($tarea->tipo=="4"){
+								$subj = Subject::find($_POST['id']);
+								if(!empty($subj)){
+									if(!empty($_POST['nota'])){
+										$jsonnota = json_decode($_POST['nota']);
+										if(!empty($jsonnota[0])){
+											$st1 = Student::whereWc_id($subj->student1)->first();
+											if(!empty($st1)){
+												if($jsonnota[0]>4){
+													//titulado!!!
+													$st1->status = "titulado";
+													$st1->save();	
+												}else{
+													$st1->status = "reprobado";
+													$st1->save();
+												}
+											}
+										}
+										if(!empty($jsonnota[1])){
+											$st2 = Student::whereWc_id($subj->student2)->first();
+											if(!empty($st2)){
+												if($jsonnota[1]>4){
+													//titulado!!!
+													$st2->status = "titulado";
+													$st2->save();	
+												}else{
+													$st2->status = "reprobado";
+													$st2->save();
+												}
+											}
+										}
+									}
+								}
+							}
+
 							$a = DID::action(Auth::user()->wc_id, "evaluar tarea", $_POST['tarea'], "tarea", $_POST['nota']);
 							$return["ok"] = 1;
 						}
@@ -368,6 +439,198 @@ class PostTareas{
 			$return["error"] = "faltan variables";
 		}
 		return json_encode($return);
+	}
+
+	public static function getnotas()
+	{
+		$return = array();	
+
+		if(Rol::hasPermission("tareas") || Rol::hasPermission("defensas")){
+
+
+			$return = array("rows"=>array(), "cols"=>array());	
+			$subjs = Subject::active();
+
+			$tareas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",5)->get();
+			foreach ($tareas as $tarea) {
+				$return["cols"][] = array("id"=>$tarea->id, "title"=>$tarea->title);
+			}
+
+			if(isset($_POST['tema'])){
+				if(!empty($_POST['tema'])){
+					$subjs->where('subject',"LIKE","%".$_POST['tema']."%");
+				}
+			}
+
+			if(isset($_POST['a1'])){
+				if(!empty($_POST['a1'])){
+					
+					$alumno = $_POST['a1'];
+					$subjs = $subjs->select('subjects.*')->join('students as s1', 's1.wc_id', '=', 'subjects.student1')
+														  ->join('students as s2', 's2.wc_id', '=', 'subjects.student2')
+									->where(function ($query) use ($alumno) {
+						            $query->where('s1.name','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s1.surname','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s1.wc_id','LIKE','%'.$alumno.'%'); 
+						        	})->orWhere(function ($query) use ($alumno) {
+						            $query->where('s2.name','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s2.surname','LIKE','%'.$alumno.'%')
+						                  ->orWhere('s2.wc_id','LIKE','%'.$alumno.'%'); 
+						        	});
+					
+				}
+			}
+
+			if(isset($_POST['pg'])){
+				if(!empty($_POST['pg'])){
+
+					$pg = $_POST['pg'];
+					$subjs = $subjs->select('subjects.*')->join('staffs', 'staffs.wc_id', '=', 'subjects.adviser')
+								->where(function ($query) use ($pg) {
+					            $query->where('staffs.name','LIKE','%'.$pg.'%')
+					                  ->orWhere('staffs.surname','LIKE','%'.$pg.'%')
+					                  ->orWhere('staffs.wc_id','LIKE','%'.$pg.'%');
+					        });
+					
+				}
+			}
+
+			if(!empty($subjs)){
+
+				$subjs = $subjs->with('ostudent1');
+				$subjs = $subjs->with('ostudent2');
+				$subjs = $subjs->with('guia');
+				$subjs = $subjs->with('sponsor');
+
+
+				$subjs = $subjs->get();
+			
+				foreach ($subjs as $subj) {
+					
+					$return["rows"][$subj->id] = array();
+					$return["rows"][$subj->id]['id'] = $subj->id;
+					$return["rows"][$subj->id]['btn'] = "btn";
+					//$return["rows"][$subj->id]['sem'] = $subj->periodo;
+					//$return["rows"][$subj->id]['tema'] = $subj->subject;
+					//$return["rows"][$subj->id]['pg'] = $subj->adviser;
+					//$return["rows"][$subj->id]['a1'] = $subj->student1;
+					//$return["rows"][$subj->id]['a2'] = $subj->student2;
+
+					$st1 = explode("@",$subj->student1);
+			    	$st2 = explode("@",$subj->student2);
+			    	$return["rows"][$subj->id]["grupo"] = $st1[0]." & ".$st2[0]."(".$subj->id.")";
+
+			    	//$evallink = url("#/revisarnota/".$tema->id);
+			    	
+			    	//$buttons = View::make("html.buttonlink",array("title"=>"Ingresar","color"=>"cyan","url"=>$evallink));
+
+			    	//$a1content = View::make("table.cell",array("content"=>$grupo, "span"=>2));
+			    	//$a2content = "";
+			    	//$tool = View::make("html.tooltip",array("title"=>$tema->subject));
+					$return["rows"][$subj->id]['tema'] = $subj->subject;
+					//$a1content .= View::make("table.cell",array("content"=>$tool, "span"=>2));
+					//$a1content .= View::make("table.cell",array("content"=>$tema->adviser, "span"=>2));
+					//$return["rows"][$subj->id]['pg'] = $subj->adviser;
+					$pg = $subj->guia;
+					if(!empty($pg)){
+						$return["rows"][$subj->id]['pg'] = $pg->name." ".$pg->surname;
+					}
+					
+			    	$a1 = Student::whereWc_id($subj->student1)->first();
+			    	$a2 = Student::whereWc_id($subj->student2)->first();
+			    	if(!empty($a1)){
+			    		//$a1content .= View::make("table.cell",array("content"=>$a1->name." ".$a1->surname));
+			    		$return["rows"][$subj->id]['a1'] = $a1->name." ".$a1->surname;
+			    	}else{
+			    		//$a1content .= View::make("table.cell",array("content"=>'Sin Memorista'));
+			    		$return["rows"][$subj->id]['a1'] = 'Sin Memorista';
+			    	}
+			    	
+			    	if(!empty($a2)){
+			    		//$a2content .= View::make("table.cell",array("content"=>$a2->name." ".$a2->surname));
+			    		$return["rows"][$subj->id]['a2'] = $a2->name." ".$a2->surname;
+			    	}else{
+			    		//$a2content .= View::make("table.cell",array("content"=>'Sin Memorista'));
+			    		$return["rows"][$subj->id]['a2'] = 'Sin Memorista';
+			    	}
+
+					foreach ($tareas as $tarea) {
+						$id = $tarea->id;
+						$nota = Nota::whereSubject_id($subj->id)->whereTarea_id($tarea->id)->first();
+						
+						if($tarea->tipo<3){//tiene fecha en tarea
+							$date = CarbonLocale::parse($tarea->date);
+							$now = Carbon::now();
+							if($date>$now){//futura
+								$return["rows"][$subj->id]["a1t".$tarea->id] = "";
+								$return["rows"][$subj->id]["a2t".$tarea->id] = "";
+							}elseif($date<$now->subDays($tarea->evaltime)){//ya pasó el tiempo de eval
+								
+								if(!empty($nota)){
+									$notas = json_decode($nota->nota);
+									$return["rows"][$subj->id]["a1t".$tarea->id] = empty($notas[0])?'<div style="color: red; font-size: 20px;" class="glyphicon glyphicon-warning-sign"></div>':$notas[0];
+									$return["rows"][$subj->id]["a2t".$tarea->id] = empty($notas[1])?'<div style="color: red; font-size: 20px;" class="glyphicon glyphicon-warning-sign"></div>':$notas[1];
+									//$a1content .= View::make("table.cell",array("content"=>$ca1));
+									//$a2content .= View::make("table.cell",array("content"=>$ca2));
+									
+								}else{
+									$return["rows"][$subj->id]["a1t".$tarea->id] = '<div style="color: red; font-size: 20px;" class="glyphicon glyphicon-warning-sign"></div>';
+									$return["rows"][$subj->id]["a2t".$tarea->id] = '<div style="color: red; font-size: 20px;" class="glyphicon glyphicon-warning-sign"></div>';
+								}
+
+							}else{//dentro de periododo de evaluacion
+
+								if(!empty($nota)){
+									$notas = json_decode($nota->nota);
+									$return["rows"][$subj->id]["a1t".$tarea->id] = empty($notas[0])?'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>':$notas[0];
+									$return["rows"][$subj->id]["a2t".$tarea->id] = empty($notas[1])?'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>':$notas[1];
+								}else{
+									$return["rows"][$subj->id]["a1t".$tarea->id] = '<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>';
+									$return["rows"][$subj->id]["a2t".$tarea->id] = '<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>';
+								}
+							}
+						}else{
+
+							if(!empty($nota)){
+								$notas = json_decode($nota->nota);
+								$return["rows"][$subj->id]["a1t".$tarea->id] = empty($notas[0])?'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>':$notas[0];
+								$return["rows"][$subj->id]["a2t".$tarea->id] = empty($notas[1])?'<div class="glyphicon glyphicon-edit" style="font-size: 20px; color: rgb(0, 30, 255);"></div>':$notas[1];
+							}else{
+								//buscar evento
+								if($tarea->tipo==3){//pre
+									$evento = CEvent::whereDetail($subj->id)->whereType('Predefensa')->first();
+									if(empty($evento)){
+										$return["rows"][$subj->id]["a1t".$tarea->id] = "Sin fecha";
+										$return["rows"][$subj->id]["a2t".$tarea->id] = "Sin fecha";
+									}else{
+										$fecha = CarbonLocale::parse($evento->start);
+										$return["rows"][$subj->id]["a1t".$tarea->id] = $fecha->diffParaHumanos();
+										$return["rows"][$subj->id]["a2t".$tarea->id] = $fecha->diffParaHumanos();
+									}
+								}elseif($tarea->tipo==4){//def
+									$evento = CEvent::whereDetail($subj->id)->whereType('Defensa')->first();
+									if(empty($evento)){
+										$return["rows"][$subj->id]["a1t".$tarea->id] = "Sin fecha";
+										$return["rows"][$subj->id]["a2t".$tarea->id] = "Sin fecha";
+									}else{
+										$fecha = CarbonLocale::parse($evento->start);
+										$return["rows"][$subj->id]["a1t".$tarea->id] = $fecha->diffParaHumanos();
+										$return["rows"][$subj->id]["a2t".$tarea->id] = $fecha->diffParaHumanos();
+									}
+								}
+							}
+						}
+					}
+				}
+
+			}
+
+		}else{
+			$return["error"] = "not permission";
+		}
+
+		return json_encode($return);
+		
 	}
 
 

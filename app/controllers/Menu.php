@@ -62,8 +62,8 @@ class Menu {
 			"array"=>array("link"=>"#/calendario", "title"=>"Calendario", "n"=>0)
 		),
 		"coordefensa"=>array(
-			"where"=>"calendario",
-			"place"=>"19",
+			"where"=>"temas",
+			"place"=>"25",
 			"array"=>array("link"=>"#/listacomisiones", "title"=>"Coordinar Defensas", "n"=>0)
 		),
 		"comisionConfirmation"=>array(
@@ -124,7 +124,7 @@ class Menu {
 		"revisartareas"=>array(
 			"where"=>"temas",
 			"place"=>"24",
-			"array"=>array("link"=>"#/revisardefensas", "title"=>"Modificar Notas", "n"=>0)
+			"array"=>array("link"=>"#/notas", "title"=>"Modificar Notas", "n"=>0)
 		),
 		"actions"=>array(
 			"where"=>"data",

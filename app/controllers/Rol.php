@@ -120,7 +120,6 @@ class Rol {
 				"coordefensa",
 				"viewProfEvents",
 				"defensas",
-				"revisartareas",
 				"reportes",
 				"reportes-t",
 				"reportes-t-h",

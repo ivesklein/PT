@@ -8,8 +8,7 @@ class PostReportes{
 		$return = array();
 		if(Rol::hasPermission("rezagados")){
 
-			$q = Rezagado::join('students', 'students.id', '=', 'rezagados.student_id');
-
+			$q = Rezagado::select('rezagados.*')->join('students', 'students.id', '=', 'rezagados.student_id');
 
 			if(isset($_POST['per'])){
 				if(!empty($_POST['per'])){
@@ -118,6 +117,108 @@ class PostReportes{
 			$return["error"] = "not permission";
 		}
 
+		return json_encode($return);
+	}
+
+	public static function getrezagado(){
+		$return = array();	
+		if(Rol::hasPermission("rezagados")){
+			if(isset($_POST['id'])){
+
+
+				$rez = Rezagado::find($_POST['id']);
+
+				//$q = $q->with('student');
+				//$q = $q->with('subject');
+				//$q = $q->get();
+				$array = array();
+				if (!empty($q)) {
+
+					$student = $rez->student;
+					$subject = $rez->subject;
+
+					$array[$rez->id] = array();
+
+					if(!empty($subject)){
+						$guia = $subject->guia;
+						$array[$rez->id]['tema'] = $subject->subject;
+					
+						if(!empty($guia)){
+							$array[$rez->id]['pg'] = $guia->name." ".$guia->surname;
+						}
+
+						$pres = $subject->comision()->where("comisions.type","1")->first();
+						if(!empty($pres)){
+							$array[$rez->id]['pr'] = $pres->name." ".$pres->surname;
+						}
+						$inv = $subject->comision()->where("comisions.type","2")->first();
+						if(!empty($inv)){
+							$array[$rez->id]['in'] = $inv->name." ".$inv->surname;
+						}
+
+						$tareas = Tarea::wherePeriodo_name($subject->periodo)->where("tipo","<",4)->get();
+						$idtareas = array();
+						foreach ($tareas as $tarea) {
+							$idtareas[] = $tarea->id;
+						}
+
+						$nstudent = $student->wc_id==$subject->student1?0:1;
+
+						$sum = 0;
+						$n = 0;
+
+						foreach ($idtareas as $tareaid) {
+							# code...
+							$nota = Nota::whereSubject_id($subject->id)->whereTarea_id($tareaid)->get();
+							if(!$nota->isEmpty()){
+								$notita = $nota->first();
+								$notas = $notita->nota;
+								$feedbacks = $notita->feedback;
+
+								if($notas!=""){
+	                                $notas = json_decode($notas);
+	                                $notaa = $notas[$nstudent];
+	                                if(!empty($notaa)){
+	                                	$sum +=$notaa;
+	                                	$n++;
+	                                }
+	                            }
+
+							}
+						}
+
+						if($n>0){
+							$array[$rez->id]['pa1'] = ($sum/$n)." (".$n." notas)";
+						}else{
+							$array[$rez->id]['pa1'] = "(sin notas)";
+						}
+
+					}
+
+					$array[$rez->id]['id'] = $rez->id;
+					$array[$rez->id]['sem'] = $rez->periodo;
+					$array[$rez->id]['status'] = $rez->status;
+					$array[$rez->id]['ver'] = $rez->status;
+
+					if(empty($student)){
+						$array[$rez->id]['run'] = "";
+						$array[$rez->id]['name'] = "";
+					}else{
+						$array[$rez->id]['run'] = $student->run;
+						$array[$rez->id]['a1'] = $student->name." ".$student->surname;
+					}
+
+					$return['rows'] = $array;
+
+				}else{
+					$return["error"] = "No existe";
+				}
+			}else{
+				$return["error"] = "faltan variables";	
+			}
+		}else{
+			$return["error"] = "not permission";
+		}
 		return json_encode($return);
 	}
 

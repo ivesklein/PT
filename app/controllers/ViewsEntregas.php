@@ -223,6 +223,8 @@ class ViewsEntregas extends BaseController
 
 	public function getNotas()
 	{
+		/*
+
 		$ahead = array("Grupo","Tema","Profesor Guía","Alumnos");
 		//agregar tareas
 		$tareas = Tarea::wherePeriodo_name(Periodo::active())->where("tipo","<",5)->get();
@@ -373,6 +375,7 @@ class ViewsEntregas extends BaseController
 
 		}*/
 		//print_r($res);
+		/*
 		$table = View::make('table.table', array("head"=>$head,"body"=>$body));
 		$script = '
 		</script>
@@ -383,6 +386,8 @@ class ViewsEntregas extends BaseController
 					  $(\'[data-toggle="popover"]\').popover()
 					})';
 		return View::make('table.tableview', array("table"=>$table, "script"=>$script));		
+		*/
+		return View::make('views.temas.listanotass');
 	}
 
 

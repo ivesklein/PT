@@ -23,7 +23,7 @@ class ViewsReportes extends BaseController
 
 	public function getRezagado()
 	{
-		return 2;
+		return View::make('views.reportes.rezagado');
 	}
 
 	public function getListamemorias()

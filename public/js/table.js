@@ -40,17 +40,6 @@ var Tabla = function(head, body) {
 
 	yo.addcol = function(name, title, opcional, search, sorted, abbr, control, link){
 		
-		//name, title, opcional, search, sorted
-		/*var name = ("short" in vararray)?vararray["short"]:"nn"+Math.floor(Math.random()*1000);
-		var title = ("title" in vararray)?vararray["title"]:"Title";
-		var opcional = ("opcional" in vararray)?vararray["opcional"]:[0,1];
-		if(opcional[0]==0){opcional[1]=1;}
-
-		var search = ("search" in vararray)?vararray["search"]:0;
-		var sorted = ("sorted" in vararray)?vararray["sorted"]:0;
-
-		var abbr = ("abbr" in vararray)?vararray["abbr"]:0;*/
-
 		name = name!=undefined?name:"nn"+Math.floor(Math.random()*1000);
 		title = title!=undefined?title:"Title";
 		opcional = opcional!=undefined?opcional:[0,1];
@@ -92,6 +81,96 @@ var Tabla = function(head, body) {
 
 	};
 
+	yo.add2col = function(name, title, opcional, search, sorted, abbr, control, link){
+		
+		name = name!=undefined?name:"nn"+Math.floor(Math.random()*1000);
+		title = title!=undefined?title:"Title";
+		opcional = opcional!=undefined?opcional:[0,1];
+		if(opcional[0]==0){opcional[1]=1;}
+
+		search = search!=undefined?search:0;
+		sorted = sorted!=undefined?sorted:0;
+
+		abbr = abbr!=undefined?abbr:0;
+
+		control = control!=undefined?control:"text";
+		link = link!=undefined?link:0;
+
+		yo.order.push(name);
+		yo.cols[name] = {"name":name, "title":title, "opcional":opcional, "search":search, "sorted":sorted, "abbr":abbr, "control":control, "link":link, "span":2};
+		
+		if(control=="check"){
+			yo.head1.append("<th class='ct"+name+" text-center'>"+title+"</th>");
+		}else{
+			yo.head1.append("<th class='ct"+name+"'>"+title+"</th>");
+		}
+		
+		if(search==1){
+			yo.head2.append("<th class='ct"+name+"' data-name='"+name+"'>"+yo.finder+"</th>");
+		}else{
+			yo.head2.append("<th class='ct"+name+"'></th>");
+		}
+
+		if(opcional[0]==1){
+			if(opcional[1]==1){
+				$(yo.head).find(".form-inline").prepend('<div class="checkbox pull-right" style="margin-left: 15px;"><label><input class="mostrar" data-col="'+name+'" type="checkbox" checked> '+title+'</label></div>');
+			}else{
+				$(yo.head).find(".form-inline").prepend('<div class="checkbox pull-right" style="margin-left: 15px;"><label><input class="mostrar" data-col="'+name+'" type="checkbox"> '+title+'</label></div>');
+				yo.head1.find(".ct"+name).hide();
+				yo.head2.find(".ct"+name).hide();
+				yo.rows.find(".ct"+name).hide();
+			}
+		}
+
+	};
+
+	yo.add2col1 = function(name, title, opcional, search, sorted, abbr, control, link){
+		
+		name = name!=undefined?name:"nn"+Math.floor(Math.random()*1000);
+		title = title!=undefined?title:"Title";
+		opcional = opcional!=undefined?opcional:[0,1];
+		if(opcional[0]==0){opcional[1]=1;}
+
+		search = search!=undefined?search:0;
+		sorted = sorted!=undefined?sorted:0;
+
+		abbr = abbr!=undefined?abbr:0;
+
+		control = control!=undefined?control:"text";
+		link = link!=undefined?link:0;
+
+		yo.order.push(name);
+		yo.cols[name] = {"name":name, "title":title, "opcional":opcional, "search":search, "sorted":sorted, "abbr":abbr, "control":control, "link":link, "span":1, "row1":name};
+		
+		if(control=="check"){
+			yo.head1.append("<th class='ct"+name+" text-center'>"+title+"</th>");
+		}else{
+			yo.head1.append("<th class='ct"+name+"'>"+title+"</th>");
+		}
+		
+		if(search==1){
+			yo.head2.append("<th class='ct"+name+"' data-name='"+name+"'>"+yo.finder+"</th>");
+		}else{
+			yo.head2.append("<th class='ct"+name+"'></th>");
+		}
+
+		if(opcional[0]==1){
+			if(opcional[1]==1){
+				$(yo.head).find(".form-inline").prepend('<div class="checkbox pull-right" style="margin-left: 15px;"><label><input class="mostrar" data-col="'+name+'" type="checkbox" checked> '+title+'</label></div>');
+			}else{
+				$(yo.head).find(".form-inline").prepend('<div class="checkbox pull-right" style="margin-left: 15px;"><label><input class="mostrar" data-col="'+name+'" type="checkbox"> '+title+'</label></div>');
+				yo.head1.find(".ct"+name).hide();
+				yo.head2.find(".ct"+name).hide();
+				yo.rows.find(".ct"+name).hide();
+			}
+		}
+
+	};
+
+	yo.add2col2 = function(name, name2){
+		yo.cols[name]["row2"] = name2;
+	};
+
     $(yo.head).on('click','.checkbox input',function() {
         if (!$(this).is(':checked')) {
             //hide
@@ -111,7 +190,7 @@ var Tabla = function(head, body) {
 		};
 	}();
 
-	yo.findfun = function() {
+	yo.findfun = function(putcols, extra) {
 
         datos = {
             f:yo.ajax
@@ -137,6 +216,22 @@ var Tabla = function(head, body) {
                 yo.rows.html("");
                 yo.csv="";
 
+                putcols = putcols!=undefined?putcols:0;
+                extra = extra!=undefined?extra:{"type":0};
+                if(putcols==1){
+                	if("cols" in data){
+                		for(col in data["cols"]){
+                			yo.add2col1("a1t"+data["cols"][col]["id"], data["cols"][col]["title"], [0,1], 0, 1);
+                			yo.add2col2("a1t"+data["cols"][col]["id"],"a2t"+data["cols"][col]["id"]);
+                		}
+                	}
+
+                	if(extra.type=="buttonid"){
+                		yo.add2col("btn", extra.title, [0,1], 0, 1, 0, "button", extra.link);
+                	}
+
+                }
+
                 var i1 = 0;
                 for(col in yo.cols){
 					if(i1>0){yo.csv+=";"}
@@ -151,12 +246,21 @@ var Tabla = function(head, body) {
 
 					var row = data['rows'][n];
 					var tr = $("<tr id='"+row.id+"' class='rowlista'></tr>");
+					var tr2 = $("<tr id='k"+row.id+"' class='rowlista'></tr>");
+					var span2 = false;
+
 					yo.csv += "\n";
 
 					var flag = 0;
 					i1 = 0;
 					for(var col in yo.order){
 						var colname = yo.order[col];
+						var span = "";
+						if("span" in yo.cols[colname]){
+
+							span = " rowspan='"+yo.cols[colname]["span"]+"' style='vertical-align: middle;' ";
+						}
+
 						if (colname in row) {
 							flag=1;
 
@@ -164,24 +268,24 @@ var Tabla = function(head, body) {
 								var sel = row[colname]['status'];
 								var dis = row[colname]['perm']==1?0:1;
 
-								tr.append("<td class='ct"+colname+"'>"+yo.checkbox("",row.id,colname,yo.cols[colname]['title'],sel,dis)+"</td>");
+								tr.append("<td "+span+" class='ct"+colname+"'>"+yo.checkbox("",row.id,colname,yo.cols[colname]['title'],sel,dis)+"</td>");
 
 							}else if(yo.cols[colname]['control']=="link"){
-								tr.append("<td class='ct"+colname+"'><a href='"+yo.cols[colname]['link']+row.id+"'>"+row[colname]+"</a></td>");
+								tr.append("<td "+span+" class='ct"+colname+"'><a href='"+yo.cols[colname]['link']+row.id+"'>"+row[colname]+"</a></td>");
 							}else if(yo.cols[colname]['control']=="button"){
-								tr.append("<td class='ct"+colname+"'><a class='btn btn-success' href='"+yo.cols[colname]['link']+row.id+"'>"+yo.cols[colname]['title']+"</a></td>");
+								tr.append("<td "+span+" class='ct"+colname+"'><a class='btn btn-success' href='"+yo.cols[colname]['link']+row.id+"'>"+yo.cols[colname]['title']+"</a></td>");
 							}else if(yo.cols[colname]['control']=="check"){
 								if(row[colname]=="1"){
-									tr.append("<td class='ct"+colname+" popsel text-center' style='color:rgb(0, 192, 0);'><span class='glyphicon glyphicon-ok'></span></td>");
+									tr.append("<td "+span+" class='ct"+colname+" popsel text-center' style='color:rgb(0, 192, 0);'><span class='glyphicon glyphicon-ok'></span></td>");
 								}else if(row[colname]=="0"){
-									tr.append("<td class='ct"+colname+" popsel text-center' style='color:red;'><span class='glyphicon glyphicon-remove'></span></td>");
+									tr.append("<td "+span+" class='ct"+colname+" popsel text-center' style='color:red;'><span class='glyphicon glyphicon-remove'></span></td>");
 								}else{
-									tr.append("<td class='ct"+colname+" popsel'></td>");
+									tr.append("<td "+span+" class='ct"+colname+" popsel'></td>");
 								}
 							}else if(yo.cols[colname]['abbr']>0){
-								tr.append("<td class='ct"+colname+"'><abbr title='"+row[colname]+"'>"+row[colname].substring(0,yo.cols[colname]['abbr'])+"...</abbr></td>");
+								tr.append("<td "+span+" class='ct"+colname+"'><abbr title='"+row[colname]+"'>"+row[colname].substring(0,yo.cols[colname]['abbr'])+"...</abbr></td>");
 							}else{
-								tr.append("<td class='ct"+colname+"'>"+row[colname]+"</td>");
+								tr.append("<td "+span+" class='ct"+colname+"'>"+row[colname]+"</td>");
 							}
 
 							if(i1>0){yo.csv+=";"}
@@ -200,9 +304,16 @@ var Tabla = function(head, body) {
 							if(i1>0){yo.csv+=";"}
 							i1++;
 						}
+						if("row2" in yo.cols[colname]){
+							tr2.append("<td "+span+" class='ct"+colname+"'>"+row[yo.cols[colname]["row2"]]+"</td>");
+							span2 = true;
+						}
 					}
 					//tr.append("<td class='p1-8'><abbr title='"+tema.tema+"'>"+tema.tema.substring(0,20)+'...</abbr></td>');
 					yo.rows.append(tr);
+					if(span2){
+						yo.rows.append(tr2);
+					}
 
                 }
 

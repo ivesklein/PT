@@ -769,7 +769,7 @@ class PostMemorias{
 	{
 		$return = array();
 		if(isset($_POST['id'])){
-			if(Rol::hasPermission("revisartareas") || Rol::hasPermission("notas")){
+			if(Rol::hasPermission("revisartareas") || Rol::hasPermission("notas") || Rol::hasPermission("defensas")){
 				$per = Periodo::active_obj();
 				if($per!="false"){
 					
